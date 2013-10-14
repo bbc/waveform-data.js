@@ -1,0 +1,56 @@
+{
+  "name": "waveform-data.js",
+  "version": "1.1.0",
+  "description": "Audio Waveform Data Manipulation API – resample, offset and segment waveform data in JavaScript.",
+  "main": "waveform-data.js",
+  "homepage": "",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npm run test-node && npm run test-browser-ci",
+    "test-node": "mocha --reporter dot test/unit/*",
+    "test-browser": "grunt karma:unit",
+    "test-browser-ci": "grunt test:ci",
+    "build": "npm run build-browser && npm run build-tests && grunt build",
+    "build-browser": "browserify -r ./waveform-data.js -s WaveformData > dist/waveform-data.js && grunt uglify",
+    "build-tests": "browserify -x dist/waveform-data.min.js test/**/*.js > dist/waveform-data.tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bbcrd/waveform-data.js.git"
+  },
+  "keywords": [
+    "webaudio",
+    "waveform",
+    "audio",
+    "visualisation"
+  ],
+  "author": "Thomas Parisot <thomas.parisot@bbc.co.uk>",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/bbcrd/waveform-data.js/issues"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.6.2",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "~0.5.1",
+    "grunt-karma": "~0.6.2",
+    "karma-script-launcher": "~0.1.0",
+    "karma-chrome-launcher": "~0.1.0",
+    "karma-firefox-launcher": "~0.1.0",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-requirejs": "~0.1.0",
+    "karma-phantomjs-launcher": "~0.1.0",
+    "grunt-jsdoc-md": "git+https://github.com/oncletom/grunt-jsdoc-md.git",
+    "chai": "~1.8.1",
+    "mocha": "~1.13.0",
+    "karma-chai": "~0.0.2",
+    "karma": "~0.10.2",
+    "karma-mocha": "~0.1.0",
+    "browserify": "~2.34.0",
+    "karma-commonjs": "0.0.2",
+    "karma-safari-launcher": "~0.1.1"
+  }
+}

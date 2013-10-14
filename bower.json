@@ -1,0 +1,13 @@
+{
+  "name": "waveform-data",
+  "version": "1.1.0",
+  "main": "dist/waveform-data.min.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "data",
+    "test",
+    "tests"
+  ]
+}
