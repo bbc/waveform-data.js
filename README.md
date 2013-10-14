@@ -164,7 +164,7 @@ request.get("http://api.myapp.com/waveforms/"+ arvg.wid +".json", function(err, 
 
 # Data format
 
-The [file format](https://github.com/bbcrd/audiowaveform/wiki/Data-Format) used and consumed by `WaveformData` is documented as part of the [**audiowaveform** project](http://waveform.prototyping.bbc.co.uk).
+The [file format](https://github.com/bbcrd/audiowaveform/blob/master/doc/DataFormat.md) used and consumed by `WaveformData` is documented as part of the [**audiowaveform** project](http://waveform.prototyping.bbc.co.uk).
 
 We basically have **headers** containing:
 
@@ -177,7 +177,7 @@ We basically have **headers** containing:
 The body contains a *single range* of *minumum* and *maximum* audio peaks.
 Which means if we have a `length` of 100, it means we have *200* elements in the body.
 
-[Waveform Data Format Documentation](https://github.com/bbcrd/audiowaveform/wiki/Data-Format)
+[Waveform Data Format Documentation](https://github.com/bbcrd/audiowaveform/blob/master/doc/DataFormat.md)
 
 # JavaScript API
 
