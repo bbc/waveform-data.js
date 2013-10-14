@@ -7,10 +7,10 @@ __browsable__ and __segmentable__ representations of audio waveforms.
 
 - [audiowaveform](https://github.com/bbcrd/audiowaveform): C++ program that generates waveform data files from MP3 or WAV format audio.
 - [audio_waveform-ruby](https://github.com/bbcrd/audio_waveform-ruby): A Ruby gem that can read and write waveform data files.
-- **waveform-data-.js**: JavaScript library that provides access to precomputed waveform data files, or can generate waveform data using the Web Audio API.
+- **waveform-data.js**: JavaScript library that provides access to precomputed waveform data files, or can generate waveform data using the Web Audio API.
 - [peaks.js](https://github.com/bbcrd/peaks.js): JavaScript UI component for interacting with waveforms.
 
-We use these projects in daily applications such as
+We use these projects daily in applications such as
 [BBC Radio Archive](http://worldservice.prototyping.bbc.co.uk) and __browser editing and sharing__ tools for BBC content editors.
 
 ![Example of what it helps to build](waveform-example.png)
@@ -164,7 +164,7 @@ request.get("http://api.myapp.com/waveforms/"+ arvg.wid +".json", function(err, 
 
 # Data format
 
-The [file format](https://github.com/bbcrd/audiowaveform/wiki/Data-Format) used and consumed by `WaveformData` is documented as part of the [**audiowaveform** project](https://github.com/bbcrd/audiowaveform).
+The [file format](https://github.com/bbcrd/audiowaveform/wiki/Data-Format) used and consumed by `WaveformData` is documented as part of the [**audiowaveform** project](http://waveform.prototyping.bbc.co.uk).
 
 We basically have **headers** containing:
 
@@ -236,7 +236,7 @@ See COPYING for details.
 Every contribution is welcomed, either it's code, idea or a *merci*!
 
 [Guidelines are provided](CONTRIBUTING.md) and every commit is tested against unit tests
-using [karma runner](http://karma-runner.github.io) and [Jasmine framework](http://pivotal.github.io/jasmine/).
+using [Karma runner](http://karma-runner.github.io) and the [Chai assertion library](http://chaijs.com/).
 
 # Authors
 
