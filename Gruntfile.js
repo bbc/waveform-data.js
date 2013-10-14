@@ -105,8 +105,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks("grunt-jsdoc-md");
   grunt.loadNpmTasks("grunt-karma");
 
-  grunt.registerTask("default", ["test", "build"]);
-  grunt.registerTask("build", ["uglify", "jsdoc_md"]);
+  grunt.registerTask("default", ["test"]);
   grunt.registerTask("test", ["jshint", "karma:ci"]);         //single run
   grunt.registerTask("debug", ["karma:debug", "watch"]);       //continuous debug
 };

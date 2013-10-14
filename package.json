@@ -12,7 +12,7 @@
     "test-node": "mocha --reporter dot test/unit/*",
     "test-browser": "grunt karma:unit",
     "test-browser-ci": "grunt test:ci",
-    "build": "npm run build-browser && npm run build-tests && grunt build",
+    "build": "npm run build-browser && npm run build-tests",
     "build-browser": "browserify -r ./waveform-data.js -s WaveformData > dist/waveform-data.js && grunt uglify",
     "build-tests": "browserify -x dist/waveform-data.min.js test/**/*.js > dist/waveform-data.tests.js"
   },
