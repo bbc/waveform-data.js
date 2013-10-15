@@ -2,9 +2,16 @@ module.exports = function(config){
   config.set({
     basePath: '',
     files: [
-      'dist/waveform-data.tests.js'
+      'test/unit/*.js'
     ],
-    frameworks: ['mocha', 'chai'],
+    frameworks: ['mocha', 'chai', 'browserify'],
+    preprocessors: {
+      'test/**/*.js': ['browserify'],
+      'waveform-data.js': ['browserify']
+    },
+    browserify: {
+      external: ['dist/waveform-data.min.js']
+    },
     plugins: [
       'karma-*'
     ],
