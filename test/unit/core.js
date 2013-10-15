@@ -3,7 +3,7 @@
 /* globals describe, it, beforeEach */
 // jshint -W030
 
-var WaveformData = require("../../dist/waveform-data.min.js");
+var WaveformData = require("../../waveform-data.js");
 var getArrayBufferFakeData = require("../fixtures").arraybuffer;
 var getJSONFakeData = require("../fixtures").json;
 var expect = require("chai").expect;
