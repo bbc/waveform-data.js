@@ -13,7 +13,6 @@ results
 
 npm-debug.log
 
-dist/*.tests.js
 dist/*.html
 bower_components
 node_modules

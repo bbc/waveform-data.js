@@ -13,9 +13,8 @@
     "code-coverage": "mocha --require blanket --reporter html-cov test/unit/* > dist/code-coverage.html",
     "test-browser": "grunt karma:unit",
     "test-browser-ci": "grunt test:ci",
-    "build": "npm run build-browser && npm run build-tests",
+    "build": "npm run build-browser",
     "build-browser": "browserify -r ./waveform-data.js -s WaveformData > dist/waveform-data.js && grunt uglify",
-    "build-tests": "browserify -x dist/waveform-data.min.js test/**/*.js > dist/waveform-data.tests.js",
     "blanket": {
       "pattern": "waveform-data.js/lib/"
     }
@@ -56,6 +55,7 @@
     "browserify": "~2.34.0",
     "karma-commonjs": "0.0.2",
     "karma-safari-launcher": "~0.1.1",
-    "blanket": "~1.1.5"
+    "blanket": "~1.1.5",
+    "karma-browserify": "0.0.5"
   }
 }
