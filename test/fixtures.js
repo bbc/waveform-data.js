@@ -2,7 +2,6 @@
 
 var getJSONFakeData = module.exports.json = function getJSONFakeData(){
   return {
-    "version": 1,
     "length": 10,
     "bits": 8,
     "sample_rate": 48000,
@@ -15,7 +14,6 @@ var getJSONFakeData = module.exports.json = function getJSONFakeData(){
 };
 
 getJSONFakeData.expected = {
-  version: 1,
   length: 10,
   sample_rate: 48000,
   samples_per_pixel: 512,
