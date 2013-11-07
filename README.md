@@ -1,5 +1,7 @@
 # waveform-data.js [![Build Status](https://travis-ci.org/bbcrd/waveform-data.js.png?branch=master)](https://travis-ci.org/bbcrd/waveform-data.js)
 
+[![browser support](https://ci.testling.com/bbcrd/waveform-data.js.png)](https://ci.testling.com/bbcrd/waveform-data.js)
+
 **waveform-data.js** is a JavaScript library for creating __zoomable__,
 __browsable__ and __segmentable__ representations of audio waveforms.
 
