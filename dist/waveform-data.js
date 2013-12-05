@@ -481,6 +481,9 @@ WaveformData.prototype = {
    * // zooming out on a 3 times less precise scale
    * var resampled_waveform = waveform.resample({ scale: waveform.adapter.scale * 3 });
    *
+   * // partial resampling (to perform fast animations involving a resampling per animation frame)
+   * var partially_resampled_waveform = waveform.resample({ width: 500, from: 0, to: 500 });
+   *
    * // ...
    * ```
    *
@@ -496,12 +499,24 @@ WaveformData.prototype = {
     var output_data = [];
     var samples_per_pixel = options.scale || Math.floor(this.duration * this.adapter.sample_rate / options.width);    //scale we want to reach
     var scale = this.adapter.scale;   //scale we are coming from
-    var input_buffer_size = this.adapter.length;
-    var min = input_buffer_size ? this.min_sample(0) : 0;
-    var max = input_buffer_size ? this.max_sample(0) : 0;
-    var input_index = 0;
-    var output_index = 0;
-    var min_value = -128;
+
+    var start_sample_input_index = 0;
+    var start_sample_output_index = 0;
+
+    if (options.start_time) {
+      start_sample_input_index = Math.floor(options.start_time * this.adapter.sample_rate / this.adapter.scale);
+      start_sample_output_index = Math.floor(options.start_time * this.adapter.sample_rate / samples_per_pixel);
+    }
+
+    console.log("start_sample_input_index", start_sample_input_index, "start_sample_output_index", start_sample_output_index, "Start Time", options.start_time);
+    console.log("input_index", options.input_index, "output_index", options.output_index, "start_time", options.testStartTime);
+
+    var input_buffer_size = this.adapter.length; //the amount of data we want to resample i.e. final zoom want to resample all data but for intermediate zoom we want to resample subset
+    var min = input_buffer_size ? this.min_sample(/*start_sample_input_index*/options.input_index) : 0; //min value for peak in waveform
+    var max = input_buffer_size ? this.max_sample(/*start_sample_input_index*/options.input_index) : 0; //max value for peak in waveform
+    var input_index = /*start_sample_input_index || 0;*/options.input_index || 0; //is this start point? or is this the index at current scale
+    var output_index = /*start_sample_output_index || 0;*/options.output_index || 0; //is this end point? or is this the index at scale we want to be?
+    var min_value = -128; 
     var max_value = 127;
 
     if (samples_per_pixel < scale){
@@ -518,8 +533,8 @@ WaveformData.prototype = {
       output_data.push(min, max);
     };
 
-    while(input_index < input_buffer_size){
-      while (Math.floor(sample_at_pixel(output_index) / scale) === input_index){
+    while (input_index < input_buffer_size) {
+      while (Math.floor(sample_at_pixel(output_index) / scale) <= input_index){
         if (output_index){
           add_sample(min, max);
         }
@@ -559,11 +574,24 @@ WaveformData.prototype = {
 
         input_index++;
       }
+
+      if (options.length) {
+        if ((output_data.length/2) >= options.length) {
+          break;
+        }
+      }
     }
 
-    if(input_index !== last_input_index){
-      add_sample(min, max);
+    if ((output_data.length/2) > options.length) {
+      if(input_index !== last_input_index){
+        add_sample(min, max);
+      }
     }
+
+
+    //if ((output_data.length/2) < options.length) {
+      //console.log("Not enough data");
+    //}
 
     return new WaveformData({
       version: this.adapter.version,
