@@ -130,6 +130,12 @@ describe("WaveformData Core object", function(){
     expect(instance.time(1)).to.equal(0.010666666666666666);     //1 * 512 / 48000
   });
 
+  it("should be able to convert frame in time and time in frame without loosing precision", function(){
+    expect(instance.at_time(instance.time(0))).to.equal(0, '0 -> 0');
+    expect(instance.at_time(instance.time(14))).to.equal(14, '14 -> 14');
+    expect(instance.at_time(instance.time(93))).to.equal(93, '93 -> 93');
+  });
+
   it("should be able to determine if a pixel index belong to the active offset", function(){
     expect(instance.in_offset(0)).to.be.true;
     expect(instance.in_offset(9)).to.be.true;
