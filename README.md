@@ -219,7 +219,7 @@ think [`Array.forEach`](http://kangax.github.io/es5-compat-table/#Array.prototyp
 
  * IE9+, Firefox Stable, Chrome Stable, Safari 6+ are fully supported;
  * IE10+ is required for the [TypedArray](http://caniuse.com/#feat=typedarrays) Adapter;
- * Firefox 23+ and Webkit/Blink browsers are required for the [Web Audio](http://caniuse.com/#feat=audio-api) Builder.
+ * Firefox 23+ and Webkit/Blink browsers are required for the experimental [Web Audio](http://caniuse.com/#feat=audio-api) Builder.
 
 # Development
 
@@ -248,4 +248,4 @@ This software was written by
 
 ## Copyright
 
-Copyright 2013 British Broadcasting Corporation
+Copyright 2014 British Broadcasting Corporation

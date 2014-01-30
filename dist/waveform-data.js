@@ -362,7 +362,7 @@ WaveformData.create = function createFromResponseData(data){
   var adapter = null;
   var xhrData = null;
 
-  if (data && typeof data === "object" && "response" in data){
+  if (data && typeof data === "object" && ("responseText" in data || "response" in data)){
     xhrData = ("responseType" in data) ? data.response : (data.responseText || data.response);
   }
 
