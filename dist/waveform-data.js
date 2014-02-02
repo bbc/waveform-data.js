@@ -671,8 +671,8 @@ WaveformData.prototype = {
       start_sample_output_index = Math.floor(options.start_time * this.adapter.sample_rate / samples_per_pixel);
     }
 
-    console.log("start_sample_input_index", start_sample_input_index, "start_sample_output_index", start_sample_output_index, "Start Time", options.start_time);
-    console.log("input_index", options.input_index, "output_index", options.output_index, "start_time", options.testStartTime);
+    //console.log("start_sample_input_index", start_sample_input_index, "start_sample_output_index", start_sample_output_index, "Start Time", options.start_time);
+    //console.log("input_index", options.input_index, "output_index", options.output_index, "start_time", options.testStartTime);
 
     var input_buffer_size = this.adapter.length; //the amount of data we want to resample i.e. final zoom want to resample all data but for intermediate zoom we want to resample subset
     var min = input_buffer_size ? this.min_sample(/*start_sample_input_index*/options.input_index) : 0; //min value for peak in waveform
@@ -750,11 +750,6 @@ WaveformData.prototype = {
         add_sample(min, max);
       }
     }
-
-
-    //if ((output_data.length/2) < options.length) {
-      //console.log("Not enough data");
-    //}
 
     return new WaveformData({
       version: this.adapter.version,
