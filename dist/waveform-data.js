@@ -512,10 +512,10 @@ WaveformData.prototype = {
     //console.log("input_index", options.input_index, "output_index", options.output_index, "start_time", options.testStartTime);
 
     var input_buffer_size = this.adapter.length; //the amount of data we want to resample i.e. final zoom want to resample all data but for intermediate zoom we want to resample subset
-    var min = input_buffer_size ? this.min_sample(/*start_sample_input_index*/options.input_index) : 0; //min value for peak in waveform
-    var max = input_buffer_size ? this.max_sample(/*start_sample_input_index*/options.input_index) : 0; //max value for peak in waveform
     var input_index = /*start_sample_input_index || 0;*/options.input_index || 0; //is this start point? or is this the index at current scale
     var output_index = /*start_sample_output_index || 0;*/options.output_index || 0; //is this end point? or is this the index at scale we want to be?
+    var min = input_buffer_size ? this.min_sample(/*start_sample_input_index*/input_index) : 0; //min value for peak in waveform
+    var max = input_buffer_size ? this.max_sample(/*start_sample_input_index*/input_index) : 0; //max value for peak in waveform
     var min_value = -128; 
     var max_value = 127;
 
@@ -582,7 +582,13 @@ WaveformData.prototype = {
       }
     }
 
-    if ((output_data.length/2) > options.length) {
+    if (options.length) {
+      if ((output_data.length/2) > options.length) {
+        if(input_index !== last_input_index){
+          add_sample(min, max);
+        }
+      }
+    } else {
       if(input_index !== last_input_index){
         add_sample(min, max);
       }
