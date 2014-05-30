@@ -13,6 +13,7 @@ results
 
 npm-debug.log
 
+.idea
 dist/*.html
 bower_components
 node_modules

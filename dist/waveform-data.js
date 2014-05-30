@@ -283,6 +283,8 @@ WaveformDataObjectAdapter.prototype = {
 
 var WaveformDataSegment = require("./segment.js");
 
+var WaveformDataPoint = require("./point.js");
+
 /**
  * Facade to iterate on audio waveform response.
  *
@@ -331,6 +333,23 @@ var WaveformData = module.exports = function WaveformData(response_data, adapter
    * @type {Object} A hash of `WaveformDataSegment` objects.
    */
   this.segments = {};
+
+  /**
+   * Defined points.
+   *
+   * ```javascript
+   * var waveform = new WaveformData({ ... }, WaveformData.adapters.object);
+   *
+   * console.log(waveform.points.speakerA);          // -> undefined
+   *
+   * waveform.set_point(30, "speakerA");
+   *
+   * console.log(waveform.points.speakerA.timeStamp);    // -> 30
+   * ```
+   *
+   * @type {Object} A hash of `WaveformDataPoint` objects.
+   */
+  this.points = {};
 
   this.offset(0, this.adapter.length);
 };
@@ -460,6 +479,54 @@ WaveformData.prototype = {
     this.segments[identifier] = new WaveformDataSegment(this, start, end);
 
     return this.segments[identifier];
+  },
+  /**
+   * Creates a new point of data.
+   * Pretty handy if you need to bookmark a specific point and display it according to the current offset.
+   *
+   * ```javascript
+   * var waveform = WaveformData.create({ ... });
+   *
+   * console.log(Object.keys(waveform.points));          // -> []
+   *
+   * waveform.set_point(10);
+   * waveform.set_point(30, "speakerA");
+   *
+   * console.log(Object.keys(waveform.points));          // -> ['default', 'speakerA']
+   * ```
+   *
+   * @param {Integer} timeStamp the time to place the bookmark
+   * @param {String*} identifier Unique identifier. If nothing is specified, *default* will be used as a value.
+   * @return {WaveformDataPoint}
+   */
+  set_point: function setPoint(timeStamp, identifier){
+    identifier = identifier || "default";
+
+    this.points[identifier] = new WaveformDataPoint(this, timeStamp);
+
+    return this.points[identifier];
+  },
+  /**
+   * Removes a point of data.
+   *
+   * ```javascript
+   * var waveform = WaveformData.create({ ... });
+   *
+   * console.log(Object.keys(waveform.points));          // -> []
+   *
+   * waveform.set_point(30, "speakerA");
+   * console.log(Object.keys(waveform.points));          // -> ['speakerA']
+   * waveform.remove_point("speakerA");
+   * console.log(Object.keys(waveform.points));          // -> []
+   * ```
+   *
+   * @param {String*} identifier Unique identifier. If nothing is specified, *default* will be used as a value.
+   * @return null
+   */
+  remove_point: function removePoint(identifier) {
+    if(this.points[identifier]) {
+      delete this.points[identifier];
+    }
   },
   /**
    * Creates a new WaveformData object with resampled data.
@@ -625,16 +692,15 @@ WaveformData.prototype = {
    */
   offsetValues: function getOffsetValues(start, length, correction){
     var adapter = this.adapter;
-
-    //creating a dense array on the fly for an optimized loop
-    //@see http://www.2ality.com/2012/06/dense-arrays.html
-    var values = Array.apply(null, new Array(length));
+    var values = [];
 
     correction += (start * 2);  //offsetting the positioning query
 
-    return values.map(function offsetValueMapper(val, i){
-      return adapter.at((i * 2) + correction);
-    });
+    for (var i = 0; i < length; i++){
+      values.push(adapter.at((i * 2) + correction));
+    }
+
+    return values;
   },
   /**
    * Compute the duration in seconds of the audio file.
@@ -817,7 +883,75 @@ WaveformData.adapter = function WaveformDataAdapter(response_data){
   this.data = response_data;
 };
 
-},{"./segment.js":5}],5:[function(require,module,exports){
+},{"./point.js":5,"./segment.js":6}],5:[function(require,module,exports){
+"use strict";
+
+/**
+ * Points are an easy way to keep track bookmarks of the described audio file.
+ *
+ * They return values based on the actual offset. Which means if you change your offset and:
+ *
+ * * a point becomes **out of scope**, no data will be returned; 
+ * * a point is **fully included in the offset**, its whole content will be returned.
+ *
+ * Points are created with the `WaveformData.set_point(timeStamp, name?)` method.
+ *
+ * @see WaveformData.prototype.set_point
+ * @param {WaveformData} context WaveformData instance
+ * @param {Integer} start Initial start index
+ * @param {Integer} end Initial end index
+ * @constructor
+ */
+var WaveformDataPoint = module.exports = function WaveformDataPoint(context, timeStamp){
+  this.context = context;
+
+  /**
+   * Start index.
+   *
+   * ```javascript
+   * var waveform = new WaveformData({ ... }, WaveformData.adapters.object);
+   * waveform.set_point(10, "example");
+   *
+   * console.log(waveform.points.example.timeStamp);  // -> 10
+   *
+   * waveform.offset(20, 50);
+   * console.log(waveform.points.example.timeStamp);  // -> 10
+   *
+   * waveform.offset(70, 100);
+   * console.log(waveform.points.example.timeStamp);  // -> 10
+   * ```
+   * @type {Integer} Time Stamp of the point
+   */
+  this.timeStamp = timeStamp;
+};
+
+/**
+ * @namespace WaveformDataPoint
+ */
+WaveformDataPoint.prototype = {
+  /**
+   * Indicates if the point has some visible part in the actual WaveformData offset.
+   *
+   * ```javascript
+   * var waveform = new WaveformData({ ... }, WaveformData.adapters.object);
+   * waveform.set_point(10, "example");
+   *
+   * console.log(waveform.points.example.visible);        // -> true
+   *
+   * waveform.offset(0, 50);
+   * console.log(waveform.points.example.visible);        // -> true
+   *
+   * waveform.offset(70, 100);
+   * console.log(waveform.points.example.visible);        // -> false
+   * ```
+   *
+   * @return {Boolean} True if visible, false otherwise.
+   */
+  get visible(){
+    return this.context.in_offset(this.timeStamp);
+  }
+};
+},{}],6:[function(require,module,exports){
 "use strict";
 
 /**
@@ -1051,14 +1185,14 @@ WaveformDataSegment.prototype = {
     return this.visible ? this.context.offsetValues(this.offset_start, this.offset_length, 1) : [];
   }
 };
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 var WaveformData = require("./lib/core");
 WaveformData.adapters = require("./lib/adapters");
 
 module.exports = WaveformData;
-},{"./lib/adapters":2,"./lib/core":4}]},{},[6])
-(6)
+},{"./lib/adapters":2,"./lib/core":4}]},{},[7])
+(7)
 });
 ;
