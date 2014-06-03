@@ -1,18 +1,15 @@
 # WaveformData
 
 <table>
-  <tbody>
-    <tr>
-      <th><code>response_data</code></th>
-      <td><code>String</code> | <code>ArrayBuffer</code> | <code>Mixed</code></td>
-      <td>Waveform data, to be consumed by the related adapter.</td>
-    </tr>
-    <tr>
-      <th><code>adapter</code></th>
-      <td><code>WaveformData.adapter</code> | <code>Function</code></td>
-      <td>Backend adapter used to manage access to the data.</td>
-    </tr>
-  </body>
+  <tr>
+    <th><code>response_data</code></th>
+    <td><code>String</code> | <code>ArrayBuffer</code> | <code>Mixed</code></td>
+    <td>Waveform data, to be consumed by the related adapter.</td>
+  </tr><tr>
+    <th><code>adapter</code></th>
+    <td><code>WaveformData.adapter</code> | <code>Function</code></td>
+    <td>Backend adapter used to manage access to the data.</td>
+  </tr>
 </table>
 
 * `@constructor`
@@ -63,16 +60,32 @@ waveform.set_segment(30, 90, "speakerA");
 console.log(waveform.segments.speakerA.start);    // -> 30
 ```
 
+# this.points
+
+
+* `@type` `Object` 
+
+
+> Defined points.
+
+```javascript
+var waveform = new WaveformData({ ... }, WaveformData.adapters.object);
+
+console.log(waveform.points.speakerA);          // -> undefined
+
+waveform.set_point(30, "speakerA");
+
+console.log(waveform.points.speakerA.timeStamp);    // -> 30
+```
+
 # WaveformData.create()
 
 <table>
-  <tbody>
-    <tr>
-      <th><code>data</code></th>
-      <td><code>XMLHttpRequest</code> | <code>Mixed</code></td>
-      <td></td>
-    </tr>
-  </body>
+  <tr>
+    <th><code>data</code></th>
+    <td><code>XMLHttpRequest</code> | <code>Mixed</code></td>
+    <td></td>
+  </tr>
 </table>
 
 * `@static`
@@ -100,18 +113,15 @@ xhr.send();
 # WaveformData.prototype.offset()
 
 <table>
-  <tbody>
-    <tr>
-      <th><code>start</code></th>
-      <td><code>Integer</code></td>
-      <td>New beginning of the offset. (inclusive)</td>
-    </tr>
-    <tr>
-      <th><code>end</code></th>
-      <td><code>Integer</code></td>
-      <td>New ending of the offset (exclusive)</td>
-    </tr>
-  </body>
+  <tr>
+    <th><code>start</code></th>
+    <td><code>Integer</code></td>
+    <td>New beginning of the offset. (inclusive)</td>
+  </tr><tr>
+    <th><code>end</code></th>
+    <td><code>Integer</code></td>
+    <td>New ending of the offset (exclusive)</td>
+  </tr>
 </table>
 
 
@@ -134,23 +144,19 @@ console.log(waveform.min[0]);          // -> -9
 # WaveformData.prototype.set_segment()
 
 <table>
-  <tbody>
-    <tr>
-      <th><code>start</code></th>
-      <td><code>Integer</code></td>
-      <td>Beginning of the segment (inclusive)</td>
-    </tr>
-    <tr>
-      <th><code>end</code></th>
-      <td><code>Integer</code></td>
-      <td>Ending of the segment (exclusive)</td>
-    </tr>
-    <tr>
-      <th><code>identifier</code></th>
-      <td><code>String*</code></td>
-      <td>Unique identifier. If nothing is specified, *default* will be used as a value.</td>
-    </tr>
-  </body>
+  <tr>
+    <th><code>start</code></th>
+    <td><code>Integer</code></td>
+    <td>Beginning of the segment (inclusive)</td>
+  </tr><tr>
+    <th><code>end</code></th>
+    <td><code>Integer</code></td>
+    <td>Ending of the segment (exclusive)</td>
+  </tr><tr>
+    <th><code>identifier</code></th>
+    <td><code>String*</code></td>
+    <td>Unique identifier. If nothing is specified, *default* will be used as a value.</td>
+  </tr>
 </table>
 
 * `@return` `WaveformDataSegment` 
@@ -172,16 +178,71 @@ console.log(waveform.segments.default.min.length);    // -> 110
 console.log(waveform.segments.speakerA.min.length);   // -> 60
 ```
 
+# WaveformData.prototype.set_point()
+
+<table>
+  <tr>
+    <th><code>timeStamp</code></th>
+    <td><code>Integer</code></td>
+    <td>the time to place the bookmark</td>
+  </tr><tr>
+    <th><code>identifier</code></th>
+    <td><code>String*</code></td>
+    <td>Unique identifier. If nothing is specified, *default* will be used as a value.</td>
+  </tr>
+</table>
+
+* `@return` `WaveformDataPoint` 
+
+
+> Creates a new point of data.
+Pretty handy if you need to bookmark a specific point and display it according to the current offset.
+
+```javascript
+var waveform = WaveformData.create({ ... });
+
+console.log(Object.keys(waveform.points));          // -> []
+
+waveform.set_point(10);
+waveform.set_point(30, "speakerA");
+
+console.log(Object.keys(waveform.points));          // -> ['default', 'speakerA']
+```
+
+# WaveformData.prototype.remove_point()
+
+<table>
+  <tr>
+    <th><code>identifier</code></th>
+    <td><code>String*</code></td>
+    <td>Unique identifier. If nothing is specified, *default* will be used as a value.</td>
+  </tr>
+</table>
+
+* `@return` `null` 
+
+
+> Removes a point of data.
+
+```javascript
+var waveform = WaveformData.create({ ... });
+
+console.log(Object.keys(waveform.points));          // -> []
+
+waveform.set_point(30, "speakerA");
+console.log(Object.keys(waveform.points));          // -> ['speakerA']
+waveform.remove_point("speakerA");
+console.log(Object.keys(waveform.points));          // -> []
+```
+
 # WaveformData.prototype.resample()
 
 <table>
-  <tbody>
-    <tr>
-      <th><code>Number,</code></th>
-      <td><code>Number</code> | <code>width:</code></td>
-      <td>scale: Number}} options Either a constraint width or a constraint sample rate</td>
-    </tr>
-  </body>
+  <tr>
+    <th><code>Number,</code></th>
+    <td><code>Number</code> | <code>width:</code></td>
+    <td>scale: Number}} options Either a constraint width or a constraint sample rate</td>
+  </tr>
 </table>
 
 * See: [https://code.google.com/p/audacity/source/browse/audacity-src/trunk/src/Sequence.cpp](https://code.google.com/p/audacity/source/browse/audacity-src/trunk/src/Sequence.cpp)
@@ -255,23 +316,19 @@ console.log(waveform.max[0]);          // -> 5
 # WaveformData.prototype.offsetValues()
 
 <table>
-  <tbody>
-    <tr>
-      <th><code>start</code></th>
-      <td><code>Integer</code></td>
-      <td></td>
-    </tr>
-    <tr>
-      <th><code>length</code></th>
-      <td><code>Integer</code></td>
-      <td></td>
-    </tr>
-    <tr>
-      <th><code>correction</code></th>
-      <td><code>Integer</code></td>
-      <td>The step to skip for each iteration (as the response body is [min, max, min, max...])</td>
-    </tr>
-  </body>
+  <tr>
+    <th><code>start</code></th>
+    <td><code>Integer</code></td>
+    <td></td>
+  </tr><tr>
+    <th><code>length</code></th>
+    <td><code>Integer</code></td>
+    <td></td>
+  </tr><tr>
+    <th><code>correction</code></th>
+    <td><code>Integer</code></td>
+    <td>The step to skip for each iteration (as the response body is [min, max, min, max...])</td>
+  </tr>
 </table>
 
 * `@return` `Array.<Integer>` 
@@ -347,13 +404,11 @@ console.log(waveform.seconds_per_pixel);       // -> 0.010666666666666666
 # WaveformData.prototype.at()
 
 <table>
-  <tbody>
-    <tr>
-      <th><code>index</code></th>
-      <td><code>Integer</code></td>
-      <td></td>
-    </tr>
-  </body>
+  <tr>
+    <th><code>index</code></th>
+    <td><code>Integer</code></td>
+    <td></td>
+  </tr>
 </table>
 
 * `@proxy`
@@ -372,13 +427,11 @@ console.log(waveform.at(21));              // -> 12
 # WaveformData.prototype.at_time()
 
 <table>
-  <tbody>
-    <tr>
-      <th><code>time</code></th>
-      <td><code>number</code></td>
-      <td></td>
-    </tr>
-  </body>
+  <tr>
+    <th><code>time</code></th>
+    <td><code>number</code></td>
+    <td></td>
+  </tr>
 </table>
 
 * `@return` `integer` Index location for a specific time.
@@ -394,13 +447,11 @@ console.log(waveform.at_time(0.0000000023));       // -> 10
 # WaveformData.prototype.time()
 
 <table>
-  <tbody>
-    <tr>
-      <th><code>index</code></th>
-      <td><code>Integer</code></td>
-      <td></td>
-    </tr>
-  </body>
+  <tr>
+    <th><code>index</code></th>
+    <td><code>Integer</code></td>
+    <td></td>
+  </tr>
 </table>
 
 * `@return` `number` 
@@ -417,13 +468,11 @@ console.log(waveform.time(10));                    // -> 0.0000000023
 # WaveformData.prototype.in_offset()
 
 <table>
-  <tbody>
-    <tr>
-      <th><code>pixel</code></th>
-      <td><code>number</code></td>
-      <td></td>
-    </tr>
-  </body>
+  <tr>
+    <th><code>pixel</code></th>
+    <td><code>number</code></td>
+    <td></td>
+  </tr>
 </table>
 
 * `@return` `boolean` True if the pixel lies in the current offset, false otherwise.
@@ -446,13 +495,11 @@ console.log(waveform.in_offset(120));     // -> true
 # WaveformData.prototype.min_sample()
 
 <table>
-  <tbody>
-    <tr>
-      <th><code>offset</code></th>
-      <td><code>Integer</code></td>
-      <td></td>
-    </tr>
-  </body>
+  <tr>
+    <th><code>offset</code></th>
+    <td><code>Integer</code></td>
+    <td></td>
+  </tr>
 </table>
 
 * `@return` `Number` Offset min value
@@ -469,13 +516,11 @@ console.log(waveform.min_sample(10));      // -> -7
 # WaveformData.prototype.max_sample()
 
 <table>
-  <tbody>
-    <tr>
-      <th><code>offset</code></th>
-      <td><code>Integer</code></td>
-      <td></td>
-    </tr>
-  </body>
+  <tr>
+    <th><code>offset</code></th>
+    <td><code>Integer</code></td>
+    <td></td>
+  </tr>
 </table>
 
 * `@return` `Number` Offset max value

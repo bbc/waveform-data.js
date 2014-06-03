@@ -1,23 +1,19 @@
 # WaveformDataSegment
 
 <table>
-  <tbody>
-    <tr>
-      <th><code>context</code></th>
-      <td><code>WaveformData</code></td>
-      <td>WaveformData instance</td>
-    </tr>
-    <tr>
-      <th><code>start</code></th>
-      <td><code>Integer</code></td>
-      <td>Initial start index</td>
-    </tr>
-    <tr>
-      <th><code>end</code></th>
-      <td><code>Integer</code></td>
-      <td>Initial end index</td>
-    </tr>
-  </body>
+  <tr>
+    <th><code>context</code></th>
+    <td><code>WaveformData</code></td>
+    <td>WaveformData instance</td>
+  </tr><tr>
+    <th><code>start</code></th>
+    <td><code>Integer</code></td>
+    <td>Initial start index</td>
+  </tr><tr>
+    <th><code>end</code></th>
+    <td><code>Integer</code></td>
+    <td>Initial end index</td>
+  </tr>
 </table>
 
 * See: `WaveformData.prototype.set_segment`
