@@ -3,6 +3,7 @@
 The documentation is actually splitted in several parts:
 
 * [`WaveformData`](WaveformData.md)
+* [`WaveformDataPoint`](WaveformDataPoint.md)
 * [`WaveformDataSegment`](WaveformDataSegment.md)
 * **Built-in adapters**
  * [`WaveformDataObjectAdapter`](WaveformDataObjectAdapter.md)

@@ -66,6 +66,7 @@ module.exports = function (grunt) {
       main: {
         files: {
           "doc/WaveformData.md": "lib/core.js",
+          "doc/WaveformDataPoint.md": "lib/point.js",
           "doc/WaveformDataSegment.md": "lib/segment.js",
           "doc/WaveformDataArrayBufferAdapter.md": "lib/adapters/arraybuffer.js",
           "doc/WaveformDataObjectAdapter.md": "lib/adapters/object.js"
