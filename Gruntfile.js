@@ -17,7 +17,8 @@ module.exports = function (grunt) {
     uglify: {
       options: {
         banner: "<%= banner %>",
-        report: "gzip"
+        report: "gzip",
+        mangle: true
       },
       all:{
         src: "dist/<%= baseName %>.js",
