@@ -6,8 +6,7 @@ module.exports = function (grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    baseName: "waveform-data",
-    pkg: grunt.file.readJSON('package.json'),
+    pkg: require('./package.json'),
     banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
       '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
@@ -21,8 +20,8 @@ module.exports = function (grunt) {
         mangle: true
       },
       all:{
-        src: "dist/<%= baseName %>.js",
-        dest: "dist/<%= baseName %>.min.js"
+        src: "dist/<%= pkg.name %>.js",
+        dest: "dist/<%= pkg.name %>.min.js"
       },
     },
 

@@ -281,10 +281,8 @@ WaveformDataObjectAdapter.prototype = {
 },{}],4:[function(require,module,exports){
 "use strict";
 
-/* globals WaveformData, AudioContext, webkitAudioContext */
-
-// jshint -W098: true
-window.AudioContext = window.AudioContext || window.webkitAudioContext;
+var WaveformData = require('../core.js');
+WaveformData.adapters = require('../adapters');
 
 /**
  * Creates a working WaveformData based on binary audio data.
@@ -316,8 +314,8 @@ window.AudioContext = window.AudioContext || window.webkitAudioContext;
  * @param {callback} what to do once the decoding is done
  * @constructor
  */
-module.exports = function fromAudioObjectBuilder(raw_response, callback){
-  var context = new AudioContext();
+function fromAudioObjectBuilder(raw_response, callback){
+  var context = fromAudioObjectBuilder.getAudioContext();
   var scale = 512;
   var scale_adjuster = 127; // to produce an 8bit like value
 
@@ -367,13 +365,20 @@ module.exports = function fromAudioObjectBuilder(raw_response, callback){
 
     callback(new WaveformData(data_object.buffer, WaveformData.adapters.arraybuffer));
   });
+}
+
+fromAudioObjectBuilder.getAudioContext = function getAudioContext(){
+  var AudioContext = window.AudioContext || window.webkitAudioContext;
+
+  // jshint -W098: true
+  return new AudioContext();
 };
 
-},{}],5:[function(require,module,exports){
+module.exports = fromAudioObjectBuilder;
+},{"../adapters":2,"../core.js":5}],5:[function(require,module,exports){
 "use strict";
 
 var WaveformDataSegment = require("./segment.js");
-
 var WaveformDataPoint = require("./point.js");
 
 /**
