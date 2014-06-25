@@ -207,6 +207,18 @@ describe("WaveformData Core object", function(){
       expect(function(){ instance.resample(20); }).to.throw(Error);
     });
 
+    it('should throw an error if the scale value is not a positive integer', function(){
+      expect(function(){ instance.resample({ scale: 0 }); }).to.throw(RangeError);
+    });
+
+    it('should throw an error if the width value is not a positive integer', function(){
+      expect(function(){ instance.resample({ width: 0 }); }).to.throw(RangeError);
+    });
+
+    it('should throw an error if both width and scale are missing', function(){
+      expect(function(){ instance.resample({}); }).to.throw(Error);
+    });
+
     describe('full resample by width', function(){
       it('should resample to 5 elements if a width of 5 is requested', function(){
         expect(instance.resample({ width: 5 }).adapter).to.have.a.lengthOf(5);
@@ -233,6 +245,24 @@ describe("WaveformData Core object", function(){
         expectations.resampled_values.forEach(function(expectedValue, i){
           expect(resampled.at(i)).to.equal(expectedValue);
         });
+      });
+    });
+
+    describe('partial resampling at a specific time', function(){
+      it('should accept only a positive input_index value', function(){
+        expect(function(){ instance.resample({ scale: 1024, input_index: -1 }); }).to.throw(RangeError);
+      });
+
+      it('should accept only a positive output_index value', function(){
+        expect(function(){ instance.resample({ scale: 1024, output_index: -1 }); }).to.throw(RangeError);
+      });
+
+      it('should throw an exception if any of the 4 mandatories options are missing', function(){
+        expect(function(){ instance.resample({ scale: 1024, input_index: 1, output_index: 1 }); }).to.throw(Error);
+      });
+
+      it('should crop the sample count to the defined length option value', function(){
+        expect(instance.resample({ scale: 1024, input_index: 1, output_index: 1, width: 3 }).adapter).to.have.a.lengthOf(3);
       });
     });
   });

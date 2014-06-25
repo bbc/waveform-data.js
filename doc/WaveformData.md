@@ -274,22 +274,7 @@ var partially_resampled_waveform = waveform.resample({ width: 500, from: 0, to: 
 // ...
 ```
 
-# input_buffer_size
-
-
-
-
-> ar start_sample_input_index = 0;
-    var start_sample_output_index = 0;
-
-    if (options.start_time) {
-      start_sample_input_index = Math.floor(options.start_time * this.adapter.sample_rate / this.adapter.scale);
-      start_sample_output_index = Math.floor(options.start_time * this.adapter.sample_rate / samples_per_pixel);
-    }
-
-    console.log("start_sample_input_index", start_sample_input_index, "start_sample_output_index", start_sample_output_index, "Start Time", options.start_time);
-    console.log("input_index", options.input_index, "output_index", options.output_index, "start_time", options.testStartTime);
-# undefined.prototype.min
+# WaveformData.prototype.min
 
 
 * `@api`
@@ -310,7 +295,7 @@ console.log(waveform.min.length);      // -> 30
 console.log(waveform.min[0]);          // -> -9
 ```
 
-# undefined.prototype.max
+# WaveformData.prototype.max
 
 
 * `@api`
@@ -331,7 +316,7 @@ console.log(waveform.max.length);      // -> 30
 console.log(waveform.max[0]);          // -> 5
 ```
 
-# undefined.prototype.offsetValues()
+# WaveformData.prototype.offsetValues()
 
 <table>
   <tr>
@@ -354,7 +339,7 @@ console.log(waveform.max[0]);          // -> 5
 
 > Return the unpacked values for a particular offset.
 
-# undefined.prototype.duration
+# WaveformData.prototype.duration
 
 
 * `@api`
@@ -371,7 +356,7 @@ waveform.offset(20, 50);
 console.log(waveform.duration);    // -> 10.33333333333
 ```
 
-# undefined.prototype.offset_duration
+# WaveformData.prototype.offset_duration
 
 
 * `@api`
@@ -390,7 +375,7 @@ waveform.offset(20, 50);
 console.log(waveform.offset_duration);    // -> 2.666666666667
 ```
 
-# undefined.prototype.pixels_per_second
+# WaveformData.prototype.pixels_per_second
 
 
 * `@api`
@@ -405,7 +390,7 @@ var waveform = WaveformData.create({ ... });
 console.log(waveform.pixels_per_second);       // -> 93.75
 ```
 
-# undefined.prototype.seconds_per_pixel
+# WaveformData.prototype.seconds_per_pixel
 
 
 * `@return` `number` Amount of time (in seconds) contained in a pixel.
@@ -419,7 +404,7 @@ var waveform = WaveformData.create({ ... });
 console.log(waveform.seconds_per_pixel);       // -> 0.010666666666666666
 ```
 
-# undefined.prototype.at()
+# WaveformData.prototype.at()
 
 <table>
   <tr>
@@ -442,7 +427,7 @@ console.log(waveform.at(20));              // -> -7
 console.log(waveform.at(21));              // -> 12
 ```
 
-# undefined.prototype.at_time()
+# WaveformData.prototype.at_time()
 
 <table>
   <tr>
@@ -462,7 +447,7 @@ var waveform = WaveformData.create({ ... });
 
 console.log(waveform.at_time(0.0000000023));       // -> 10
 ```
-# undefined.prototype.time()
+# WaveformData.prototype.time()
 
 <table>
   <tr>
@@ -483,7 +468,7 @@ var waveform = WaveformData.create({ ... });
 console.log(waveform.time(10));                    // -> 0.0000000023
 ```
 
-# undefined.prototype.in_offset()
+# WaveformData.prototype.in_offset()
 
 <table>
   <tr>
@@ -510,7 +495,7 @@ console.log(waveform.in_offset(50));      // -> false
 console.log(waveform.in_offset(120));     // -> true
 ```
 
-# undefined.prototype.min_sample()
+# WaveformData.prototype.min_sample()
 
 <table>
   <tr>
@@ -531,7 +516,7 @@ var waveform = WaveformData.create({ ... });
 console.log(waveform.min_sample(10));      // -> -7
 ```
 
-# undefined.prototype.max_sample()
+# WaveformData.prototype.max_sample()
 
 <table>
   <tr>
