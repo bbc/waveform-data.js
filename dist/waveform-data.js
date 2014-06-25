@@ -656,30 +656,57 @@ WaveformData.prototype = {
    */
   resample: function(options){
     if (typeof options === 'number'){
-      options = { width: options };
+      options = {
+        width: options
+      };
+    }
+
+    options.input_index = typeof options.input_index === 'number' ? options.input_index : null;
+    options.output_index = typeof options.output_index === 'number' ? options.output_index : null;
+    options.scale = typeof options.scale === 'number' ? options.scale : null;
+    options.width = typeof options.width === 'number' ? options.width : null;
+
+    var is_partial_resampling = Boolean(options.input_index) || Boolean(options.output_index);
+
+    if (options.input_index !== null && (options.input_index >= 0) === false){
+      throw new RangeError('options.input_index should be a positive integer value. ['+ options.input_index +']');
+    }
+
+    if (options.output_index !== null && (options.output_index >= 0) === false){
+      throw new RangeError('options.output_index should be a positive integer value. ['+ options.output_index +']');
+    }
+
+    if (options.width !== null && (options.width > 0) === false){
+      throw new RangeError('options.width should be a strictly positive integer value. ['+ options.width +']');
+    }
+
+    if (options.scale !== null && (options.scale > 0) === false){
+      throw new RangeError('options.scale should be a strictly positive integer value. ['+ options.scale +']');
+    }
+
+    if (!options.scale && !options.width){
+      throw new RangeError('You should provide either a resampling scale or a width in pixel the data should fit in.');
+    }
+
+    var definedPartialOptionsCount = ['width', 'scale', 'output_index', 'input_index'].reduce(function(count, key){
+      return count + (options[key] === null ? 0 : 1);
+    }, 0);
+
+    if (is_partial_resampling && definedPartialOptionsCount !== 4) {
+      throw new Error('Some partial resampling options are missing. You provided ' + definedPartialOptionsCount + ' of them over 4.');
     }
 
     var output_data = [];
     var samples_per_pixel = options.scale || Math.floor(this.duration * this.adapter.sample_rate / options.width);    //scale we want to reach
     var scale = this.adapter.scale;   //scale we are coming from
-
-    var start_sample_input_index = 0;
-    var start_sample_output_index = 0;
-
-    if (options.start_time) {
-      start_sample_input_index = Math.floor(options.start_time * this.adapter.sample_rate / this.adapter.scale);
-      start_sample_output_index = Math.floor(options.start_time * this.adapter.sample_rate / samples_per_pixel);
-    }
-
-    //console.log("start_sample_input_index", start_sample_input_index, "start_sample_output_index", start_sample_output_index, "Start Time", options.start_time);
-    //console.log("input_index", options.input_index, "output_index", options.output_index, "start_time", options.testStartTime);
+    var channel_count = 2;
 
     var input_buffer_size = this.adapter.length; //the amount of data we want to resample i.e. final zoom want to resample all data but for intermediate zoom we want to resample subset
-    var input_index = /*start_sample_input_index || 0;*/options.input_index || 0; //is this start point? or is this the index at current scale
-    var output_index = /*start_sample_output_index || 0;*/options.output_index || 0; //is this end point? or is this the index at scale we want to be?
-    var min = input_buffer_size ? this.min_sample(/*start_sample_input_index*/input_index) : 0; //min value for peak in waveform
-    var max = input_buffer_size ? this.max_sample(/*start_sample_input_index*/input_index) : 0; //max value for peak in waveform
-    var min_value = -128; 
+    var input_index = options.input_index || 0; //is this start point? or is this the index at current scale
+    var output_index = options.output_index || 0; //is this end point? or is this the index at scale we want to be?
+    var min = input_buffer_size ? this.min_sample(input_index) : 0; //min value for peak in waveform
+    var max = input_buffer_size ? this.max_sample(input_index) : 0; //max value for peak in waveform
+    var min_value = -128;
     var max_value = 127;
 
     if (samples_per_pixel < scale){
@@ -738,29 +765,24 @@ WaveformData.prototype = {
         input_index++;
       }
 
-      if (options.length) {
-        if ((output_data.length/2) >= options.length) {
-          break;
-        }
+      if (is_partial_resampling && (output_data.length / channel_count) >= options.width) {
+        break;
       }
     }
 
-    if (options.length) {
-      if ((output_data.length/2) > options.length) {
-        if(input_index !== last_input_index){
-          add_sample(min, max);
-        }
-      }
-    } else {
-      if(input_index !== last_input_index){
+    if (is_partial_resampling) {
+      if ((output_data.length / channel_count) > options.width && input_index !== last_input_index){
         add_sample(min, max);
       }
+    }
+    else if(input_index !== last_input_index){
+      add_sample(min, max);
     }
 
     return new WaveformData({
       version: this.adapter.version,
       samples_per_pixel: samples_per_pixel,
-      length: output_data.length / 2,
+      length: output_data.length / channel_count,
       data: output_data,
       sample_rate: this.adapter.sample_rate
     }, WaveformData.adapters.object);
