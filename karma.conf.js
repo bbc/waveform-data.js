@@ -1,4 +1,6 @@
 module.exports = function(config){
+  var isCI = Boolean(process.env.CI);
+
   config.set({
     basePath: '',
     files: [
@@ -16,18 +18,14 @@ module.exports = function(config){
       'karma-*'
     ],
     exclude: [],
-    reporters: ['progress'],
+    reporters: isCI ? 'dots' : 'progress',
     port: 8080,
     runnerPort: 9100,
     colors: true,
     logLevel: config.LOG_INFO,
-    autoWatch: false,
-    browsers: [
-      'Chrome',
-      'Safari',
-      'Firefox'
-    ],
+    autoWatch: !isCI,
+    browsers: isCI ? ['PhantomJS'] : ['Chrome', 'Safari', 'Firefox' ],
     captureTimeout: 5000,
-    singleRun: false
+    singleRun: isCI
   });
 };

@@ -8,13 +8,15 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npm run test-node && npm run test-browser-ci && npm run code-coverage",
+    "test": "npm run test-node && npm run jshint && npm run code-coverage && npm run test-browser",
+    "jshint": "jshint -c .jshintrc ./lib",
     "test-node": "mocha --reporter dot test/unit/*",
     "code-coverage": "mocha --require blanket --reporter html-cov test/unit/* > dist/code-coverage.html",
-    "test-browser": "grunt karma:unit",
-    "test-browser-ci": "grunt test:ci",
+    "test-browser": "./node_modules/karma/bin/karma start",
     "build": "npm run build-browser",
-    "build-browser": "browserify -r ./waveform-data.js -s WaveformData > dist/waveform-data.js && grunt uglify",
+    "build-browser": "browserify -r ./waveform-data.js -s WaveformData > dist/waveform-data.js && grunt uglify"
+  },
+  "config": {
     "blanket": {
       "pattern": "waveform-data.js/lib/"
     }
@@ -50,24 +52,21 @@
   "devDependencies": {
     "blanket": "~1.1.5",
     "browserify": "~2.34.0",
-    "chai": "~1.8.1",
+    "chai": "^1.9.1",
     "grunt": "~0.4.1",
-    "grunt-contrib-jshint": "~0.6.2",
     "grunt-contrib-uglify": "~0.2.2",
-    "grunt-contrib-watch": "~0.5.1",
     "grunt-jsdoc-md": "git+https://github.com/oncletom/grunt-jsdoc-md.git",
-    "grunt-karma": "~0.6.2",
-    "karma": "~0.10.2",
-    "karma-browserify": "0.0.5",
-    "karma-chai": "~0.0.2",
+    "jshint": "^2.5.1",
+    "karma": "^0.12.16",
+    "karma-browserify": "~0.0.5",
+    "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "~0.1.0",
-    "karma-commonjs": "0.0.2",
     "karma-firefox-launcher": "~0.1.0",
     "karma-html2js-preprocessor": "~0.1.0",
-    "karma-mocha": "~0.1.0",
+    "karma-mocha": "<= 0.1.3",
     "karma-phantomjs-launcher": "~0.1.0",
     "karma-safari-launcher": "~0.1.1",
-    "mocha": "~1.13.0",
+    "mocha": "^1.20.1",
     "testling": "^1.6.1"
   }
 }

@@ -85,28 +85,13 @@ module.exports = function (grunt) {
           ]
         }
       }
-    },
-
-    watch: {
-      gruntfile: {
-        files: "<%= jshint.gruntfile.src %>",
-        tasks: ["jshint:gruntfile"]
-      },
-      lib_test: {
-        files: "<%= jshint.lib_test.src %>",
-        tasks: ["jshint:lib_test", "build", "karma:unit:run"]
-      }
     }
   });
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks("grunt-contrib-uglify");
-  grunt.loadNpmTasks("grunt-contrib-jshint");
-  grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.loadNpmTasks("grunt-jsdoc-md");
-  grunt.loadNpmTasks("grunt-karma");
 
-  grunt.registerTask("default", ["test"]);
-  grunt.registerTask("test", ["jshint", "karma:ci"]);         //single run
-  grunt.registerTask("debug", ["karma:debug", "watch"]);       //continuous debug
+  grunt.registerTask("default", ["build"]);
+  grunt.registerTask("build", ["jsdoc_md", "uglify"]);
 };
