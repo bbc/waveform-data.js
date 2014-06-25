@@ -79,66 +79,115 @@ describe("WaveformData Core object", function(){
     expect(function(){ instance.offset(15, 5); }).to.throw(Error);
   });
 
-  it("should return all the minimum values of the offset.", function(){
-    instance.offset(2, 5);
+  describe('.min', function(){
+    beforeEach(function(){
+      instance.offset(2, 5);
+    });
 
-    expect(instance.min).to.have.length.of(3);   //same as previous test
-    expect(instance.min[0]).to.equal(0);       //means index 5
-    expect(instance.min[1]).to.equal(-5);      //means index 7
+    it('should return the 3 minimum values, at index 5, 7 and 9.', function(){
+      expect(instance.min).to.deep.equal([0, -5, -5]);
+    });
   });
 
-  it("should return all the maximum values of the offset.", function(){
-    instance.offset(2, 5);
+  describe('.max', function(){
+    beforeEach(function(){
+      instance.offset(2, 5);
+    });
 
-    expect(instance.max).to.have.length.of(3);   //same as previous test
-    expect(instance.max[0]).to.equal(0);       //means index 6
-    expect(instance.max[1]).to.equal(7);       //means index 8
+    it('should return the 3 minimum values, at index 6, 8 and 10.', function(){
+      expect(instance.max).to.deep.equal([0, 7, 7]);
+    });
   });
 
-  it("should calculate the audio duration based on internal data.", function(){
-    expect(instance.duration).to.equal(expectations.duration);
+  describe('.duration', function(){
+    it('should return the duration of the media when no offset is set.', function(){
+      expect(instance.duration).to.equal(expectations.duration);
+    });
 
-    instance.offset(2, 5);
-    expect(instance.duration).to.equal(expectations.duration);   // if should not affect the whole duration
+    it('should return the duration of the media even when an offset is set', function(){
+      instance.offset(2, 5);
+      expect(instance.duration).to.equal(expectations.duration);
+    });
   });
 
-  it("should calculate the audio offset duration based on internal data.", function(){
-    expect(instance.offset_duration).to.equal(expectations.duration);
+  describe('.offset_duration', function(){
+    it('should return the duration of the media when no offset is set.', function(){
+      expect(instance.offset_duration).to.equal(expectations.duration);
+    });
 
-    instance.offset(2, 5);
-    expect(instance.offset_duration).to.equal(0.032);   //3 * 512 / 48000
+    it('should return the duration of the offset even when an offset is set', function(){
+      instance.offset(2, 5);
+      expect(instance.offset_duration).to.equal(0.032);   //3 * 512 / 48000
+    });
   });
 
-  it("should compute the number of pixels per seconds for this set of data.", function(){
+  describe('.pixels_per_second', function(){
+    it("should compute the number of pixels per seconds for this set of data.", function(){
       expect(instance.pixels_per_second).to.equal(93.75);   //48000 / 512
+    });
   });
 
-  it("should compute the number of seconds per pixel for this set of data.", function(){
-    expect(instance.seconds_per_pixel).to.equal(0.010666666666666666);    //512 / 48000
+  describe('.seconds_per_pixel', function(){
+    it("should compute the number of seconds per pixel for this set of data.", function(){
+      expect(instance.seconds_per_pixel).to.equal(0.010666666666666666);    //512 / 48000
+    });
   });
 
-  it("should calculate the pixel value for a given time in seconds.", function(){
-    expect(instance.at_time(0)).to.equal(0);
-    expect(instance.at_time(0.15)).to.equal(14);      //floor 0.15 * 48000 / 512
-    expect(instance.at_time(1)).to.equal(93);         //floor 1 * 48000 / 512 (~ pixels_per_second, brilliant!)
+  describe('.at_time', function(){
+    it("should compute a location in pixel of 0 if the time is 0 seconds", function(){
+      expect(instance.at_time(0)).to.equal(0);
+    });
+
+    it("should compute a location in pixel of 14 if the time is 0.15 seconds", function(){
+      expect(instance.at_time(0.15)).to.equal(14);      //floor 0.15 * 48000 / 512
+    });
+
+    it("should compute a location in pixel of 93 if the time is 1 second", function(){
+      expect(instance.at_time(1)).to.equal(93);         //floor 1 * 48000 / 512 (~ pixels_per_second, brilliant!)
+    });
   });
 
-  it("should calculate the time in seconds for a given pixel index.", function(){
-    //not sure they are the expected values. Should check the operator priority
-    expect(instance.time(0)).to.equal(0);
-    expect(instance.time(0.15)).to.equal(0.0015999999999999999); //0.15 * 512 / 48000
-    expect(instance.time(1)).to.equal(0.010666666666666666);     //1 * 512 / 48000
+  describe('.time', function(){
+    it("should return a time of 0 seconds for a given pixel index of 0.", function(){
+      expect(instance.time(0)).to.equal(0);
+    });
+
+    it("should return a time of 0.0015999999999999999 seconds for a given pixel index of 0.15.", function(){
+      expect(instance.time(0.15)).to.equal(0.0015999999999999999); //0.15 * 512 / 48000
+    });
+
+    it("should return a time of 0.010666666666666666 seconds for a given pixel index of 1.", function(){
+      expect(instance.time(1)).to.equal(0.010666666666666666);     //1 * 512 / 48000
+    });
   });
 
-  it("should be able to determine if a pixel index belong to the active offset", function(){
-    expect(instance.in_offset(0)).to.be.true;
-    expect(instance.in_offset(9)).to.be.true;
-    expect(instance.in_offset(10)).to.be.false;
+  describe('.in_offset()', function(){
+    it('should consider a pixel index of 0 to be in the offset, when not set', function(){
+      expect(instance.in_offset(0)).to.be.true;
+    });
 
-    instance.offset(4, 6);
-    expect(instance.in_offset(2)).to.be.false;
-    expect(instance.in_offset(6)).to.be.false;
-    expect(instance.in_offset(5)).to.be.true;
+    it('should consider a pixel index of 9 to be in the offset, when not set', function(){
+      expect(instance.in_offset(9)).to.be.true;
+    });
+
+    it('should consider a pixel index of 10 not to be in the offset', function(){
+      expect(instance.in_offset(10)).to.be.false;
+    });
+
+    it('should consider a pixel index of 4 to be in an offset of 4 to 6', function(){
+      instance.offset(4, 6);
+      expect(instance.in_offset(4)).to.be.true;
+    });
+
+    it('should consider a pixel index of 5 to be in an offset of 4 to 6', function(){
+      instance.offset(4, 6);
+      expect(instance.in_offset(5)).to.be.true;
+    });
+
+    it('should consider a pixel index of 6 not to be in an offset of 4 to 6', function(){
+      instance.offset(4, 6);
+      expect(instance.in_offset(6)).to.be.false;
+    });
   });
 
   it("should return the proper minimum value for a given pixel index.", function(){
@@ -153,34 +202,48 @@ describe("WaveformData Core object", function(){
     expect(instance.max_sample(9)).to.equal(2);
   });
 
-  it("should resample the data as a new WaveformData object.", function(){
-    var resampled;
+  describe('.resample()', function(){
+    it('should throw an error when an upscaling tries to be achieved', function(){
+      expect(function(){ instance.resample(20); }).to.throw(Error);
+    });
 
-    //upscalling
-    expect(function(){ instance.resample(20); }).to.throw(Error);
+    describe('full resample by width', function(){
+      it('should resample to 5 elements if a width of 5 is requested', function(){
+        expect(instance.resample({ width: 5 }).adapter).to.have.a.lengthOf(5);
+      });
 
-    //by width
-    resampled = instance.resample({ width: 5 });
-    expect(resampled.adapter).to.have.length.of(instance.resample(5).adapter.length);
-    expect(resampled.duration).to.equal(expectations.duration);
+      it('should resample to an expected duration if a width of 5 is requested', function(){
+        expect(instance.resample({ width: 5 })).to.have.property('duration', expectations.duration);
+      });
+    });
 
-    //by scale
     //if we double the scale, it should fit in half the previous size (which means 5px)
-    resampled = instance.resample({ scale: 1024 });
-    expect(resampled.adapter).to.have.length.of(expectations.resampled_length);
-    expect(resampled.duration).to.equal(expectations.duration);
+    describe('full resample by scale', function(){
+      it('should downsize the number of data by 2 if we request a half-size scaled resampled waveform', function(){
+        expect(instance.resample({ scale: 1024 }).adapter).to.have.length.of(expectations.resampled_length);
+      });
 
-    //checking resampled values
-    expectations.resampled_values.forEach(function(expectedValue, i){
-      expect(resampled.at(i)).to.equal(expectedValue);
+      it('should downsize the duration by 2 if we request a half-size scaled resampled waveform', function(){
+        expect(instance.resample({ scale: 1024 })).to.have.property('duration', expectations.duration);
+      });
+
+      it('should resample to a set of expected values', function(){
+        var resampled = instance.resample({ scale: 1024 });
+
+        expectations.resampled_values.forEach(function(expectedValue, i){
+          expect(resampled.at(i)).to.equal(expectedValue);
+        });
+      });
     });
   });
 
-  it("should throw an exception if start is negative.", function(){
-    expect(function(){ instance.offset(-1, 10); }).to.throw(Error);
-  });
+  describe('.offset()', function(){
+    it("should throw an exception if start is negative.", function(){
+      expect(function(){ instance.offset(-1, 10); }).to.throw(Error);
+    });
 
-  it("should throw an exception if end is negative.", function(){
-    expect(function(){ instance.offset(1, -1); }).to.throw(Error);
+    it("should throw an exception if end is negative.", function(){
+      expect(function(){ instance.offset(1, -1); }).to.throw(Error);
+    });
   });
 });
