@@ -22,7 +22,7 @@ module.exports = function (grunt) {
       all:{
         src: "dist/<%= pkg.name %>.js",
         dest: "dist/<%= pkg.name %>.min.js"
-      },
+      }
     },
 
     jshint: {
