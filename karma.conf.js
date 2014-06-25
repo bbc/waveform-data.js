@@ -4,6 +4,7 @@ module.exports = function(config){
   config.set({
     basePath: '',
     files: [
+      { pattern: 'lib/**/*.js', included: false, served: false, watched: true },
       'test/unit/*.js'
     ],
     frameworks: ['mocha', 'chai', 'browserify'],
