@@ -524,19 +524,19 @@ WaveformData.prototype = {
     var data_length = this.adapter.length;
 
     if (end < 0){
-      throw new RangeError("End point must be non-negative.");
+      throw new RangeError("End point must be non-negative [" + Number(end) + "]");
     }
 
     if (end <= start){
-      throw new RangeError("We can't end prior to the starting point.");
+      throw new RangeError("We can't end prior to the starting point [" + Number(end) + " <= " + Number(start) + "]");
     }
 
     if (start < 0){
-      throw new RangeError("Start point must be non-negative.");
+      throw new RangeError("Start point must be non-negative [" + Number(start) + " < 0]");
     }
 
     if (start >= data_length){
-      throw new RangeError("Start point must be within range.");
+      throw new RangeError("Start point must be within range [" + Number(start) + " >= " + data_length + "]");
     }
 
     if (end > data_length){
