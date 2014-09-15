@@ -368,10 +368,11 @@ function fromAudioObjectBuilder(raw_response, callback){
 }
 
 fromAudioObjectBuilder.getAudioContext = function getAudioContext(){
-  var AudioContext = window.AudioContext || window.webkitAudioContext;
-
-  // jshint -W098: true
-  return new AudioContext();
+  if(!window.webBuilderAudioContext){
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+	window.webBuilderAudioContext = new AudioContext();
+  }
+  return window.webBuilderAudioContext;
 };
 
 module.exports = fromAudioObjectBuilder;
@@ -524,7 +525,7 @@ WaveformData.prototype = {
     var data_length = this.adapter.length;
 
     if (end < 0){
-      throw new RangeError("End point must be non-negative [" + Number(end) + "]");
+      throw new RangeError("End point must be non-negative [" + Number(end) + " < 0]");
     }
 
     if (end <= start){
