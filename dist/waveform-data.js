@@ -1,5 +1,4 @@
-!function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.WaveformData=e():"undefined"!=typeof global?global.WaveformData=e():"undefined"!=typeof self&&(self.WaveformData=e())}(function(){var define,module,exports;
-return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.WaveformData=e():"undefined"!=typeof global?global.WaveformData=e():"undefined"!=typeof self&&(self.WaveformData=e())}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
 /**
@@ -281,6 +280,7 @@ WaveformDataObjectAdapter.prototype = {
 },{}],4:[function(require,module,exports){
 "use strict";
 
+var audioContext = require('audio-context');
 var WaveformData = require('../core.js');
 WaveformData.adapters = require('../adapters');
 
@@ -315,7 +315,6 @@ WaveformData.adapters = require('../adapters');
  * @constructor
  */
 function fromAudioObjectBuilder(raw_response, callback){
-  var context = fromAudioObjectBuilder.getAudioContext();
   var scale = 512;
   var scale_adjuster = 127; // to produce an 8bit like value
 
@@ -328,7 +327,7 @@ function fromAudioObjectBuilder(raw_response, callback){
    * Adapted from BlockFile::CalcSummary in Audacity, with permission.
    * @see https://code.google.com/p/audacity/source/browse/audacity-src/trunk/src/BlockFile.cpp
    */
-  context.decodeAudioData(raw_response, function onAudioDecoded(audio_buffer){
+  audioContext.decodeAudioData(raw_response, function onAudioDecoded(audio_buffer){
     var data_length = Math.floor(audio_buffer.length / scale);
     var offset = 20;
     var data_object = new DataView(new ArrayBuffer(offset + data_length * 2));
@@ -368,14 +367,11 @@ function fromAudioObjectBuilder(raw_response, callback){
 }
 
 fromAudioObjectBuilder.getAudioContext = function getAudioContext(){
-  var AudioContext = window.AudioContext || window.webkitAudioContext;
-
-  // jshint -W098: true
-  return new AudioContext();
+  return audioContext;
 };
 
 module.exports = fromAudioObjectBuilder;
-},{"../adapters":2,"../core.js":5}],5:[function(require,module,exports){
+},{"../adapters":2,"../core.js":5,"audio-context":8}],5:[function(require,module,exports){
 "use strict";
 
 var WaveformDataSegment = require("./segment.js");
@@ -524,7 +520,7 @@ WaveformData.prototype = {
     var data_length = this.adapter.length;
 
     if (end < 0){
-      throw new RangeError("End point must be non-negative [" + Number(end) + "]");
+      throw new RangeError("End point must be non-negative [" + Number(end) + " < 0]");
     }
 
     if (end <= start){
@@ -596,7 +592,9 @@ WaveformData.prototype = {
    * @return {WaveformDataPoint}
    */
   set_point: function setPoint(timeStamp, identifier){
-    identifier = identifier || "default";
+    if(identifier === undefined || identifier === null || identifier.length === 0) {
+      identifier = "default";
+    }
 
     this.points[identifier] = new WaveformDataPoint(this, timeStamp);
 
@@ -1333,6 +1331,21 @@ WaveformDataSegment.prototype = {
   }
 };
 },{}],8:[function(require,module,exports){
+var window = require('global/window');
+
+var Context = window.AudioContext || window.webkitAudioContext;
+if (Context) module.exports = new Context;
+
+},{"global/window":9}],9:[function(require,module,exports){
+var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};if (typeof window !== "undefined") {
+    module.exports = window;
+} else if (typeof global !== "undefined") {
+    module.exports = global;
+} else {
+    module.exports = {};
+}
+
+},{}],10:[function(require,module,exports){
 "use strict";
 
 var WaveformData = require("./lib/core");
@@ -1343,7 +1356,7 @@ WaveformData.builders = {
 };
 
 module.exports = WaveformData;
-},{"./lib/adapters":2,"./lib/builders/webaudio.js":4,"./lib/core":5}]},{},[8])
-(8)
+},{"./lib/adapters":2,"./lib/builders/webaudio.js":4,"./lib/core":5}]},{},[10])
+(10)
 });
 ;
