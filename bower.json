@@ -9,5 +9,8 @@
     "data",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "audio-context": "juliangruber/audio-context#~0.1.0"
+  }
 }
