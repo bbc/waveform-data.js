@@ -12,8 +12,5 @@
   "eqnull": true,
   "browser": true,
   "node": true,
-  "globalstrict": true,
-  "globals": {
-    "WaveformData": true
-  }
+  "globalstrict": true
 }
