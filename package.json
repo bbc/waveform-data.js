@@ -10,16 +10,21 @@
   "scripts": {
     "test": "npm run test-node && npm run jshint && npm run code-coverage && npm run test-browser",
     "jshint": "jshint -c .jshintrc ./lib",
-    "test-node": "mocha --reporter dot test/unit/*",
-    "test-watch": "mocha --reporter dot --watch test/unit/* --browsers Chrome",
-    "code-coverage": "mocha --require blanket --reporter html-cov test/unit/* > dist/code-coverage.html",
+    "test-node": "mocha -R dot test/unit/*",
+    "test-coverage": "mocha -R travis-cov -r blanket test/unit/*",
+    "test-watch": "mocha -R dot --watch test/unit/*",
+    "code-coverage": "mocha -r blanket -R html-cov test/unit/* > dist/code-coverage.html",
     "test-browser": "./node_modules/karma/bin/karma start",
     "build": "npm run build-browser",
     "build-browser": "browserify -r ./waveform-data.js -s WaveformData > dist/waveform-data.js && grunt uglify"
   },
   "config": {
     "blanket": {
-      "pattern": "waveform-data.js/lib/"
+      "pattern": "waveform-data.js/lib/",
+      "data-cover-never": "webaudio"
+    },
+    "travis-cov": {
+      "threshold": 98
     }
   },
   "repository": {
@@ -68,7 +73,8 @@
     "karma-phantomjs-launcher": "^0.1.0",
     "karma-safari-launcher": "^0.1.1",
     "mocha": "^1.20.1",
-    "testling": "^1.6.1"
+    "testling": "^1.6.1",
+    "travis-cov": "^0.2.5"
   },
   "dependencies": {
     "audio-context": "^0.1.0"

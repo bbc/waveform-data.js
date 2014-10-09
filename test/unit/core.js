@@ -276,4 +276,12 @@ describe("WaveformData Core object", function(){
       expect(function(){ instance.offset(1, -1); }).to.throw(Error);
     });
   });
+
+  describe('.adapter', function(){
+    it("should assign the provided argument as this.data", function(){
+      var data = { foo: 'bar' };
+
+      expect(new WaveformData.adapter(data)).to.have.property('data', data);
+    });
+  });
 });
