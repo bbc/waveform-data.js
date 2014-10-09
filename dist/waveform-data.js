@@ -278,10 +278,63 @@ WaveformDataObjectAdapter.prototype = {
 };
 
 },{}],4:[function(require,module,exports){
+'use strict';
+
+/**
+ * AudioBuffer-based WaveformData generator
+ *
+ * @param {Object.<{scale: Number, scale_adjuster: Number}>} options
+ * @param {Function.<WaveformData>} callback
+ * @returns {Function.<AudioBuffer>}
+ */
+module.exports = function getAudioDecoder(options, callback){
+  var scale = options.scale;
+  var scale_adjuster = options.scale_adjuster;
+
+  return function onAudioDecoded(audio_buffer){
+    var data_length = Math.floor(audio_buffer.length / scale);
+    var offset = 20;
+    var data_object = new DataView(new ArrayBuffer(offset + data_length * 2));
+    var left_channel, right_channel;
+    var min_value = Infinity, max_value = -Infinity, scale_counter = scale;
+    var buffer_length = audio_buffer.length;
+
+    data_object.setInt32(0, 1, true);   //version
+    data_object.setUint32(4, 1, true);   //is 8 bit
+    data_object.setInt32(8, audio_buffer.sampleRate, true);   //sample rate
+    data_object.setInt32(12, scale, true);   //scale
+    data_object.setInt32(16, data_length, true);   //length
+
+    left_channel = audio_buffer.getChannelData(0);
+    right_channel = audio_buffer.getChannelData(0);
+
+    for (var i = 0; i < buffer_length; i++){
+      var sample = (left_channel[i] + right_channel[i]) / 2 * scale_adjuster;
+
+      if (sample < min_value){
+        min_value = sample;
+      }
+
+      if (sample > max_value){
+        max_value = sample;
+      }
+
+      if (--scale_counter === 0){
+        data_object.setInt8(offset++, Math.floor(min_value));
+        data_object.setInt8(offset++, Math.floor(max_value));
+        min_value = Infinity; max_value = -Infinity; scale_counter = scale;
+      }
+    }
+
+    callback(new WaveformData(data_object.buffer, WaveformData.adapters.arraybuffer));
+  };
+};
+},{}],5:[function(require,module,exports){
 "use strict";
 
 var audioContext = require('audio-context');
 var WaveformData = require('../core.js');
+var audioDecoder = require('./audiodecoder.js');
 WaveformData.adapters = require('../adapters');
 
 /**
@@ -324,9 +377,12 @@ function fromAudioObjectBuilder(raw_response, options, callback){
     callback = options;
     options = {};
   }
+  else {
+    options = options || {};
+  }
 
-  var scale = options.scale || defaultOptions.scale;
-  var scale_adjuster = options.scale_adjuster || defaultOptions.scale_adjuster;
+  options.scale = options.scale || defaultOptions.scale;
+  options.scale_adjuster = options.scale_adjuster || defaultOptions.scale_adjuster;
 
   /*
    * The result will vary on the codec implentation of the browser.
@@ -337,43 +393,7 @@ function fromAudioObjectBuilder(raw_response, options, callback){
    * Adapted from BlockFile::CalcSummary in Audacity, with permission.
    * @see https://code.google.com/p/audacity/source/browse/audacity-src/trunk/src/BlockFile.cpp
    */
-  audioContext.decodeAudioData(raw_response, function onAudioDecoded(audio_buffer){
-    var data_length = Math.floor(audio_buffer.length / scale);
-    var offset = 20;
-    var data_object = new DataView(new ArrayBuffer(offset + data_length * 2));
-    var left_channel, right_channel;
-    var min_value = Infinity, max_value = -Infinity, scale_counter = scale;
-    var buffer_length = audio_buffer.length;
-
-    data_object.setInt32(0, 1, true);   //version
-    data_object.setUint32(4, 1, true);   //is 8 bit
-    data_object.setInt32(8, audio_buffer.sampleRate, true);   //sample rate
-    data_object.setInt32(12, scale, true);   //scale
-    data_object.setInt32(16, data_length, true);   //length
-
-    left_channel = audio_buffer.getChannelData(0);
-    right_channel = audio_buffer.getChannelData(0);
-
-    for (var i = 0; i < buffer_length; i++){
-      var sample = (left_channel[i] + right_channel[i]) / 2 * scale_adjuster;
-
-      if (sample < min_value){
-        min_value = sample;
-      }
-
-      if (sample > max_value){
-        max_value = sample;
-      }
-
-      if (--scale_counter === 0){
-        data_object.setInt8(offset++, Math.floor(min_value));
-        data_object.setInt8(offset++, Math.floor(max_value));
-        min_value = Infinity; max_value = -Infinity; scale_counter = scale;
-      }
-    }
-
-    callback(new WaveformData(data_object.buffer, WaveformData.adapters.arraybuffer));
-  });
+  audioContext.decodeAudioData(raw_response, audioDecoder(options, callback));
 }
 
 fromAudioObjectBuilder.getAudioContext = function getAudioContext(){
@@ -381,7 +401,7 @@ fromAudioObjectBuilder.getAudioContext = function getAudioContext(){
 };
 
 module.exports = fromAudioObjectBuilder;
-},{"../adapters":2,"../core.js":5,"audio-context":8}],5:[function(require,module,exports){
+},{"../adapters":2,"../core.js":6,"./audiodecoder.js":4,"audio-context":9}],6:[function(require,module,exports){
 "use strict";
 
 var WaveformDataSegment = require("./segment.js");
@@ -1038,7 +1058,7 @@ WaveformData.adapter = function WaveformDataAdapter(response_data){
   this.data = response_data;
 };
 
-},{"./point.js":6,"./segment.js":7}],6:[function(require,module,exports){
+},{"./point.js":7,"./segment.js":8}],7:[function(require,module,exports){
 "use strict";
 
 /**
@@ -1106,7 +1126,7 @@ WaveformDataPoint.prototype = {
     return this.context.in_offset(this.timeStamp);
   }
 };
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 
 /**
@@ -1340,13 +1360,13 @@ WaveformDataSegment.prototype = {
     return this.visible ? this.context.offsetValues(this.offset_start, this.offset_length, 1) : [];
   }
 };
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var window = require('global/window');
 
 var Context = window.AudioContext || window.webkitAudioContext;
 if (Context) module.exports = new Context;
 
-},{"global/window":9}],9:[function(require,module,exports){
+},{"global/window":10}],10:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};if (typeof window !== "undefined") {
     module.exports = window;
 } else if (typeof global !== "undefined") {
@@ -1355,7 +1375,7 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
     module.exports = {};
 }
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 
 var WaveformData = require("./lib/core");
@@ -1366,7 +1386,7 @@ WaveformData.builders = {
 };
 
 module.exports = WaveformData;
-},{"./lib/adapters":2,"./lib/builders/webaudio.js":4,"./lib/core":5}]},{},[10])
-(10)
+},{"./lib/adapters":2,"./lib/builders/webaudio.js":5,"./lib/core":6}]},{},[11])
+(11)
 });
 ;

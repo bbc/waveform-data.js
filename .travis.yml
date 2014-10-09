@@ -12,3 +12,7 @@ notifications:
 before_script:
   - npm install -g grunt-cli
   - npm run build
+
+script:
+  - npm test
+  - npm run test-coverage
