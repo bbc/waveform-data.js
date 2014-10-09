@@ -3,9 +3,9 @@
 /* globals describe, it, beforeEach */
 // jshint -W030
 
-var WaveformData = require("../../waveform-data.js");
+var WaveformData = require("../../../waveform-data.js");
 var constructor = WaveformData.adapters.object;
-var getJSONFakeData = require("../fixtures").json;
+var getJSONFakeData = require("../../fixtures").json;
 var expect = require("chai").expect;
 
 describe("WaveformData Object Adapter", function(){

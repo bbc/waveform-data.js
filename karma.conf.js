@@ -5,9 +5,12 @@ module.exports = function(config){
     basePath: '',
     files: [
       { pattern: 'lib/**/*.js', included: false, served: false, watched: true },
-      'test/unit/*.js'
+      'test/unit/**/*.js'
     ],
-    frameworks: ['mocha', 'chai', 'browserify'],
+    exclude: [
+      'test/unit/builders/webaudio.js'
+    ],
+    frameworks: ['mocha', 'browserify'],
     preprocessors: {
       'test/**/*.js': ['browserify'],
       'waveform-data.js': ['browserify']
@@ -18,7 +21,6 @@ module.exports = function(config){
     plugins: [
       'karma-*'
     ],
-    exclude: [],
     reporters: isCI ? 'dots' : 'progress',
     port: 8080,
     runnerPort: 9100,
