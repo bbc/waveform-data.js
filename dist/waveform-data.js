@@ -280,6 +280,8 @@ WaveformDataObjectAdapter.prototype = {
 },{}],4:[function(require,module,exports){
 'use strict';
 
+var WaveformData = require('../core.js');
+
 /**
  * AudioBuffer-based WaveformData generator
  *
@@ -329,13 +331,11 @@ module.exports = function getAudioDecoder(options, callback){
     callback(new WaveformData(data_object.buffer, WaveformData.adapters.arraybuffer));
   };
 };
-},{}],5:[function(require,module,exports){
+},{"../core.js":6}],5:[function(require,module,exports){
 "use strict";
 
 var audioContext = require('audio-context');
-var WaveformData = require('../core.js');
 var audioDecoder = require('./audiodecoder.js');
-WaveformData.adapters = require('../adapters');
 
 /**
  * Creates a working WaveformData based on binary audio data.
@@ -401,7 +401,7 @@ fromAudioObjectBuilder.getAudioContext = function getAudioContext(){
 };
 
 module.exports = fromAudioObjectBuilder;
-},{"../adapters":2,"../core.js":6,"./audiodecoder.js":4,"audio-context":9}],6:[function(require,module,exports){
+},{"./audiodecoder.js":4,"audio-context":9}],6:[function(require,module,exports){
 "use strict";
 
 var WaveformDataSegment = require("./segment.js");

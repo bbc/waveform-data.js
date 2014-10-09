@@ -1,6 +1,6 @@
 {
   "name": "waveform-data",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "main": "dist/waveform-data.min.js",
   "ignore": [
     "**/.*",
