@@ -281,12 +281,19 @@ WaveformDataObjectAdapter.prototype = {
 'use strict';
 
 var WaveformData = require('../core.js');
-
+/**
+ * This callback is executed once the audio has been decoded by the browser and resampled by waveform-data.
+ *
+ * @callback onAudioResampled
+ * @param {WaveformData} waveform_data Waveform instance of the browser decoded audio
+ * @param {AudioBuffer} audio_buffer Decoded audio buffer
+ */
+ 
 /**
  * AudioBuffer-based WaveformData generator
  *
  * @param {Object.<{scale: Number, scale_adjuster: Number}>} options
- * @param {Function.<WaveformData>} callback
+ * @param {onAudioResampled} callback
  * @returns {Function.<AudioBuffer>}
  */
 module.exports = function getAudioDecoder(options, callback){
@@ -315,10 +322,16 @@ module.exports = function getAudioDecoder(options, callback){
 
       if (sample < min_value){
         min_value = sample;
+        if (min_value < -128) {
+          min_value = -128;
+        }
       }
 
       if (sample > max_value){
         max_value = sample;
+        if (max_value > 127) {
+          max_value = 127;
+        }
       }
 
       if (--scale_counter === 0){
@@ -328,9 +341,10 @@ module.exports = function getAudioDecoder(options, callback){
       }
     }
 
-    callback(new WaveformData(data_object.buffer, WaveformData.adapters.arraybuffer));
+    callback(new WaveformData(data_object.buffer, WaveformData.adapters.arraybuffer), audio_buffer);
   };
 };
+
 },{"../core.js":6}],5:[function(require,module,exports){
 "use strict";
 
