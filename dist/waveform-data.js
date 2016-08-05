@@ -610,7 +610,9 @@ WaveformData.prototype = {
    * @return {WaveformDataSegment}
    */
   set_segment: function setSegment(start, end, identifier){
-    identifier = identifier || "default";
+    if (identifier === undefined || identifier === null || identifier.length === 0) {
+      identifier = "default";
+    }
 
     this.segments[identifier] = new WaveformDataSegment(this, start, end);
 
