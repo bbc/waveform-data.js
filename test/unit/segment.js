@@ -21,6 +21,17 @@ describe("WaveformData Segment object", function(){
     expect(Object.keys(instance.segments)).to.have.length.of(2);
     expect(instance.segments.default.start).to.equal(1);
     expect(instance.segments.default.end).to.equal(6);
+
+    expect(instance.segments.snip.start).to.equal(3);
+    expect(instance.segments.snip.end).to.equal(6);
+  });
+
+  it("should allow zero as a valid segment name.", function(){
+    instance.set_segment(1, 6, 0);
+
+    expect(Object.keys(instance.segments)).to.have.length.of(1);
+    expect(instance.segments[0].start).to.equal(1);
+    expect(instance.segments[0].end).to.equal(6);
   });
 
   it("should return an accurate initial length.", function (){
