@@ -56,7 +56,7 @@
     ]
   },
   "devDependencies": {
-    "blanket": "^1.1.5",
+    "blanket": "1.1.9",
     "browserify": "^2.34.0",
     "chai": "^1.9.2",
     "grunt": "^0.4.1",
