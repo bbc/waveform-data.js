@@ -7,10 +7,10 @@ __browsable__ and __segmentable__ representations of audio waveforms.
 
 **waveform-data.js** is part of a [BBC R&D Browser-based audio waveform visualisation software family](http://waveform.prototyping.bbc.co.uk):
 
-- [audiowaveform](https://github.com/bbcrd/audiowaveform): C++ program that generates waveform data files from MP3 or WAV format audio.
-- [audio_waveform-ruby](https://github.com/bbcrd/audio_waveform-ruby): A Ruby gem that can read and write waveform data files.
+- [audiowaveform](https://github.com/bbc/audiowaveform): C++ program that generates waveform data files from MP3 or WAV format audio.
+- [audio_waveform-ruby](https://github.com/bbc/audio_waveform-ruby): A Ruby gem that can read and write waveform data files.
 - **waveform-data.js**: JavaScript library that provides access to precomputed waveform data files, or can generate waveform data using the Web Audio API.
-- [peaks.js](https://github.com/bbcrd/peaks.js): JavaScript UI component for interacting with waveforms.
+- [peaks.js](https://github.com/bbc/peaks.js): JavaScript UI component for interacting with waveforms.
 
 We use these projects daily in applications such as
 [BBC Radio Archive](http://worldservice.prototyping.bbc.co.uk) and __browser editing and sharing__ tools for BBC content editors.
@@ -166,7 +166,7 @@ request.get("http://api.myapp.com/waveforms/"+ arvg.wid +".json", function(err, 
 
 # Data format
 
-The [file format](https://github.com/bbcrd/audiowaveform/blob/master/doc/DataFormat.md) used and consumed by `WaveformData` is documented as part of the [**audiowaveform** project](http://waveform.prototyping.bbc.co.uk).
+The [file format](https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md) used and consumed by `WaveformData` is documented as part of the [**audiowaveform** project](http://waveform.prototyping.bbc.co.uk).
 
 We basically have **headers** containing:
 
@@ -179,7 +179,7 @@ We basically have **headers** containing:
 The body contains a *single range* of *minumum* and *maximum* audio peaks.
 Which means if we have a `length` of 100, it means we have *200* elements in the body.
 
-[Waveform Data Format Documentation](https://github.com/bbcrd/audiowaveform/blob/master/doc/DataFormat.md)
+[Waveform Data Format Documentation](https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md)
 
 # JavaScript API
 
