@@ -1,18 +1,15 @@
 language: node_js
-node_js:
-  - "0.10"
-
+node_js: 'v6'
 notifications:
-  email:
-    recipients:
-      - thomas.parisot@bbc.co.uk
-    on_failure: change
-    on_success: never
-
-before_script:
-  - npm install -g grunt-cli
-  - npm run build
-
 script:
-  - npm test
-  - npm run test-coverage
+- npm test
+- npm run test-coverage
+deploy:
+  provider: npm
+  email: irfs@bbc.co.uk
+  skip_cleanup: true
+  api_key:
+    secure: vO22dsZgTJNx8LIldkPkFFu8jkuBd3XFYfb4HFfhElcBewIkRd7774vsOzkAlT2SshdP2QFTR6Jg7gjiJs2Z6jJYzREvVz3gi06wvoFjKafB93q6bxsEqMel9JmVMfgq2ZDg7SYVAQW+mz+mmk0pa6Ye/oiBztzhatOumDEZwrk=
+  on:
+    tags: true
+    repo: bbc/waveform-data.js
