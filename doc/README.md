@@ -9,4 +9,4 @@ The documentation is actually splitted in several parts:
  * [`WaveformDataObjectAdapter`](WaveformDataObjectAdapter.md)
  * [`WaveformDataArrayBufferAdapter`](WaveformDataArrayBufferAdapter.md)
 
-[The *data format* consumed by adapters](https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md) is documented in the [`audiowaveform` C++ project](https://github.com/bbcrd/audiowaveform).
+[The *data format* consumed by adapters](https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md) is documented in the [`audiowaveform` C++ project](https://github.com/bbc/audiowaveform).
