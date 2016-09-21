@@ -3,7 +3,7 @@
   "version": "1.5.2",
   "description": "Audio Waveform Data Manipulation API – resample, offset and segment waveform data in JavaScript.",
   "main": "waveform-data.js",
-  "homepage": "https://github.com/bbcrd/waveform-data.js",
+  "homepage": "https://github.com/bbc/waveform-data.js",
   "directories": {
     "test": "test"
   },
@@ -30,7 +30,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/bbcrd/waveform-data.js.git"
+    "url": "git://github.com/bbc/waveform-data.js.git"
   },
   "keywords": [
     "webaudio",
@@ -41,7 +41,7 @@
   "author": "Thomas Parisot <thomas.parisot@bbc.co.uk>",
   "license": "LGPL-3.0",
   "bugs": {
-    "url": "https://github.com/bbcrd/waveform-data.js/issues"
+    "url": "https://github.com/bbc/waveform-data.js/issues"
   },
   "testling": {
     "files": "test/unit/*.js",
