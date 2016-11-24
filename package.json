@@ -82,6 +82,5 @@
     "travis-cov": "^0.2.5"
   },
   "dependencies": {
-    "audio-context": "^0.1.0"
   }
 }
