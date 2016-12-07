@@ -72,4 +72,12 @@ describe("WaveformData WebAudio builder", function(){
       expect(WebaudioBuilder.getAudioContext()).to.have.property('decodeAudioData');
     });
   });
+
+  describe('setAudioContext', function(){
+    it('should be able to set instance of audioContext', function(){
+      WebaudioBuilder.setAudioContext('testContext');
+      expect(WebaudioBuilder.getAudioContext()).to.equal('testContext');
+    });
+  });
+
 });
