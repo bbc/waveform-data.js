@@ -12,7 +12,7 @@ matrix:
     env: BROWSER=Safari
   - os: linux
     node_js: v6
-    sudo: required
+    sudo: false
     env: BROWSER=Firefox
     addons:
       firefox: '49.0'
