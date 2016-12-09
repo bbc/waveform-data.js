@@ -1,21 +1,14 @@
 language: node_js
-node_js: 'v6'
-notifications:
-os:
-  - osx
-  - linux
-env:
-  - BROWSER=Firefox
-  - BROWSER=Safari
 
 matrix:
   include:
   - os: osx
-    env: BROWSER=Safari
     sudo: required
+    env: BROWSER=Safari
   - os: linux
-    env: BROWSER=Firefox
+    node_js: v6
     sudo: false
+    env: BROWSER=Firefox
 
 script: rvfb-run npm test -- --browsers $BROWSER
 
