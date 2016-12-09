@@ -7,7 +7,7 @@
   "scripts": {
     "pretest": "npm run build",
     "test": "npm run test-node && npm run test-browsers",
-    "test-browsers": "./node_modules/karma/bin/karma start",
+    "test-browsers": "xvfb-maybe ./node_modules/karma/bin/karma start",
     "test-node": "mocha -R dot 'test/unit/*.js' 'test/unit/adapters/*.js'",
     "posttest-node": "npm run lint",
     "lint": "jshint -c .jshintrc ./lib",
@@ -75,7 +75,8 @@
     "sinon-chai": "^2.6.0",
     "testling": "^1.6.1",
     "travis-cov": "^0.2.5",
-    "watchify": "^3.7.0"
+    "watchify": "^3.7.0",
+    "xvfb-maybe": "^0.1.3"
   },
   "dependencies": {}
 }

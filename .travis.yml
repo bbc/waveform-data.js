@@ -4,6 +4,7 @@ cache:
   - node_modules
 
 matrix:
+  fast_finish: true
   include:
   - os: osx
     node_js: v6
@@ -11,7 +12,7 @@ matrix:
     env: BROWSER=Safari
   - os: linux
     node_js: v6
-    sudo: false
+    sudo: required
     env: BROWSER=Firefox
 
 before_install:
@@ -19,7 +20,7 @@ before_install:
 
 script:
 - npm run test-node
-- xvfb-run npm run test-browsers -- --browsers="$BROWSER"
+- npm run test-browsers -- --browsers="$BROWSER"
 
 deploy:
   provider: npm
