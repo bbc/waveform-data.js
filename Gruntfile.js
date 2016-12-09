@@ -25,43 +25,6 @@ module.exports = function (grunt) {
       }
     },
 
-    jshint: {
-      options: {
-        jshintrc: ".jshintrc"
-      },
-      gruntfile: {
-        src: [
-          "Gruntfile.js",
-          "lib/grunt/**/*.js"
-        ]
-      },
-      lib_test: {
-        src: [
-          "lib/**/*.js",
-          "!lib/grunt/**/*.js",
-          "test/**/*.js"
-        ]
-      }
-    },
-
-    karma: {
-      options: {
-        configFile: "karma.conf.js"
-      },
-      unit: {
-        singleRun: true
-      },
-      debug: {
-        background: true
-      },
-      ci: {
-        singleRun: true,
-        reporters: ["dots"],
-        browsers: ["PhantomJS"]
-      }
-
-    },
-
     jsdoc_md: {
       main: {
         files: {

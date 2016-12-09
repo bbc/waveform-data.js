@@ -7,16 +7,17 @@ module.exports = function(config){
       { pattern: 'lib/**/*.js', included: false, served: false, watched: true },
       'test/unit/**/*.js'
     ],
-    exclude: [
-      'test/unit/builders/webaudio.js'
-    ],
     frameworks: ['mocha', 'browserify'],
     preprocessors: {
       'test/**/*.js': ['browserify'],
       'waveform-data.js': ['browserify']
     },
     browserify: {
-      external: ['dist/waveform-data.min.js']
+      debug: true,
+      external: ['dist/waveform-data.min.js'],
+      transform: [
+        'brfs'
+      ]
     },
     plugins: [
       'karma-*'
@@ -27,7 +28,7 @@ module.exports = function(config){
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: !isCI,
-    browsers: isCI ? ['PhantomJS'] : ['Chrome', 'Safari', 'Firefox' ],
+    browsers: isCI ? ['Firefox'] : ['Chrome', 'Safari', 'Firefox' ],
     captureTimeout: 5000,
     singleRun: isCI
   });

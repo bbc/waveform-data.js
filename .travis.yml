@@ -1,9 +1,29 @@
 language: node_js
-node_js: 'v6'
-notifications:
+cache:
+  directories:
+  - node_modules
+
+matrix:
+  fast_finish: true
+  include:
+  - os: osx
+    node_js: v6
+    sudo: required
+    env: BROWSER=Safari
+  - os: linux
+    node_js: v6
+    sudo: required
+    env: BROWSER=Firefox
+    addons:
+      firefox: '49.0'
+
+before_install:
+- npm cache clean
+
 script:
-- npm test
-- npm run test-coverage
+- npm run test-node
+- npm run test-browsers -- --browsers="$BROWSER"
+
 deploy:
   provider: npm
   email: irfs@bbc.co.uk
