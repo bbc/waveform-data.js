@@ -1,9 +1,24 @@
 language: node_js
 node_js: 'v6'
 notifications:
-script:
-- npm test
-- npm run test-coverage
+os:
+  - osx
+  - linux
+env:
+  - BROWSER=Firefox
+  - BROWSER=Safari
+
+matrix:
+  include:
+  - os: osx
+    env: BROWSER=Safari
+    sudo: required
+  - os: linux
+    env: BROWSER=Firefox
+    sudo: false
+
+script: rvfb-run npm test -- --browsers $BROWSER
+
 deploy:
   provider: npm
   email: irfs@bbc.co.uk

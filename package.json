@@ -60,6 +60,7 @@
     "blanket": "1.1.9",
     "browserify": "^2.34.0",
     "chai": "^1.9.2",
+    "brfs": "^1.4.3",
     "grunt": "^0.4.1",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-uglify": "^0.9.2",

@@ -3,26 +3,29 @@
 /* globals describe, it, beforeEach */
 // jshint -W030
 
-var rewire = require('rewire');
-var WebaudioBuilder = rewire("../../../lib/builders/webaudio.js");
-var getArrayBufferFakeData = require("../../fixtures").arraybuffer;
+var webaudioBuilder = require("../../../lib/builders/webaudio.js");
+var AudioWaveform = require("../../../waveform-data.js");
 var chai = require("chai");
+var sinon = require("sinon");
+var fs = require("fs");
 var sinonChai = require("sinon-chai");
 var expect = chai.expect;
 chai.use(sinonChai);
-var sinon = require('sinon');
 
 describe("WaveformData WebAudio builder", function(){
-  var sandbox, decodeAudioStub, audioDecoderStub;
+  var sandbox, audioDecoderStub, sampleBuffer;
+  var audioContext = window.AudioContext || window.webkitAudioContext;
+  var context = new audioContext;
 
-  beforeEach(function(){
+  beforeEach(function(done){
     sandbox = sinon.sandbox.create();
 
     audioDecoderStub = sandbox.stub();
-    decodeAudioStub = sandbox.stub().returns(function(){});
 
-    WebaudioBuilder.__set__('audioContext', { decodeAudioData: decodeAudioStub });
-    WebaudioBuilder.__set__('audioDecoder', audioDecoderStub);
+    fs.readFile(__dirname + '/../../silence.mp3', function(err, buf) {
+      sampleBuffer = buf.buffer;
+      done();
+    });
   });
 
   afterEach(function(){
@@ -30,54 +33,50 @@ describe("WaveformData WebAudio builder", function(){
   });
 
   describe('Constructor', function(){
-
-    it('should pass the provided data to the audioContext.decodeAudio', function(){
-      var dataArgSpy = sinon.spy();
-      new WebaudioBuilder(dataArgSpy, sinon.spy());
-
-      expect(decodeAudioStub).to.have.been.calledWith(dataArgSpy);
+    it('should explicitely fail if audioContext is not the first argument', function () {
+      expect(function(){
+        webaudioBuilder(new ArrayBuffer(), sinon.spy());
+      }).to.throw(/AudioContext/);
     });
 
-    it('should call the built-in audioDecoder', function(){
-      new WebaudioBuilder(new ArrayBuffer(), sinon.spy());
+    it('should raise an error in case audio buffer is invalid', function(done){
+      webaudioBuilder(context, new ArrayBuffer(), function(err, waveform){
+        if (err) {
+          expect(err).to.have.property('code');
+          expect(err).and.to.have.property('message').and.to.match(/Unable to decode audio data/);
+        }
+        // Safari and Firefox error style…
+        // @see http://stackoverflow.com/q/10365335/103396
+        else {
+          expect(err).to.not.be.ok;
+          expect(waveform).to.not.be.ok;
+        }
 
-      expect(audioDecoderStub).to.have.been.calledOnce;
+        done();
+      });
     });
 
-    it('should call the build-in audioDecoder with default values', function(){
-      new WebaudioBuilder(new ArrayBuffer(), sinon.spy());
+    it('should return a valid waveform in case of success', function(done){
+      webaudioBuilder(context, sampleBuffer, function(err, waveform){
+        expect(err).to.not.be.ok;
+        expect(waveform).to.be.an.instanceOf(AudioWaveform);
 
-      expect(audioDecoderStub.firstCall.args[0]).to.have.property('scale', 512);
-      expect(audioDecoderStub.firstCall.args[0]).to.have.property('scale_adjuster', 127);
+        done();
+      });
     });
 
-    it('should call the build-in audioDecoder with an optional object', function(){
-      var options = { scale: 128 }
-      new WebaudioBuilder(new ArrayBuffer(), options, sinon.spy());
+    it('should adjust the length of the waveform when using a different scale', function(done){
+      var options = { scale: 128 };
 
-      expect(audioDecoderStub.firstCall.args[0]).to.have.property('scale', 128);
-      expect(audioDecoderStub.firstCall.args[0]).to.have.property('scale_adjuster', 127);
+      webaudioBuilder(new audioContext, sampleBuffer, options, function(err, waveform){
+        expect(err).to.not.be.ok;
+        expect(waveform).to.have.property('offset_length').and.to.be.closeTo(360, 15);
+
+        done();
+      });
+
     });
 
-    it('should call the build-in audioDecoder with an undefined object', function(){
-      new WebaudioBuilder(new ArrayBuffer(), undefined, sinon.spy());
-
-      expect(audioDecoderStub.firstCall.args[0]).to.have.property('scale', 512);
-      expect(audioDecoderStub.firstCall.args[0]).to.have.property('scale_adjuster', 127);
-    });
-  });
-
-  describe('getAudioContext', function(){
-    it('should return an instance of audioContext', function(){
-      expect(WebaudioBuilder.getAudioContext()).to.have.property('decodeAudioData');
-    });
-  });
-
-  describe('setAudioContext', function(){
-    it('should be able to set instance of audioContext', function(){
-      WebaudioBuilder.setAudioContext('testContext');
-      expect(WebaudioBuilder.getAudioContext()).to.equal('testContext');
-    });
   });
 
 });
