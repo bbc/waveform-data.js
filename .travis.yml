@@ -3,6 +3,7 @@ language: node_js
 matrix:
   include:
   - os: osx
+    node_js: v6
     sudo: required
     env: BROWSER=Safari
   - os: linux
@@ -10,7 +11,7 @@ matrix:
     sudo: false
     env: BROWSER=Firefox
 
-script: rvfb-run npm test -- --browsers $BROWSER
+script: xvfb-run npm test -- --browsers $BROWSER
 
 deploy:
   provider: npm
