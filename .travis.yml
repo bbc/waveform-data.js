@@ -1,4 +1,7 @@
 language: node_js
+cache:
+  directories:
+  - node_modules
 
 matrix:
   include:
@@ -10,6 +13,9 @@ matrix:
     node_js: v6
     sudo: false
     env: BROWSER=Firefox
+
+before_install:
+- npm cache clean
 
 script: xvfb-run npm test -- --browsers $BROWSER
 
