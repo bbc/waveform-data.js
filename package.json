@@ -4,20 +4,18 @@
   "description": "Audio Waveform Data Manipulation API – resample, offset and segment waveform data in JavaScript.",
   "main": "waveform-data.js",
   "homepage": "https://github.com/bbc/waveform-data.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "pretest": "npm run build",
-    "test": "npm run test-node && npm run jshint && npm run code-coverage && npm run test-browser",
-    "jshint": "jshint -c .jshintrc ./lib",
+    "test": "npm run test-node && npm run test-browsers",
+    "test-browsers": "./node_modules/karma/bin/karma start",
     "test-node": "mocha -R dot 'test/unit/*.js' 'test/unit/adapters/*.js'",
+    "posttest-node": "npm run lint",
+    "lint": "jshint -c .jshintrc ./lib",
     "test-coverage": "mocha -R travis-cov -r blanket 'test/unit/**/*.js'",
     "test-watch": "mocha -R dot --watch 'test/unit/*.js' 'test/unit/adapters/*.js'",
     "code-coverage": "mocha -r blanket 'test/unit/*.js' 'test/unit/adapters/*.js' > dist/code-coverage.html",
-    "test-browser": "./node_modules/karma/bin/karma start",
-    "build": "npm run build-browser",
-    "build-browser": "browserify -r ./waveform-data.js -s WaveformData > dist/waveform-data.js && grunt uglify"
+    "build": "npm run build-browsers",
+    "build-browsers": "browserify -r ./waveform-data.js -s WaveformData -o dist/waveform-data.js && grunt uglify"
   },
   "config": {
     "blanket": {

@@ -17,7 +17,9 @@ matrix:
 before_install:
 - npm cache clean
 
-script: xvfb-run npm test -- --browsers $BROWSER
+script:
+- npm run test-node
+- xvfb-run npm run test-browsers -- --browsers="$BROWSER"
 
 deploy:
   provider: npm

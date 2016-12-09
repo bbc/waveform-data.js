@@ -22,7 +22,7 @@ describe("WaveformData WebAudio builder", function(){
 
     audioDecoderStub = sandbox.stub();
 
-    fs.readFile(__dirname + '/../../silence.mp3', function(err, buf) {
+    fs.readFile(__dirname + '/../../silence.wav', function(err, buf) {
       sampleBuffer = buf.buffer;
       done();
     });
@@ -57,24 +57,31 @@ describe("WaveformData WebAudio builder", function(){
     });
 
     it('should return a valid waveform in case of success', function(done){
-      webaudioBuilder(context, sampleBuffer, function(err, waveform){
+      var result = webaudioBuilder(context, sampleBuffer, function(err, waveform){
         expect(err).to.not.be.ok;
         expect(waveform).to.be.an.instanceOf(AudioWaveform);
 
         done();
       });
+
+      if (result && 'then' in result) {
+        result.catch(console.error.message);
+      }
     });
 
     it('should adjust the length of the waveform when using a different scale', function(done){
       var options = { scale: 128 };
 
-      webaudioBuilder(new audioContext, sampleBuffer, options, function(err, waveform){
+      var result = webaudioBuilder(new audioContext, sampleBuffer, options, function(err, waveform){
         expect(err).to.not.be.ok;
-        expect(waveform).to.have.property('offset_length').and.to.be.closeTo(360, 15);
+        expect(waveform).to.have.property('offset_length').and.to.be.closeTo(700, 15);
 
         done();
       });
 
+      if (result && 'then' in result) {
+        result.catch(console.error.message);
+      }
     });
 
   });
