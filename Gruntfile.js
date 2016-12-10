@@ -13,18 +13,6 @@ module.exports = function (grunt) {
       '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
       ' Licensed <%= pkg.license %> */\n',
 
-    uglify: {
-      options: {
-        banner: "<%= banner %>",
-        report: "gzip",
-        mangle: true
-      },
-      all:{
-        src: "dist/<%= pkg.name %>.js",
-        dest: "dist/<%= pkg.name %>.min.js"
-      }
-    },
-
     jsdoc_md: {
       main: {
         files: {
@@ -52,9 +40,8 @@ module.exports = function (grunt) {
   });
 
   // These plugins provide necessary tasks.
-  grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-jsdoc-md");
 
   grunt.registerTask("default", ["build"]);
-  grunt.registerTask("build", ["jsdoc_md", "uglify"]);
+  grunt.registerTask("build", ["jsdoc_md"]);
 };

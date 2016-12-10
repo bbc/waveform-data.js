@@ -27,24 +27,16 @@ You can use `npm` to install `waveform-data`, both for Node.js or your frontend 
 npm install --save waveform-data
 ```
 
-## Bower Component
-
-If you already use `bower` to manage your frontend dependencies, you can then install `waveform-data` with it:
-
-```bash
-bower install --save waveform-data
-```
-
 # Usage and Examples
 
-Simply add `waveform-data.min.js` in a `script` tag in your HTML page.
+Simply add `waveform-data.js` in a `script` tag in your HTML page.
 Additional and detailed examples are showcased below and in the [documentation pages](doc/README.md).
 
 ```html
 <!DOCTYPE html>
 <html>
 <body>
-<script src="/path/to/waveform-data.min.js"></script>
+<script src="/path/to/waveform-data.js"></script>
 <script>
 var waveform = new WaveformData(...);
 </script>
@@ -52,8 +44,7 @@ var waveform = new WaveformData(...);
 </html>
 ```
 
-You can use any of`dist/waveform-data.min.js` or `dist/waveform-data.js` files.
-They are delivered as UMD module so they can be used as:
+`dist/waveform-data.js` is delivered as UMD module so it can be used as:
 
 - Vanilla JavaScript (available as `window.WaveformData`)
 - RequireJS module (available as `define(['WaveformData'], function(WaveformData){ ... })`)
