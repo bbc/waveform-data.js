@@ -3,15 +3,19 @@ module.exports = function(config){
 
   config.set({
     basePath: '',
+
     files: [
       { pattern: 'lib/**/*.js', included: false, served: false, watched: true },
       'test/unit/**/*.js'
     ],
+
     frameworks: ['mocha', 'browserify'],
+
     preprocessors: {
       'test/**/*.js': ['browserify'],
       'waveform-data.js': ['browserify']
     },
+
     browserify: {
       debug: true,
       external: ['dist/waveform-data.min.js'],
@@ -19,9 +23,11 @@ module.exports = function(config){
         'brfs'
       ]
     },
+
     plugins: [
       'karma-*'
     ],
+
     reporters: isCI ? 'dots' : 'progress',
     port: 8080,
     runnerPort: 9100,
