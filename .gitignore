@@ -16,3 +16,5 @@ npm-debug.log
 dist/*.html
 bower_components
 node_modules
+coverage
+.nyc_output

@@ -8,23 +8,12 @@
     "pretest": "npm run build",
     "test": "npm run test-node && npm run test-browsers",
     "test-browsers": "xvfb-maybe ./node_modules/karma/bin/karma start",
-    "test-node": "mocha -R dot 'test/unit/*.js' 'test/unit/adapters/*.js'",
+    "test-node": "nyc mocha -R dot 'test/unit/*.js' 'test/unit/adapters/*.js'",
     "posttest-node": "npm run lint",
     "lint": "jshint -c .jshintrc ./lib",
-    "test-coverage": "mocha -R travis-cov -r blanket 'test/unit/**/*.js'",
     "test-watch": "mocha -R dot --watch 'test/unit/*.js' 'test/unit/adapters/*.js'",
-    "code-coverage": "mocha -r blanket 'test/unit/*.js' 'test/unit/adapters/*.js' > dist/code-coverage.html",
     "build": "npm run build-browsers",
     "build-browsers": "browserify -r ./waveform-data.js -s WaveformData -o dist/waveform-data.js && grunt uglify"
-  },
-  "config": {
-    "blanket": {
-      "pattern": "waveform-data.js/lib/",
-      "data-cover-never": "audiodecoder"
-    },
-    "travis-cov": {
-      "threshold": 99
-    }
   },
   "repository": {
     "type": "git",
@@ -54,8 +43,14 @@
       "android/latest"
     ]
   },
+  "nyc": {
+    "check-coverage": true,
+    "reporter": [
+      "text",
+      "html"
+    ]
+  },
   "devDependencies": {
-    "blanket": "1.1.9",
     "brfs": "^1.4.3",
     "browserify": "^13.0.0",
     "chai": "^3.5.0",
@@ -71,13 +66,12 @@
     "karma-mocha": "^1.3.0",
     "karma-safari-launcher": "^1.0.0",
     "mocha": "^3.2.0",
+    "nyc": "^10.0.0",
     "sinon": "^1.10.3",
     "sinon-chai": "^2.6.0",
     "testling": "^1.6.1",
-    "travis-cov": "^0.2.5",
     "watchify": "^3.7.0",
     "xvfb-maybe": "^0.1.3"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
