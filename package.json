@@ -5,6 +5,7 @@
   "main": "waveform-data.js",
   "homepage": "https://github.com/bbc/waveform-data.js",
   "scripts": {
+    "changelog": "github-changes -o bbc -r waveform-data.js -n ${npm_package_version} --only-pulls --use-commit-body",
     "pretest": "npm run build",
     "test": "npm run test-node && npm run test-browsers",
     "test-browsers": "xvfb-maybe ./node_modules/karma/bin/karma start",
@@ -15,7 +16,8 @@
     "build": "npm run build-waveform-data && npm run build-waveform-webaudio",
     "build-waveform-data": "browserify -r ./waveform-data.js -s WaveformData -o dist/waveform-data.js",
     "build-waveform-webaudio": "browserify -r ./webaudio.js -s WaveformDataWebaudioBuilder -o dist/webaudio.js",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "version": "npm run changelog && git add CHANGELOG.md"
   },
   "repository": {
     "type": "git",
@@ -56,6 +58,7 @@
     "brfs": "^1.4.3",
     "browserify": "^13.0.0",
     "chai": "^3.5.0",
+    "github-changes": "^1.0.0",
     "grunt": "^0.4.1",
     "grunt-cli": "^0.1.13",
     "grunt-jsdoc-md": "github:oncletom/grunt-jsdoc-md",
