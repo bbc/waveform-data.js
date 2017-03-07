@@ -33,7 +33,7 @@ describe("WaveformData WebAudio builder", function(){
   });
 
   describe('Constructor', function(){
-    it('should explicitely fail if audioContext is not the first argument', function () {
+    it('should explicitly fail if audioContext is not the first argument', function () {
       expect(function(){
         webaudioBuilder(new ArrayBuffer(), sinon.spy());
       }).to.throw(/AudioContext/);
@@ -60,7 +60,12 @@ describe("WaveformData WebAudio builder", function(){
       var result = webaudioBuilder(context, sampleBuffer, function(err, waveform){
         expect(err).to.not.be.ok;
         expect(waveform).to.be.an.instanceOf(AudioWaveform);
+        expect(waveform).to.have.property('offset_length');
 
+        // file length: 88200 samples
+        // scale: 512 (default)
+        // 88200 / 512 = 172, with 136 samples remaining, so 173 points total
+        expect(waveform.offset_length).to.equal(173);
         done();
       });
 
@@ -74,8 +79,12 @@ describe("WaveformData WebAudio builder", function(){
 
       var result = webaudioBuilder(new audioContext, sampleBuffer, options, function(err, waveform){
         expect(err).to.not.be.ok;
-        expect(waveform).to.have.property('offset_length').and.to.be.closeTo(700, 15);
+        expect(waveform).to.have.property('offset_length');
 
+        // file length: 88200 samples
+        // scale: 128
+        // 88200 / 128 = 689, with 8 samples remaining, so 690 points total
+        expect(waveform.offset_length).to.equal(690);
         done();
       });
 
@@ -83,7 +92,5 @@ describe("WaveformData WebAudio builder", function(){
         result.catch(console.error.message);
       }
     });
-
   });
-
 });
