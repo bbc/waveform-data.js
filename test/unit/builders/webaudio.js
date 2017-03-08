@@ -22,7 +22,7 @@ describe("WaveformData WebAudio builder", function(){
 
     audioDecoderStub = sandbox.stub();
 
-    fs.readFile(__dirname + '/../../silence.wav', function(err, buf) {
+    fs.readFile(__dirname + '/../../4channel.wav', function(err, buf) {
       sampleBuffer = buf.buffer;
       done();
     });
@@ -33,7 +33,7 @@ describe("WaveformData WebAudio builder", function(){
   });
 
   describe('Constructor', function(){
-    it('should explicitly fail if audioContext is not the first argument', function () {
+    it('should throw if audioContext is not the first argument', function() {
       expect(function(){
         webaudioBuilder(new ArrayBuffer(), sinon.spy());
       }).to.throw(/AudioContext/);
@@ -91,6 +91,48 @@ describe("WaveformData WebAudio builder", function(){
       if (result && 'then' in result) {
         result.catch(console.error.message);
       }
+    });
+
+    it('should return waveform data points', function(done) {
+      var result = webaudioBuilder(new audioContext, sampleBuffer, function(err, waveform) {
+        expect(err).to.not.be.ok;
+
+        expect(waveform.min[0]).to.equal(-23);
+        expect(waveform.max[0]).to.equal(22);
+
+        expect(waveform.min[waveform.offset_length - 1]).to.equal(-23);
+        expect(waveform.max[waveform.offset_length - 1]).to.equal(22);
+        done();
+      });
+
+      if (result && 'then' in result) {
+        result.catch(console.error.message);
+      }
+    });
+
+    it('should return correctly scaled waveform data points', function(done) {
+      var options = { amplitude_scale: 2.0 };
+
+      var result = webaudioBuilder(new audioContext, sampleBuffer, options, function(err, waveform) {
+        expect(err).to.not.be.ok;
+
+        expect(waveform.min[0]).to.equal(-45);
+        expect(waveform.max[0]).to.equal(44);
+
+        expect(waveform.min[waveform.offset_length - 1]).to.equal(-45);
+        expect(waveform.max[waveform.offset_length - 1]).to.equal(44);
+        done();
+      });
+
+      if (result && 'then' in result) {
+        result.catch(console.error.message);
+      }
+    });
+
+    it('should return an error if the scale_adjuster parameter is present', function() {
+      expect(function(){
+        webaudioBuilder(new ArrayBuffer(), sinon.spy());
+      }).to.throw(Error);
     });
   });
 });
