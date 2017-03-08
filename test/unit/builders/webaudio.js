@@ -130,9 +130,11 @@ describe("WaveformData WebAudio builder", function(){
     });
 
     it('should return an error if the scale_adjuster parameter is present', function() {
+      var options = { scale_adjuster: 127 };
+
       expect(function(){
-        webaudioBuilder(new ArrayBuffer(), sinon.spy());
-      }).to.throw(Error);
+        webaudioBuilder(new audioContext, sampleBuffer, options);
+      }).to.throw(Error, /scale_adjuster/);
     });
   });
 });
