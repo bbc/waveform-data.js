@@ -36,6 +36,6 @@ module.exports = function(config){
     autoWatch: !isCI,
     browsers: isCI ? ['Firefox'] : ['Chrome', 'Safari', 'Firefox' ],
     captureTimeout: 5000,
-    singleRun: isCI
+    singleRun: true
   });
 };

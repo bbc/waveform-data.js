@@ -14,7 +14,7 @@
     "test-node": "nyc mocha -R dot 'test/unit/*.js' 'test/unit/adapters/*.js'",
     "posttest-node": "npm run lint",
     "lint": "jshint -c .jshintrc ./lib ./test",
-    "test-watch": "mocha -R dot --watch 'test/unit/*.js' 'test/unit/adapters/*.js'",
+    "test-watch": "xvfb-maybe ./node_modules/karma/bin/karma start --no-single-run",
     "prepublish": "npm run build"
   },
   "repository": {
