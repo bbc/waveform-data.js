@@ -1,5 +1,12 @@
 # waveform-data.js
 
+## v2.0.1 (2016/03/14)
+
+ * (#42) Fixed multi-channel audio handling in Web Audio builder (@chrisn)
+ * Fixed off-by-one error in waveform data generation (@chrisn)
+ * Replaced auto-generated ChangeLog (@chrisn)
+ * Apply jshint to test code (@chrisn)
+
 ## v2.0.0 (2016/12/10)
 
  * Auto-generate CHANGELOG.md on version bump (@oncletom)
