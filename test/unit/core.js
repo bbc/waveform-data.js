@@ -8,9 +8,8 @@ var getArrayBufferFakeData = require("../fixtures").arraybuffer;
 var getJSONFakeData = require("../fixtures").json;
 var expect = require("chai").expect;
 
-if (XMLHttpRequest === undefined){
-  // jshint -W079
-  var XMLHttpRequest = function(){ return {}; };
+if (global.XMLHttpRequest === undefined) {
+   global.XMLHttpRequest = function() { return null; };
 }
 
 describe("WaveformData Core object", function(){

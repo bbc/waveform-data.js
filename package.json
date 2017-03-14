@@ -5,16 +5,16 @@
   "main": "waveform-data.js",
   "homepage": "https://github.com/bbc/waveform-data.js",
   "scripts": {
+    "build": "npm run build-waveform-data && npm run build-waveform-webaudio",
+    "build-waveform-data": "browserify -r ./waveform-data.js -s WaveformData -o dist/waveform-data.js",
+    "build-waveform-webaudio": "browserify -r ./webaudio.js -s WaveformDataWebaudioBuilder -o dist/webaudio.js",
     "pretest": "npm run build",
     "test": "npm run test-node && npm run test-browsers",
     "test-browsers": "xvfb-maybe ./node_modules/karma/bin/karma start",
     "test-node": "nyc mocha -R dot 'test/unit/*.js' 'test/unit/adapters/*.js'",
     "posttest-node": "npm run lint",
-    "lint": "jshint -c .jshintrc ./lib",
+    "lint": "jshint -c .jshintrc ./lib ./test",
     "test-watch": "mocha -R dot --watch 'test/unit/*.js' 'test/unit/adapters/*.js'",
-    "build": "npm run build-waveform-data && npm run build-waveform-webaudio",
-    "build-waveform-data": "browserify -r ./waveform-data.js -s WaveformData -o dist/waveform-data.js",
-    "build-waveform-webaudio": "browserify -r ./webaudio.js -s WaveformDataWebaudioBuilder -o dist/webaudio.js",
     "prepublish": "npm run build"
   },
   "repository": {

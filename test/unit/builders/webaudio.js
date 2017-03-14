@@ -1,6 +1,6 @@
 "use strict";
 
-/* globals describe, it, beforeEach */
+/* globals describe, it, beforeEach, afterEach */
 // jshint -W030
 
 var webaudioBuilder = require("../../../lib/builders/webaudio.js");
@@ -14,8 +14,8 @@ chai.use(sinonChai);
 
 describe("WaveformData WebAudio builder", function(){
   var sandbox, audioDecoderStub, sampleBuffer;
-  var audioContext = window.AudioContext || window.webkitAudioContext;
-  var context = new audioContext;
+  var Context = window.AudioContext || window.webkitAudioContext;
+  var context = new Context();
 
   beforeEach(function(done){
     sandbox = sinon.sandbox.create();
@@ -39,7 +39,7 @@ describe("WaveformData WebAudio builder", function(){
       }).to.throw(/AudioContext/);
     });
 
-    it('should raise an error in case audio buffer is invalid', function(done){
+    it('should return an error if the audio buffer is invalid', function(done) {
       webaudioBuilder(context, new ArrayBuffer(), function(err, waveform){
         if (err) {
           expect(err).to.have.property('code');
@@ -77,7 +77,7 @@ describe("WaveformData WebAudio builder", function(){
     it('should adjust the length of the waveform when using a different scale', function(done){
       var options = { scale: 128 };
 
-      var result = webaudioBuilder(new audioContext, sampleBuffer, options, function(err, waveform){
+      var result = webaudioBuilder(new Context(), sampleBuffer, options, function(err, waveform){
         expect(err).to.not.be.ok;
         expect(waveform).to.have.property('offset_length');
 
@@ -94,7 +94,7 @@ describe("WaveformData WebAudio builder", function(){
     });
 
     it('should return waveform data points', function(done) {
-      var result = webaudioBuilder(new audioContext, sampleBuffer, function(err, waveform) {
+      var result = webaudioBuilder(new Context(), sampleBuffer, function(err, waveform) {
         expect(err).to.not.be.ok;
 
         expect(waveform.min[0]).to.equal(-23);
@@ -113,7 +113,7 @@ describe("WaveformData WebAudio builder", function(){
     it('should return correctly scaled waveform data points', function(done) {
       var options = { amplitude_scale: 2.0 };
 
-      var result = webaudioBuilder(new audioContext, sampleBuffer, options, function(err, waveform) {
+      var result = webaudioBuilder(new Context(), sampleBuffer, options, function(err, waveform) {
         expect(err).to.not.be.ok;
 
         expect(waveform.min[0]).to.equal(-45);
@@ -133,7 +133,7 @@ describe("WaveformData WebAudio builder", function(){
       var options = { scale_adjuster: 127 };
 
       expect(function(){
-        webaudioBuilder(new audioContext, sampleBuffer, options);
+        webaudioBuilder(new Context(), sampleBuffer, options);
       }).to.throw(Error, /scale_adjuster/);
     });
   });
