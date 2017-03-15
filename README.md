@@ -95,7 +95,7 @@ xhr.open("GET", "http://example.com/some/file.mp3");
 fetch('http://example.com/waveforms/track.dat')
   .then(response => response.arrayBuffer())
   .then(buffer => {
-    webAudioBuilder(audioContext, buffer, (error, waveform) {
+    webAudioBuilder(audioContext, buffer, (error, waveform) => {
       console.log(waveform.duration);
     });
   });
