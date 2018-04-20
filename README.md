@@ -89,13 +89,40 @@ Web Audio is an HTML5 API which can help fetch the waveform from the file direct
 ```javascript
 const webAudioBuilder = require('waveform-data/webaudio');
 const audioContext = new AudioContext();
+```
 
-xhr.open("GET", "http://example.com/some/file.mp3");
+### With AJAX
 
-fetch('http://example.com/waveforms/track.dat')
+```javascript
+xhr.open("GET", "http://example.com/audio/track.ogg");
+xhr.responseType = "arraybuffer";
+
+xhr.addEventListener("load", function onResponse(progressEvent){
+  WaveformData.builders.webaudio(audioContext, progressEvent.target.response, onProcessed(err, waveform){
+    if (err) {
+       console.error(err);
+       return;
+    }
+    
+    console.log(waveform.duration);
+  });
+});
+
+xhr.send();
+```
+
+### With `fetch`
+
+```javascript
+fetch('http://example.com/audio/track.ogg')
   .then(response => response.arrayBuffer())
   .then(buffer => {
-    webAudioBuilder(audioContext, buffer, (error, waveform) => {
+    webAudioBuilder(audioContext, buffer, (err, waveform) => {
+      if (err) {
+         console.error(err);
+         return;
+      }
+      
       console.log(waveform.duration);
     });
   });
