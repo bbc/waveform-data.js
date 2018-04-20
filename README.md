@@ -100,8 +100,8 @@ xhr.responseType = "arraybuffer";
 xhr.addEventListener("load", function onResponse(progressEvent){
   WaveformData.builders.webaudio(audioContext, progressEvent.target.response, onProcessed(err, waveform){
     if (err) {
-       console.error(err);
-       return;
+      console.error(err);
+        return;
     }
     
     console.log(waveform.duration);
