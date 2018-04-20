@@ -119,8 +119,8 @@ fetch('http://example.com/audio/track.ogg')
   .then(buffer => {
     webAudioBuilder(audioContext, buffer, (err, waveform) => {
       if (err) {
-         console.error(err);
-         return;
+        console.error(err);
+        return;
       }
       
       console.log(waveform.duration);
