@@ -267,12 +267,17 @@ describe("WaveformData Core object", function(){
   });
 
   describe('.offset()', function(){
-    it("should throw an exception if start is negative.", function(){
+    it("should throw an exception if start is negative", function() {
       expect(function(){ instance.offset(-1, 10); }).to.throw(Error);
     });
 
-    it("should throw an exception if end is negative.", function(){
+    it("should throw an exception if end is negative", function() {
       expect(function(){ instance.offset(1, -1); }).to.throw(Error);
+    });
+
+    it("should allow a zero offset length", function() {
+      instance.offset(0, 0);
+      expect(instance.offset_length).to.equal(0);
     });
   });
 
