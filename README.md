@@ -203,14 +203,13 @@ You could even self-consume the data from another application:
 ```javascript
 #!/usr/bin/env node
 
-// app/bin/cli-resampler.js
-// called like `./app/bin/cli-resampler.js --wid=1337`
+// Save as: app/bin/cli-resampler.js
 
 const WaveformData = require('waveform-data');
 const request = require('superagent');
 const args = require('yargs').argv;
 
-request.get(`http://api.myapp.com/waveforms/${arvg.wid}.json`)
+request.get(`https://api.example.com/waveforms/${args.waveformid}.json`)
   .then(response => {
   const resampled_waveform = WaveformData.create(response.body).resample(2000);
 
@@ -221,10 +220,11 @@ request.get(`http://api.myapp.com/waveforms/${arvg.wid}.json`)
 });
 ```
 
+Usage: `./app/bin/cli-resampler.js --waveformid=1337`
 
 # Data format
 
-The [file format](https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md) used and consumed by `WaveformData` is documented as part of the [**audiowaveform** project](http://waveform.prototyping.bbc.co.uk).
+The file format used and consumed by `WaveformData` is documented [here](https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md) as part of the [**audiowaveform** project](http://waveform.prototyping.bbc.co.uk).
 
 We basically have **headers** containing:
 
@@ -236,8 +236,6 @@ We basically have **headers** containing:
 
 The body contains a *single range* of *minumum* and *maximum* audio peaks.
 Which means if we have a `length` of 100, it means we have *200* elements in the body.
-
-[Waveform Data Format Documentation](https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md)
 
 # JavaScript API
 
