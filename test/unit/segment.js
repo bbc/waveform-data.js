@@ -1,20 +1,19 @@
 "use strict";
 
 /* globals describe, it, beforeEach */
-// jshint -W030
 
 var WaveformData = require("../../waveform-data.js");
 var getArrayBufferFakeData = require("../fixtures").arraybuffer;
 var expect = require("chai").expect;
 
-describe("WaveformData Segment object", function(){
+describe("WaveformData Segment object", function() {
   var instance;
 
-  beforeEach(function(){
+  beforeEach(function() {
     instance = new WaveformData(getArrayBufferFakeData(), WaveformData.adapters.arraybuffer);
   });
 
-  it("should create a named segment of data.", function(){
+  it("should create a named segment of data", function() {
     instance.set_segment(1, 6);
     instance.set_segment(3, 6, "snip");
 
@@ -26,7 +25,7 @@ describe("WaveformData Segment object", function(){
     expect(instance.segments.snip.end).to.equal(6);
   });
 
-  it("should allow zero as a valid segment name.", function(){
+  it("should allow zero as a valid segment name", function() {
     instance.set_segment(1, 6, 0);
 
     expect(Object.keys(instance.segments)).to.have.length.of(1);
@@ -34,12 +33,12 @@ describe("WaveformData Segment object", function(){
     expect(instance.segments[0].end).to.equal(6);
   });
 
-  it("should return an accurate initial length.", function (){
+  it("should return an accurate initial length", function() {
     instance.set_segment(3, 6);
     expect(instance.segments.default).to.have.length.of(3);
   });
 
-  it("should return an accurate offset relative length.", function (){
+  it("should return an accurate offset relative length", function() {
     instance.set_segment(3, 6);
     expect(instance.segments.default.offset_length).to.equal(3);
 
@@ -59,12 +58,12 @@ describe("WaveformData Segment object", function(){
     expect(instance.segments.default.offset_length).to.equal(0);
   });
 
-  it("should return an accurate offset relative start index.", function(){
-    //tests below describe several use case
-    //segment within a global offset (everything is displayed)
-    //offset partially contains the segment
-    //offset does not contain the segment
-    //offset is contained in the segment
+  it("should return an accurate offset relative start index", function() {
+    // tests below describe several use case
+    // segment within a global offset (everything is displayed)
+    // offset partially contains the segment
+    // offset does not contain the segment
+    // offset is contained in the segment
     instance.set_segment(3, 6);
     expect(instance.segments.default.offset_start).to.equal(3);
 
@@ -84,7 +83,7 @@ describe("WaveformData Segment object", function(){
     expect(instance.segments.default.offset_start).to.be.null;
   });
 
-  it("should return an accurate offset relative end index.", function(){
+  it("should return an accurate offset relative end index", function() {
     instance.set_segment(3, 6);
     expect(instance.segments.default.offset_end).to.equal(6);
 
@@ -103,7 +102,7 @@ describe("WaveformData Segment object", function(){
     expect(instance.segments.default.offset_end).to.be.null;
   });
 
-  it("should return an accurate offset relative length.", function(){
+  it("should return an accurate offset relative length", function() {
     instance.set_segment(3, 6);
     expect(instance.segments.default.offset_length).to.equal(3);
 
@@ -123,7 +122,7 @@ describe("WaveformData Segment object", function(){
     expect(instance.segments.default.offset_length).to.equal(0);
   });
 
-  it("should indicate if the segment is at least partially visible in the offset.", function(){
+  it("should indicate if the segment is at least partially visible in the offset", function() {
     instance.set_segment(3, 6);
     expect(instance.segments.default.visible).to.be.true;
 
@@ -137,7 +136,7 @@ describe("WaveformData Segment object", function(){
     expect(instance.segments.default.visible).to.be.true;
   });
 
-  it("should return the minimum values visible in the offset.", function(){
+  it("should return the minimum values visible in the offset", function() {
     instance.set_segment(3, 6);
     expect(instance.segments.default.min).to.have.length.of(3);
     expect(instance.segments.default.min[0]).to.equal(instance.min_sample(3));
@@ -155,7 +154,7 @@ describe("WaveformData Segment object", function(){
     expect(instance.segments.default.min[0]).to.equal(instance.min_sample(4));
   });
 
-  it("should return the maximum values visible in the offset.", function(){
+  it("should return the maximum values visible in the offset", function() {
     instance.set_segment(3, 6);
     expect(instance.segments.default.max[0]).to.equal(instance.max_sample(3));
     expect(instance.segments.default.max[2]).to.equal(instance.max_sample(5));
