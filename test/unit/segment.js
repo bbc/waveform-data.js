@@ -17,7 +17,7 @@ describe("WaveformData Segment object", function() {
     instance.set_segment(1, 6);
     instance.set_segment(3, 6, "snip");
 
-    expect(Object.keys(instance.segments)).to.have.length.of(2);
+    expect(Object.keys(instance.segments)).to.have.lengthOf(2);
     expect(instance.segments.default.start).to.equal(1);
     expect(instance.segments.default.end).to.equal(6);
 
@@ -28,14 +28,14 @@ describe("WaveformData Segment object", function() {
   it("should allow zero as a valid segment name", function() {
     instance.set_segment(1, 6, 0);
 
-    expect(Object.keys(instance.segments)).to.have.length.of(1);
+    expect(Object.keys(instance.segments)).to.have.lengthOf(1);
     expect(instance.segments[0].start).to.equal(1);
     expect(instance.segments[0].end).to.equal(6);
   });
 
   it("should return an accurate initial length", function() {
     instance.set_segment(3, 6);
-    expect(instance.segments.default).to.have.length.of(3);
+    expect(instance.segments.default).to.have.lengthOf(3);
   });
 
   it("should return an accurate offset relative length", function() {
@@ -138,19 +138,19 @@ describe("WaveformData Segment object", function() {
 
   it("should return the minimum values visible in the offset", function() {
     instance.set_segment(3, 6);
-    expect(instance.segments.default.min).to.have.length.of(3);
+    expect(instance.segments.default.min).to.have.lengthOf(3);
     expect(instance.segments.default.min[0]).to.equal(instance.min_sample(3));
     expect(instance.segments.default.min[2]).to.equal(instance.min_sample(5));
 
     instance.offset(5, 9);
-    expect(instance.segments.default.min).to.have.length.of(1);
+    expect(instance.segments.default.min).to.have.lengthOf(1);
     expect(instance.segments.default.min[0]).to.equal(instance.min_sample(5));
 
     instance.offset(7, 8);
     expect(instance.segments.default.min).to.be.empty;
 
     instance.offset(4, 5);
-    expect(instance.segments.default.min).to.have.length.of(1);
+    expect(instance.segments.default.min).to.have.lengthOf(1);
     expect(instance.segments.default.min[0]).to.equal(instance.min_sample(4));
   });
 
@@ -160,14 +160,14 @@ describe("WaveformData Segment object", function() {
     expect(instance.segments.default.max[2]).to.equal(instance.max_sample(5));
 
     instance.offset(5, 9);
-    expect(instance.segments.default.max).to.have.length.of(1);
+    expect(instance.segments.default.max).to.have.lengthOf(1);
     expect(instance.segments.default.max[0]).to.equal(instance.max_sample(5));
 
     instance.offset(7, 8);
-    expect(instance.segments.default.max).to.have.length.of(0);
+    expect(instance.segments.default.max).to.have.lengthOf(0);
 
     instance.offset(4, 5);
-    expect(instance.segments.default.max).to.have.length.of(1);
+    expect(instance.segments.default.max).to.have.lengthOf(1);
     expect(instance.segments.default.max[0]).to.equal(instance.max_sample(4));
   });
 });

@@ -18,7 +18,7 @@ describe("WaveformData WebAudio builder", function() {
   var context = new Context();
 
   beforeEach(function(done) {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
 
     fs.readFile(__dirname + "/../../4channel.wav", function(err, buf) {
       sampleBuffer = buf.buffer;

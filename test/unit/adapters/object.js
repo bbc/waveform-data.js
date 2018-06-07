@@ -44,7 +44,7 @@ describe("WaveformData Object Adapter", function() {
 
   it("should return the expected samples length (not the length of the data object)", function() {
     expect(instance.length).to.equal(10);
-    expect(instance.data.data).to.have.length.of(20);
+    expect(instance.data.data).to.have.lengthOf(20);
   });
 
   it("should return the proper data index value", function() {

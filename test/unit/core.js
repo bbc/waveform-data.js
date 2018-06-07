@@ -283,7 +283,7 @@ describe("WaveformData Core object", function() {
     describe("full resample by scale", function() {
       it("should downsize the number of data by 2 if we request a half-size scaled resampled waveform", function() {
         expect(instance.resample({ scale: 1024 }).adapter)
-          .to.have.length.of(expectations.resampled_length);
+          .to.have.lengthOf(expectations.resampled_length);
       });
 
       it("should downsize the duration by 2 if we request a half-size scaled resampled waveform", function() {

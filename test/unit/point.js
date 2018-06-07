@@ -17,7 +17,7 @@ describe("WaveformData Point object", function() {
     instance.set_point(1);
     instance.set_point(3, "sample");
 
-    expect(Object.keys(instance.points)).to.have.length.of(2);
+    expect(Object.keys(instance.points)).to.have.lengthOf(2);
     expect(instance.points.default.timeStamp).to.equal(1);
     expect(instance.points.sample.timeStamp).to.equal(3);
   });
@@ -26,21 +26,21 @@ describe("WaveformData Point object", function() {
     instance.set_point(1);
     instance.set_point(2, "sample");
 
-    expect(Object.keys(instance.points)).to.have.length.of(2);
+    expect(Object.keys(instance.points)).to.have.lengthOf(2);
 
     instance.remove_point("default");
-    expect(Object.keys(instance.points)).to.have.length.of(1);
+    expect(Object.keys(instance.points)).to.have.lengthOf(1);
   });
 
   it("should remove a named point of data (false values)", function() {
     instance.set_point(0, 0);
     instance.set_point(1, "1");
 
-    expect(Object.keys(instance.points)).to.have.length.of(2);
+    expect(Object.keys(instance.points)).to.have.lengthOf(2);
 
     instance.remove_point(0);
 
-    expect(Object.keys(instance.points)).to.have.length.of(1);
+    expect(Object.keys(instance.points)).to.have.lengthOf(1);
     expect(instance.points["1"].timeStamp).to.equal(1);
   });
 
