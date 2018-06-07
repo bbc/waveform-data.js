@@ -15,7 +15,13 @@ matrix:
     sudo: false
     env: BROWSER=Firefox
     addons:
-      firefox: '60.0'
+      firefox: latest
+  - os: linux
+    node_js: v6
+    sudo: false
+    env: BROWSER=Chrome
+    addons:
+      chrome: stable
 
 before_install:
 - npm cache clean
