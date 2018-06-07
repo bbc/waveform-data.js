@@ -1,5 +1,10 @@
 # waveform-data.js
 
+## v2.0.2 (2016/06/07)
+
+ * Allow offset length to be zero (@chrisn)
+ * Improved documentation and code examples (@gr2m, @mdesenfants, @chrisn)
+
 ## v2.0.1 (2016/03/14)
 
  * (#42) Fixed multi-channel audio handling in Web Audio builder (@chrisn)
