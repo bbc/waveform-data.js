@@ -18,10 +18,13 @@ matrix:
       firefox: latest
   - os: linux
     node_js: v6
-    sudo: false
+    sudo: required
     env: BROWSER=Chrome
     addons:
       chrome: stable
+    before_script:
+      - "sudo chown root /opt/google/chrome/chrome-sandbox"
+      - "sudo chmod 4755 /opt/google/chrome/chrome-sandbox"
 
 before_install:
 - npm cache clean
