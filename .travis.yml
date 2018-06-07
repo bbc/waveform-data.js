@@ -15,7 +15,7 @@ matrix:
     sudo: false
     env: BROWSER=Firefox
     addons:
-      firefox: '49.0'
+      firefox: '60.0'
 
 before_install:
 - npm cache clean
