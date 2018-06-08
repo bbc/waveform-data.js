@@ -1,18 +1,14 @@
 "use strict";
 
-// jshint node:true
-
-module.exports = function (grunt) {
-
+module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
-    pkg: require('./package.json'),
-    banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-      '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-      '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
-      '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-      ' Licensed <%= pkg.license %> */\n',
-
+    pkg: require("./package.json"),
+    banner: "/*! <%= pkg.name %> - v<%= pkg.version %> - " +
+      "<%= grunt.template.today('yyyy-mm-dd') %>\n" +
+      "<%= pkg.homepage ? '* ' + pkg.homepage + '\\n' : '' %>" +
+      "* Copyright (c) <%= grunt.template.today('yyyy') %> <%= pkg.author.name %>;" +
+      " Licensed <%= pkg.license %> */\n",
     jsdoc_md: {
       main: {
         files: {
@@ -24,14 +20,16 @@ module.exports = function (grunt) {
         },
         options: {
           filters: [
-            function excludePrototypeObject(comment){
+            function excludePrototypeObject(comment) {
               return comment.ctx && comment.ctx.type === "prototype";
             },
-            function excludeSingleLineComment(comment){
+            function excludeSingleLineComment(comment) {
               return comment.description.full.match(/^[ \t]*(globals|jshint|jslint)/);
             },
-            function excludeTypedefTag(comment){
-              return comment.tags.some(function(tag){ return tag.type === "typedef"; });
+            function excludeTypedefTag(comment) {
+              return comment.tags.some(function(tag) {
+                return tag.type === "typedef";
+              });
             }
           ]
         }
