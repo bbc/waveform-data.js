@@ -2,7 +2,7 @@
 
 /* globals describe, it, beforeEach, afterEach, DOMException, __dirname */
 
-var webaudioBuilder = require("../../../lib/builders/webaudio.js");
+var webAudioBuilder = require("../../../lib/builders/webaudio.js");
 var AudioWaveform = require("../../../waveform-data.js");
 var chai = require("chai");
 var sinon = require("sinon");
@@ -14,8 +14,8 @@ chai.use(sinonChai);
 
 describe("WaveformData WebAudio builder", function() {
   var sandbox, sampleBuffer;
-  var Context = window.AudioContext || window.webkitAudioContext;
-  var context = new Context();
+  var AudioContext = window.AudioContext || window.webkitAudioContext;
+  var audioContext = new AudioContext();
 
   beforeEach(function(done) {
     sandbox = sinon.createSandbox();
@@ -33,12 +33,12 @@ describe("WaveformData WebAudio builder", function() {
   describe("Constructor", function() {
     it("should throw if audioContext is not the first argument", function() {
       expect(function() {
-        webaudioBuilder(new ArrayBuffer(), sinon.spy());
+        webAudioBuilder(new ArrayBuffer(), sinon.spy());
       }).to.throw(/AudioContext/);
     });
 
     it("should return an error if the audio buffer is invalid", function(done) {
-      webaudioBuilder(context, new ArrayBuffer(), function(err, waveform) {
+      webAudioBuilder(audioContext, new ArrayBuffer(1024), function(err, waveform) {
         // @see http://stackoverflow.com/q/10365335/103396
         expect(err).to.be.an.instanceOf(DOMException);
         expect(waveform).to.not.be.ok;
@@ -48,7 +48,7 @@ describe("WaveformData WebAudio builder", function() {
     });
 
     it("should return a valid waveform in case of success", function(done) {
-      var result = webaudioBuilder(context, sampleBuffer, function(err, waveform) {
+      var result = webAudioBuilder(audioContext, sampleBuffer, function(err, waveform) {
         expect(err).to.not.be.ok;
         expect(waveform).to.be.an.instanceOf(AudioWaveform);
         expect(waveform).to.have.property("offset_length");
@@ -68,7 +68,7 @@ describe("WaveformData WebAudio builder", function() {
     it("should adjust the length of the waveform when using a different scale", function(done) {
       var options = { scale: 128 };
 
-      var result = webaudioBuilder(new Context(), sampleBuffer, options, function(err, waveform) {
+      var result = webAudioBuilder(audioContext, sampleBuffer, options, function(err, waveform) {
         expect(err).to.not.be.ok;
         expect(waveform).to.have.property("offset_length");
 
@@ -85,7 +85,7 @@ describe("WaveformData WebAudio builder", function() {
     });
 
     it("should return waveform data points", function(done) {
-      var result = webaudioBuilder(new Context(), sampleBuffer, function(err, waveform) {
+      var result = webAudioBuilder(audioContext, sampleBuffer, function(err, waveform) {
         expect(err).to.not.be.ok;
 
         expect(waveform.min[0]).to.equal(-23);
@@ -104,7 +104,7 @@ describe("WaveformData WebAudio builder", function() {
     it("should return correctly scaled waveform data points", function(done) {
       var options = { amplitude_scale: 2.0 };
 
-      var result = webaudioBuilder(new Context(), sampleBuffer, options, function(err, waveform) {
+      var result = webAudioBuilder(audioContext, sampleBuffer, options, function(err, waveform) {
         expect(err).to.not.be.ok;
 
         expect(waveform.min[0]).to.equal(-45);
@@ -124,7 +124,7 @@ describe("WaveformData WebAudio builder", function() {
       var options = { scale_adjuster: 127 };
 
       expect(function() {
-        webaudioBuilder(new Context(), sampleBuffer, options);
+        webAudioBuilder(audioContext, sampleBuffer, options);
       }).to.throw(Error, /scale_adjuster/);
     });
   });
