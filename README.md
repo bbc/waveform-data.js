@@ -5,7 +5,7 @@
 **waveform-data.js** is a JavaScript library for creating __zoomable__,
 __browsable__ and __segmentable__ representations of audio waveforms.
 
-**waveform-data.js** is part of a [BBC R&D Browser-based audio waveform visualisation software family](http://waveform.prototyping.bbc.co.uk):
+**waveform-data.js** is part of a [BBC R&D Browser-based audio waveform visualisation software family](https://waveform.prototyping.bbc.co.uk):
 
 - [audiowaveform](https://github.com/bbc/audiowaveform): C++ program that generates waveform data files from MP3 or WAV format audio.
 - [audio_waveform-ruby](https://github.com/bbc/audio_waveform-ruby): A Ruby gem that can read and write waveform data files.
@@ -224,7 +224,7 @@ Usage: `./app/bin/cli-resampler.js --waveformid=1337`
 
 # Data format
 
-The file format used and consumed by `WaveformData` is documented [here](https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md) as part of the [**audiowaveform** project](http://waveform.prototyping.bbc.co.uk).
+The file format used and consumed by `WaveformData` is documented [here](https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md) as part of the [**audiowaveform** project](https://waveform.prototyping.bbc.co.uk).
 
 We basically have **headers** containing:
 
