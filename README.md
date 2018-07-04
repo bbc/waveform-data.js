@@ -13,7 +13,7 @@ __browsable__ and __segmentable__ representations of audio waveforms.
 - [peaks.js](https://github.com/bbc/peaks.js): JavaScript UI component for interacting with waveforms.
 
 We use these projects daily in applications such as
-[BBC Radio Archive](http://worldservice.prototyping.bbc.co.uk) and __browser editing and sharing__ tools for BBC content editors.
+[BBC World Service Radio Archive](https://www.bbc.co.uk/rd/projects/worldservice-archive-proto) and __browser editing and sharing__ tools for BBC content editors.
 
 ![Example of what it helps to build](waveform-example.png)
 
