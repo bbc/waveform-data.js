@@ -151,7 +151,8 @@ waveform.max.reverse().forEach((val, x) => {
 });
 
 ctx.closePath();
-canvas.fillStroke();
+ctx.strokeStyle="#000";
+ctx.stroke();
 ```
 
 ## Drawing in D3
