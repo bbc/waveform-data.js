@@ -139,11 +139,13 @@ const interpolateHeight = (total_height) => {
 };
 
 const y = interpolateHeight(canvas.height);
-const ctx = canvas.getContext();
+const ctx = canvas.getContext('2d');
 ctx.beginPath();
 
 // from 0 to 100
-waveform.min.forEach((val, x) => ctx.lineTo(x + 0.5, y(val) + 0.5));
+waveform.min.forEach((val, x) => {
+  ctx.lineTo(x + 0.5, y(val) + 0.5));
+});
 
 // then looping back from 100 to 0
 waveform.max.reverse().forEach((val, x) => {
@@ -151,8 +153,8 @@ waveform.max.reverse().forEach((val, x) => {
 });
 
 ctx.closePath();
-ctx.strokeStyle="#000";
 ctx.stroke();
+ctx.fill();
 ```
 
 ## Drawing in D3
