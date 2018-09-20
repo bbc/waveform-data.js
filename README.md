@@ -98,7 +98,7 @@ xhr.open('GET', 'https://example.com/audio/track.ogg');
 xhr.responseType = 'arraybuffer';
 
 xhr.addEventListener('load', (progressEvent) => {
-  WaveformData.builders.webaudio(audioContext, progressEvent.target.response, (err, waveform) => {
+  webAudioBuilder(audioContext, progressEvent.target.response, (err, waveform) => {
     if (err) {
       console.error(err);
       return;
