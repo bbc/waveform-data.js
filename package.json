@@ -61,7 +61,6 @@
     "grunt": "^1.0.3",
     "grunt-cli": "^1.2.0",
     "grunt-jsdoc-md": "github:oncletom/grunt-jsdoc-md",
-    "inline-worker": "^1.1.0",
     "karma": "^2.0.2",
     "karma-browserify": "^5.2.0",
     "karma-chrome-launcher": "^2.2.0",
@@ -76,5 +75,7 @@
     "watchify": "^3.11.0",
     "xvfb-maybe": "^0.2.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "inline-worker": "^1.1.0"
+  }
 }
