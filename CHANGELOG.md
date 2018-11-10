@@ -1,5 +1,10 @@
 # waveform-data.js
 
+## v2.1.0 (2018/11/10)
+
+ * Move Web Audio based waveform generation to a Web Worker (@semiaddict)
+ * Fix audio decode error handling in Safari (@chrisn)
+
 ## v2.0.2 (2016/06/07)
 
  * Allow offset length to be zero (@chrisn)
