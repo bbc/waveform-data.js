@@ -1,6 +1,6 @@
 "use strict";
 
-/* globals describe, it, beforeEach, afterEach, DOMException, __dirname */
+/* globals describe, it, beforeEach, DOMException, __dirname */
 
 var webAudioBuilder = require("../../../lib/builders/webaudio.js");
 var AudioWaveform = require("../../../waveform-data.js");
@@ -13,21 +13,15 @@ var expect = chai.expect;
 chai.use(sinonChai);
 
 describe("WaveformData WebAudio builder", function() {
-  var sandbox, sampleBuffer;
+  var sampleBuffer;
   var AudioContext = window.AudioContext || window.webkitAudioContext;
   var audioContext = new AudioContext();
 
   beforeEach(function(done) {
-    sandbox = sinon.createSandbox();
-
     fs.readFile(__dirname + "/../../4channel.wav", function(err, buf) {
       sampleBuffer = buf.buffer;
       done();
     });
-  });
-
-  afterEach(function() {
-    sandbox.restore();
   });
 
   describe("Constructor", function() {
