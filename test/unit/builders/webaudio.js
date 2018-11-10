@@ -2,8 +2,9 @@
 
 /* globals describe, it, beforeEach, DOMException, __dirname */
 
-var webAudioBuilder = require("../../../lib/builders/webaudio.js");
-var AudioWaveform = require("../../../waveform-data.js");
+var webAudioBuilder = require("../../../lib/builders/webaudio");
+var AudioWaveform = require("../../../waveform-data");
+
 var chai = require("chai");
 var sinon = require("sinon");
 var fs = require("fs");

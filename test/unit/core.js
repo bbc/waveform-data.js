@@ -2,7 +2,7 @@
 
 /* globals describe, it, beforeEach */
 
-var WaveformData = require("../../waveform-data.js");
+var WaveformData = require("../../waveform-data");
 var getArrayBufferFakeData = require("../fixtures").arraybuffer;
 var getJSONFakeData = require("../fixtures").json;
 var expect = require("chai").expect;
