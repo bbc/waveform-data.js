@@ -32,7 +32,7 @@ module.exports = function(config) {
       "karma-*"
     ],
 
-    reporters: isCI ? "dots" : "progress",
+    reporters: "spec",
     port: 8080,
     runnerPort: 9100,
     colors: true,
