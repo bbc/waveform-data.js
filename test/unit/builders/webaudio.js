@@ -34,8 +34,8 @@ describe("WaveformData WebAudio builder", function() {
     it("should return an error if the audio buffer is invalid", function(done) {
       webAudioBuilder(audioContext, new ArrayBuffer(1024), function(err, waveform) {
         // @see http://stackoverflow.com/q/10365335/103396
-        expect(err).to.be.an.instanceOf(DOMException);
         expect(waveform).to.not.be.ok;
+        expect(err).to.be.an.instanceOf(DOMException);
 
         done();
       });
