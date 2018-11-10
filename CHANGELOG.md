@@ -1,6 +1,6 @@
 # waveform-data.js
 
-## v2.1.1 (2018/11/10)
+## v2.1.2 (2018/11/10)
 
  * Version bump after updating npm access token (@chrisn)
 
