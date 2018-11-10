@@ -187,6 +187,12 @@ describe("WaveformData Core object", function() {
       // floor 1 * 48000 / 512 (pixels_per_second)
       expect(instance.at_time(1)).to.equal(93);
     });
+
+    it("should be able to convert between pixel indexes and times without losing precision", function() {
+      expect(instance.at_time(instance.time(0))).to.equal(0);
+      expect(instance.at_time(instance.time(14))).to.equal(14);
+      expect(instance.at_time(instance.time(93))).to.equal(93);
+    });
   });
 
   describe(".time", function() {
