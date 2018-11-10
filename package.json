@@ -75,5 +75,7 @@
     "watchify": "^3.11.0",
     "xvfb-maybe": "^0.2.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "inline-worker": "^1.1.0"
+  }
 }
