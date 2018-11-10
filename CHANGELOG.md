@@ -1,5 +1,9 @@
 # waveform-data.js
 
+## v2.1.1 (2018/11/10)
+
+ * Version bump after updating npm access token (@chrisn)
+
 ## v2.1.0 (2018/11/10)
 
  * Move Web Audio based waveform generation to a Web Worker (@semiaddict)
