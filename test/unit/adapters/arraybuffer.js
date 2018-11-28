@@ -1,10 +1,10 @@
 "use strict";
 
-/* globals describe, it, beforeEach */
+/* globals beforeEach, context, describe, it */
 
 var WaveformData = require("../../../waveform-data");
 var constructor = WaveformData.adapters.arraybuffer;
-var getArrayBufferFakeData = require("../../fixtures").arraybuffer;
+var fixtures = require("../../fixtures");
 var expect = require("chai").expect;
 
 describe("WaveformData ArrayBuffer Adapter", function() {
@@ -15,45 +15,102 @@ describe("WaveformData ArrayBuffer Adapter", function() {
   });
 
   it("should return a WaveformDataAdapter instance from `fromResponseData` factory", function() {
-    var fakeData = getArrayBufferFakeData();
+    const data = fixtures.getBinaryData({ channels: 1 });
 
-    expect(constructor.fromResponseData(fakeData)).to.be.an("object");
+    expect(constructor.fromResponseData(data)).to.be.an("object");
   });
 
-  beforeEach(function() {
-    instance = constructor.fromResponseData(getArrayBufferFakeData());
+  context("with a single channel data file", function() {
+    beforeEach(function() {
+      const data = fixtures.getBinaryData({ channels: 1 });
+
+      instance = constructor.fromResponseData(data);
+    });
+
+    it("should return the data version number", function() {
+      expect(instance.version).to.equal(1);
+    });
+
+    it("should return the number of channels", function() {
+      expect(instance.channels).to.equal(1);
+    });
+
+    it("should contain 8-bit data", function() {
+      expect(instance.is_8_bit).to.be.true;
+      expect(instance.is_16_bit).to.be.false;
+    });
+
+    it("should return the sample rate", function() {
+      expect(instance.sample_rate).to.equal(48000);
+    });
+
+    it("should return the scale (samples per pixel)", function() {
+      expect(instance.scale).to.equal(512);
+    });
+
+    it("should return the length of the waveform", function() {
+      expect(instance.length).to.equal(10);
+    });
+
+    it("should return the proper data index value", function() {
+      expect(instance.at(0)).to.equal(0);
+      expect(instance.at(8)).to.equal(-5);
+      expect(instance.at(9)).to.equal(7);
+      expect(instance.at(10)).to.equal(0);
+      expect(instance.at(19)).to.equal(2);
+    });
+
+    it("should throw on indexing beyond the length of the data", function() {
+      expect(function() {
+        instance.at(20);
+      }).to.throw(RangeError);
+    });
   });
 
-  it("should return a supported version number (1 so far)", function() {
-    expect(instance.version).to.equal(1);
-  });
+  context("with a two-channel data file", function() {
+    beforeEach(function() {
+      const data = fixtures.getBinaryData({ channels: 2 });
 
-  it("should contain 8 bits data only (16 is not properly handled yet)", function() {
-    expect(instance.is_8_bit).to.be.true;
-    expect(instance.is_16_bit).to.be.false;
-  });
+      instance = constructor.fromResponseData(data);
+    });
 
-  it("should provide the expected sample rate", function() {
-    expect(instance.sample_rate).to.equal(48000);
-  });
+    it("should return the data version number", function() {
+      expect(instance.version).to.equal(2);
+    });
 
-  it("should provide the expected scale (samples per pixel)", function() {
-    expect(instance.scale).to.equal(512);
-  });
+    it("should return the number of channels", function() {
+      expect(instance.channels).to.equal(2);
+    });
 
-  it("should return the expected samples length (not the length of the data object)", function() {
-    expect(instance.length).to.equal(10);
-    expect(instance.data.buffer.byteLength).to.equal(40);
-  });
+    it("should contain 8-bit data", function() {
+      expect(instance.is_8_bit).to.be.true;
+      expect(instance.is_16_bit).to.be.false;
+    });
 
-  it("should return the proper data index value", function() {
-    expect(instance.at(0)).to.equal(0);
-    expect(instance.at(8)).to.equal(-5);
-    expect(instance.at(9)).to.equal(7);
-    expect(instance.at(10)).to.equal(0);
-    expect(instance.at(19)).to.equal(2);
-    expect(function() {
-      instance.at(20);
-    }).to.throw();
+    it("should return the sample rate", function() {
+      expect(instance.sample_rate).to.equal(48000);
+    });
+
+    it("should return the scale (samples per pixel)", function() {
+      expect(instance.scale).to.equal(512);
+    });
+
+    it("should return the length of the waveform", function() {
+      expect(instance.length).to.equal(10);
+    });
+
+    it("should return waveform data points", function() {
+      expect(instance.at(0)).to.equal(0);
+      expect(instance.at(4)).to.equal(-10);
+      expect(instance.at(6)).to.equal(-8);
+      expect(instance.at(13)).to.equal(7);
+      expect(instance.at(39)).to.equal(3);
+    });
+
+    it("should throw on indexing beyond the length of the data", function() {
+      expect(function() {
+        instance.at(40);
+      }).to.throw(RangeError);
+    });
   });
 });

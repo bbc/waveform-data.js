@@ -45,12 +45,12 @@ describe("WaveformData WebAudio builder", function() {
       var result = webAudioBuilder(audioContext, sampleBuffer, function(err, waveform) {
         expect(err).to.not.be.ok;
         expect(waveform).to.be.an.instanceOf(AudioWaveform);
-        expect(waveform).to.have.property("offset_length");
+        expect(waveform.channels).to.equal(1);
 
         // file length: 88200 samples
         // scale: 512 (default)
         // 88200 / 512 = 172, with 136 samples remaining, so 173 points total
-        expect(waveform.offset_length).to.equal(173);
+        expect(waveform.length).to.equal(173);
         done();
       });
 
@@ -64,12 +64,14 @@ describe("WaveformData WebAudio builder", function() {
 
       var result = webAudioBuilder(audioContext, sampleBuffer, options, function(err, waveform) {
         expect(err).to.not.be.ok;
-        expect(waveform).to.have.property("offset_length");
+        expect(waveform).to.be.an.instanceOf(AudioWaveform);
+        expect(waveform).to.have.property("offset");
+        expect(waveform.channels).to.equal(1);
 
         // file length: 88200 samples
         // scale: 128
         // 88200 / 128 = 689, with 8 samples remaining, so 690 points total
-        expect(waveform.offset_length).to.equal(690);
+        expect(waveform.length).to.equal(690);
         done();
       });
 
@@ -82,11 +84,13 @@ describe("WaveformData WebAudio builder", function() {
       var result = webAudioBuilder(audioContext, sampleBuffer, function(err, waveform) {
         expect(err).to.not.be.ok;
 
-        expect(waveform.min[0]).to.equal(-23);
-        expect(waveform.max[0]).to.equal(22);
+        expect(waveform.channels).to.equal(1);
 
-        expect(waveform.min[waveform.offset_length - 1]).to.equal(-23);
-        expect(waveform.max[waveform.offset_length - 1]).to.equal(22);
+        expect(waveform.channel(0).min_sample(0)).to.equal(-23);
+        expect(waveform.channel(0).max_sample(0)).to.equal(22);
+
+        expect(waveform.channel(0).min_sample(waveform.offset_length - 1)).to.equal(-23);
+        expect(waveform.channel(0).max_sample(waveform.offset_length - 1)).to.equal(22);
         done();
       });
 
@@ -101,11 +105,50 @@ describe("WaveformData WebAudio builder", function() {
       var result = webAudioBuilder(audioContext, sampleBuffer, options, function(err, waveform) {
         expect(err).to.not.be.ok;
 
-        expect(waveform.min[0]).to.equal(-45);
-        expect(waveform.max[0]).to.equal(44);
+        expect(waveform.channel(0).min_sample(0)).to.equal(-45);
+        expect(waveform.channel(0).max_sample(0)).to.equal(44);
 
-        expect(waveform.min[waveform.offset_length - 1]).to.equal(-45);
-        expect(waveform.max[waveform.offset_length - 1]).to.equal(44);
+        expect(waveform.channel(0).min_sample(waveform.length - 1)).to.equal(-45);
+        expect(waveform.channel(0).max_sample(waveform.length - 1)).to.equal(44);
+        done();
+      });
+
+      if (result && "then" in result) {
+        result.catch(console.error.message);
+      }
+    });
+
+    it("should return multiple channels of waveform data points", function(done) {
+      var options = { split_channels: true };
+
+      var result = webAudioBuilder(audioContext, sampleBuffer, options, function(err, waveform) {
+        expect(err).to.not.be.ok;
+
+        expect(waveform.channels).to.equal(4);
+
+        expect(waveform.channel(0).min_sample(0)).to.equal(-1);
+        expect(waveform.channel(0).max_sample(0)).to.equal(0);
+
+        expect(waveform.channel(1).min_sample(0)).to.equal(-1);
+        expect(waveform.channel(1).max_sample(0)).to.equal(0);
+
+        expect(waveform.channel(2).min_sample(0)).to.equal(-90);
+        expect(waveform.channel(2).max_sample(0)).to.equal(89);
+
+        expect(waveform.channel(3).min_sample(0)).to.equal(-1);
+        expect(waveform.channel(3).max_sample(0)).to.equal(0);
+
+        expect(waveform.channel(0).min_sample(waveform.length - 1)).to.equal(-1);
+        expect(waveform.channel(0).max_sample(waveform.length - 1)).to.equal(0);
+
+        expect(waveform.channel(1).min_sample(waveform.length - 1)).to.equal(-1);
+        expect(waveform.channel(1).max_sample(waveform.length - 1)).to.equal(0);
+
+        expect(waveform.channel(2).min_sample(waveform.length - 1)).to.equal(-90);
+        expect(waveform.channel(2).max_sample(waveform.length - 1)).to.equal(89);
+
+        expect(waveform.channel(3).min_sample(waveform.length - 1)).to.equal(-1);
+        expect(waveform.channel(3).max_sample(waveform.length - 1)).to.equal(0);
         done();
       });
 

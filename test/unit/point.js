@@ -3,14 +3,16 @@
 /* globals describe, it, beforeEach */
 
 var WaveformData = require("../../waveform-data");
-var getArrayBufferFakeData = require("../fixtures").arraybuffer;
+var fixtures = require("../fixtures");
 var expect = require("chai").expect;
 
 describe("WaveformData Point object", function() {
   var instance;
 
   beforeEach(function() {
-    instance = new WaveformData(getArrayBufferFakeData(), WaveformData.adapters.arraybuffer);
+    const data = fixtures.getBinaryData({ channels: 1 });
+
+    instance = new WaveformData(data, WaveformData.adapters.arraybuffer);
   });
 
   it("should create a named point of data", function() {
