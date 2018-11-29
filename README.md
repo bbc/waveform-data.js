@@ -229,17 +229,6 @@ Usage: `./app/bin/cli-resampler.js --waveformid=1337`
 
 The file format used and consumed by `WaveformData` is documented [here](https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md) as part of the [**audiowaveform** project](https://waveform.prototyping.bbc.co.uk).
 
-We basically have **headers** containing:
-
- * the `version number` of the data format
- * the `number of bits` used to encode the waveform data points
- * the expected `length` of samples to render
- * the `sample rate` of the original audio file used to compute the data
- * the `samples per pixel` which specifies the time resolution of the waveform data
-
-The body contains a *single range* of *minumum* and *maximum* audio peaks.
-Which means if we have a `length` of 100, it means we have *200* elements in the body.
-
 # JavaScript API
 
 This section describes the `WaveformData` API.
