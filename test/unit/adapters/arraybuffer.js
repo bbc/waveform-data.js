@@ -36,8 +36,7 @@ describe("WaveformData ArrayBuffer Adapter", function() {
     });
 
     it("should contain 8-bit data", function() {
-      expect(instance.is_8_bit).to.be.true;
-      expect(instance.is_16_bit).to.be.false;
+      expect(instance.bits).to.equal(8);
     });
 
     it("should return the sample rate", function() {
@@ -83,8 +82,7 @@ describe("WaveformData ArrayBuffer Adapter", function() {
     });
 
     it("should contain 8-bit data", function() {
-      expect(instance.is_8_bit).to.be.true;
-      expect(instance.is_16_bit).to.be.false;
+      expect(instance.bits).to.equal(8);
     });
 
     it("should return the sample rate", function() {
