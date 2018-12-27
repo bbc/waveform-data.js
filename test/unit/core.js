@@ -3,6 +3,8 @@
 /* globals beforeEach, context, describe, it */
 
 var WaveformData = require("../../waveform-data");
+var WaveformDataChannel = require("../../lib/channel");
+
 var fixtures = require("../fixtures");
 var expect = require("chai").expect;
 
@@ -145,7 +147,7 @@ describe("WaveformData", function() {
 
     describe(".channel", function() {
       it("should return a channel object", function() {
-        expect(instance.channel(0)).to.be.ok;
+        expect(instance.channel(0)).to.be.an.instanceOf(WaveformDataChannel);
       });
 
       it("should throw when given an invalid channel index", function() {
@@ -165,7 +167,7 @@ describe("WaveformData", function() {
       });
 
       it("should return the 3 minimum values, at index 5, 7 and 9", function() {
-        expect(instance.channel(0).min).to.deep.equal([0, -5, -5]);
+        expect(instance.channel(0).min_array()).to.deep.equal([0, -5, -5]);
       });
     });
 
@@ -175,7 +177,7 @@ describe("WaveformData", function() {
       });
 
       it("should return the 3 minimum values, at index 6, 8 and 10", function() {
-        expect(instance.channel(0).max).to.deep.equal([0, 7, 7]);
+        expect(instance.channel(0).max_array()).to.deep.equal([0, 7, 7]);
       });
     });
 
@@ -226,13 +228,13 @@ describe("WaveformData", function() {
 
     describe(".pixels_per_second", function() {
       it("should compute the number of pixels per seconds for this set of data", function() {
-        expect(instance.pixels_per_second).to.equal(93.75);   // 48000 / 512
+        expect(instance.pixels_per_second).to.equal(93.75); // 48000 / 512
       });
     });
 
     describe(".seconds_per_pixel", function() {
       it("should compute the number of seconds per pixel for this set of data", function() {
-        expect(instance.seconds_per_pixel).to.equal(0.010666666666666666);    // 512 / 48000
+        expect(instance.seconds_per_pixel).to.equal(0.010666666666666666); // 512 / 48000
       });
     });
 
@@ -327,8 +329,8 @@ describe("WaveformData", function() {
         it("should resample to a set of expected values", function() {
           var resampled = instance.resample({ scale: 1024 });
 
-          expect(resampled.channel(0).min).to.deep.equal(expectations.resampled_values.channels[0].min);
-          expect(resampled.channel(0).max).to.deep.equal(expectations.resampled_values.channels[0].max);
+          expect(resampled.channel(0).min_array()).to.deep.equal(expectations.resampled_values.channels[0].min);
+          expect(resampled.channel(0).max_array()).to.deep.equal(expectations.resampled_values.channels[0].max);
         });
       });
 
@@ -467,8 +469,8 @@ describe("WaveformData", function() {
       });
 
       it("should return the 3 minimum values within the offset range", function() {
-        expect(instance.channel(0).min).to.deep.equal([0, -5, -5]);
-        expect(instance.channel(1).min).to.deep.equal([-2, -6, -6]);
+        expect(instance.channel(0).min_array()).to.deep.equal([0, -5, -5]);
+        expect(instance.channel(1).min_array()).to.deep.equal([-2, -6, -6]);
       });
     });
 
@@ -478,8 +480,8 @@ describe("WaveformData", function() {
       });
 
       it("should return the 3 minimum values within the offset range", function() {
-        expect(instance.channel(0).max).to.deep.equal([0, 7, 7]);
-        expect(instance.channel(1).max).to.deep.equal([2, 3, 3]);
+        expect(instance.channel(0).max_array()).to.deep.equal([0, 7, 7]);
+        expect(instance.channel(1).max_array()).to.deep.equal([2, 3, 3]);
       });
     });
 
@@ -632,11 +634,11 @@ describe("WaveformData", function() {
         it("should resample to a set of expected values", function() {
           var resampled = instance.resample({ scale: 1024 });
 
-          expect(resampled.channel(0).min).to.deep.equal(expectations.resampled_values.channels[0].min);
-          expect(resampled.channel(0).max).to.deep.equal(expectations.resampled_values.channels[0].max);
+          expect(resampled.channel(0).min_array()).to.deep.equal(expectations.resampled_values.channels[0].min);
+          expect(resampled.channel(0).max_array()).to.deep.equal(expectations.resampled_values.channels[0].max);
 
-          expect(resampled.channel(1).min).to.deep.equal(expectations.resampled_values.channels[1].min);
-          expect(resampled.channel(1).max).to.deep.equal(expectations.resampled_values.channels[1].max);
+          expect(resampled.channel(1).min_array()).to.deep.equal(expectations.resampled_values.channels[1].min);
+          expect(resampled.channel(1).max_array()).to.deep.equal(expectations.resampled_values.channels[1].max);
         });
       });
 
@@ -696,7 +698,7 @@ describe("WaveformData", function() {
     });
   });
 
-  describe(".at_time", function() {
+  describe(".at_time()", function() {
     it("should compute a location in pixel of 0 if the time is 0 seconds", function() {
       expect(instance.at_time(0)).to.equal(0);
     });
@@ -718,7 +720,7 @@ describe("WaveformData", function() {
     });
   });
 
-  describe(".time", function() {
+  describe(".time()", function() {
     it("should return a time of 0 seconds for a given pixel index of 0", function() {
       expect(instance.time(0)).to.equal(0);
     });
