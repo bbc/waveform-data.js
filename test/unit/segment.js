@@ -12,7 +12,7 @@ describe("WaveformData Segment object", function() {
   beforeEach(function() {
     const data = fixtures.getBinaryData({ channels: 1 });
 
-    instance = new WaveformData(data, WaveformData.adapters.arraybuffer);
+    instance = new WaveformData(data);
   });
 
   it("should create a named segment of data", function() {

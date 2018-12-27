@@ -18,11 +18,6 @@ describe("WaveformData", function() {
   var instance;
   var expectations = fixtures.getExpectedData();
 
-  it("should provide an `adapter` static properties and an `adapters` storage", function() {
-    expect(WaveformData.adapters).to.be.an("object");
-    expect(WaveformData.adapter).to.be.a("function");
-  });
-
   describe(".create", function() {
     it("should not build an instance for an unknown data type", function() {
       expect(function() {
@@ -34,55 +29,32 @@ describe("WaveformData", function() {
       }).to.throw("Could not detect a WaveformData adapter from the input.");
     });
 
-    it("should select the correct adapter based on the given data", function() {
+    it("should not create from a JSON string", function() {
       const data = fixtures.getJSONData({ channels: 1 });
 
-      expect(WaveformData.create(data).adapter)
-        .to.be.an.instanceOf(WaveformData.adapters.object);
-
-      expect(WaveformData.create(JSON.stringify(data)).adapter)
-        .to.be.an.instanceOf(WaveformData.adapters.object);
-
-      const binaryData = fixtures.getBinaryData({ channels: 2 });
-
-      expect(WaveformData.create(binaryData).adapter)
-        .to.be.an.instanceOf(WaveformData.adapters.arraybuffer);
+      expect(function() {
+        WaveformData.create(JSON.stringify(data));
+      }).to.throw("Could not detect a WaveformData adapter from the input.");
     });
 
-    it("should select the correct adapter based on a given HTTP response", function() {
+    it("should create from a JavaScript object", function() {
+      const data = fixtures.getJSONData({ channels: 1 });
+
+      expect(WaveformData.create(data))
+        .to.be.an.instanceOf(WaveformData);
+    });
+
+    it("should create from an ArrayBuffer containing binary waveform data", function() {
+      const data = fixtures.getBinaryData({ channels: 2 });
+
+      expect(WaveformData.create(data))
+        .to.be.an.instanceOf(WaveformData);
+    });
+
+    it("should not create from an XHR object", function() {
       expect(function() {
         WaveformData.create(new XMLHttpRequest());
       }).to.throw("Could not detect a WaveformData adapter from the input.");
-
-      const data = fixtures.getJSONData({ channels: 1 });
-
-      var jsonAsTextResponse = {
-        response: JSON.stringify(data),
-        responseText: JSON.stringify(data)
-      };
-
-      var jsonAsObjectResponse = {
-        response: data,
-        responseType: "json",
-        responseText: new Error("Accessing this property throws an exception in the browser.")
-      };
-
-      expect(WaveformData.create(jsonAsTextResponse).adapter)
-        .to.be.an.instanceOf(WaveformData.adapters.object);
-
-      expect(WaveformData.create(jsonAsObjectResponse).adapter)
-        .to.be.an.instanceOf(WaveformData.adapters.object);
-
-      const binaryData = fixtures.getBinaryData({ channels: 2 });
-
-      var arrayBufferResponse = {
-        response: binaryData,
-        responseType: "arraybuffer",
-        responseText: new Error("Accessing this property throws an exception in the browser.")
-      };
-
-      expect(WaveformData.create(arrayBufferResponse).adapter)
-        .to.be.an.instanceOf(WaveformData.adapters.arraybuffer);
     });
 
     it("should not build an instance for an unknown version", function() {
@@ -98,7 +70,7 @@ describe("WaveformData", function() {
     beforeEach(function() {
       const data = fixtures.getBinaryData({ channels: 1 });
 
-      instance = new WaveformData(data, WaveformData.adapters.arraybuffer);
+      instance = new WaveformData(data, WaveformData);
     });
 
     it("should enable us to create a valid offset of data", function() {
@@ -306,24 +278,27 @@ describe("WaveformData", function() {
 
       describe("full resample by width", function() {
         it("should resample to 5 elements if a width of 5 is requested", function() {
-          expect(instance.resample({ width: 5 }).adapter).to.have.a.lengthOf(5);
-        });
+          const resampled = instance.resample({ width: 5 });
 
-        it("should resample to an expected duration if a width of 5 is requested", function() {
-          expect(instance.resample({ width: 5 })).to.have.property("duration", expectations.duration);
+          expect(resampled).to.be.an.instanceOf(WaveformData);
+          expect(resampled.length).to.equal(5);
+          expect(resampled.sample_rate).to.equal(instance.sample_rate);
+          expect(resampled.channels).to.equal(instance.channels);
+          expect(resampled.bits).to.equal(8);
+          expect(resampled._adapter.version).to.equal(instance._adapter.version);
         });
       });
 
       // if we double the scale, it should fit in half the previous size (which means 5px)
       describe("full resample by scale", function() {
         it("should downsize the number of data by 2 if we request a half-size scaled resampled waveform", function() {
-          expect(instance.resample({ scale: 1024 }).adapter)
-            .to.have.lengthOf(expectations.resampled_length);
+          expect(instance.resample({ scale: 1024 }).length)
+            .to.equal(expectations.resampled_length);
         });
 
         it("should downsize the duration by 2 if we request a half-size scaled resampled waveform", function() {
-          expect(instance.resample({ scale: 1024 }))
-            .to.have.property("duration", expectations.duration);
+          expect(instance.resample({ scale: 1024 }).duration)
+            .to.equal(expectations.duration);
         });
 
         it("should resample to a set of expected values", function() {
@@ -356,7 +331,7 @@ describe("WaveformData", function() {
         it("should crop the sample count to the defined length option value", function() {
           var data = instance.resample({ scale: 1024, input_index: 1, output_index: 1, width: 3 });
 
-          expect(data.adapter).to.have.a.lengthOf(3);
+          expect(data).to.have.a.lengthOf(3);
         });
       });
     });
@@ -381,11 +356,8 @@ describe("WaveformData", function() {
     });
 
     describe(".adapter", function() {
-      it("should assign the provided argument as this.data", function() {
-        var data = { foo: "bar" };
-
-        // eslint-disable-next-line new-cap
-        expect(new WaveformData.adapter(data)).to.have.property("data", data);
+      it("should not be exposed", function() {
+        expect(instance.adapter).to.not.exist;
       });
     });
   });
@@ -394,7 +366,7 @@ describe("WaveformData", function() {
     beforeEach(function() {
       const data = fixtures.getBinaryData({ channels: 2 });
 
-      instance = new WaveformData(data, WaveformData.adapters.arraybuffer);
+      instance = new WaveformData(data);
     });
 
     it("the default offset should cover the entire waveform duration", function() {
@@ -404,7 +376,7 @@ describe("WaveformData", function() {
     });
 
     describe(".offset()", function() {
-      it("should enable us to create a valid offset of data", function() {
+      it("should create a valid offset", function() {
         // remember, if data length = 10, we have 20 items in the array
         // but it's internal and no one cares about it
         // so we always think in terms of pixel display
@@ -607,11 +579,11 @@ describe("WaveformData", function() {
 
       describe("full resample by width", function() {
         it("should resample to 5 elements if a width of 5 is requested", function() {
-          expect(instance.resample({ width: 5 }).adapter).to.have.a.lengthOf(5);
+          expect(instance.resample({ width: 5 })).to.have.a.lengthOf(5);
         });
 
         it("should resample to an expected duration if a width of 5 is requested", function() {
-          expect(instance.resample({ width: 5 })).to.have.property("duration", expectations.duration);
+          expect(instance.resample({ width: 5 }).duration).equal(expectations.duration);
         });
 
         it("should contain the same number of channels", function() {
@@ -622,7 +594,7 @@ describe("WaveformData", function() {
       // if we double the scale, it should fit in half the previous size (which means 5px)
       describe("full resample by scale", function() {
         it("should downsize the number of data by 2 if we request a half-size scaled resampled waveform", function() {
-          expect(instance.resample({ scale: 1024 }).adapter)
+          expect(instance.resample({ scale: 1024 }))
             .to.have.lengthOf(expectations.resampled_length);
         });
 
@@ -664,7 +636,7 @@ describe("WaveformData", function() {
         it("should crop the sample count to the defined length option value", function() {
           var data = instance.resample({ scale: 1024, input_index: 1, output_index: 1, width: 3 });
 
-          expect(data.adapter).to.have.a.lengthOf(3);
+          expect(data).to.have.a.lengthOf(3);
         });
       });
     });
@@ -689,11 +661,8 @@ describe("WaveformData", function() {
     });
 
     describe(".adapter", function() {
-      it("should assign the provided argument as this.data", function() {
-        var data = { foo: "bar" };
-
-        // eslint-disable-next-line new-cap
-        expect(new WaveformData.adapter(data)).to.have.property("data", data);
+      it("should not be exposed", function() {
+        expect(instance.adapter).to.not.exist;
       });
     });
   });

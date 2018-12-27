@@ -2,29 +2,18 @@
 
 /* globals beforeEach, context, describe, it */
 
-var WaveformData = require("../../../waveform-data");
-var constructor = WaveformData.adapters.arraybuffer;
+var WaveformDataArrayBufferAdapter = require("../../../lib/adapters/arraybuffer");
 var fixtures = require("../../fixtures");
 var expect = require("chai").expect;
 
-describe("WaveformData ArrayBuffer Adapter", function() {
+describe("WaveformDataArrayBufferAdapter", function() {
   var instance;
-
-  it("should have the `fromResponseData` static property", function() {
-    expect(constructor.fromResponseData).to.be.a("function");
-  });
-
-  it("should return a WaveformDataAdapter instance from `fromResponseData` factory", function() {
-    const data = fixtures.getBinaryData({ channels: 1 });
-
-    expect(constructor.fromResponseData(data)).to.be.an("object");
-  });
 
   context("with a single channel data file", function() {
     beforeEach(function() {
       const data = fixtures.getBinaryData({ channels: 1 });
 
-      instance = constructor.fromResponseData(data);
+      instance = new WaveformDataArrayBufferAdapter(data);
     });
 
     it("should return the data version number", function() {
@@ -70,7 +59,7 @@ describe("WaveformData ArrayBuffer Adapter", function() {
     beforeEach(function() {
       const data = fixtures.getBinaryData({ channels: 2 });
 
-      instance = constructor.fromResponseData(data);
+      instance = new WaveformDataArrayBufferAdapter(data);
     });
 
     it("should return the data version number", function() {

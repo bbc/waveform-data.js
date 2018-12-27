@@ -2,30 +2,18 @@
 
 /* globals beforeEach, context, describe, it */
 
-var WaveformData = require("../../../waveform-data");
-var constructor = WaveformData.adapters.object;
+var WaveformDataObjectAdapter = require("../../../lib/adapters/object");
 var fixtures = require("../../fixtures");
 var expect = require("chai").expect;
 
-describe("WaveformData Object Adapter", function() {
+describe("WaveformDataObjectAdapter", function() {
   var instance;
-
-  it("should have the `fromResponseData` static property", function() {
-    expect(constructor.fromResponseData).to.be.a("function");
-  });
-
-  it("should return a WaveformDataAdapter instance from `fromResponseData` factory", function() {
-    const data = fixtures.getJSONData({ channels: 1 });
-
-    expect(constructor.fromResponseData(data)).to.be.an("object");
-    expect(constructor.fromResponseData(JSON.stringify(data))).to.be.an("object");
-  });
 
   context("with a single channel data file", function() {
     beforeEach(function() {
       const data = fixtures.getJSONData({ channels: 1 });
 
-      instance = constructor.fromResponseData(data);
+      instance = new WaveformDataObjectAdapter(data);
     });
 
     it("should return the data version number", function() {
@@ -71,7 +59,7 @@ describe("WaveformData Object Adapter", function() {
     beforeEach(function() {
       const data = fixtures.getJSONData({ channels: 2 });
 
-      instance = constructor.fromResponseData(data);
+      instance = new WaveformDataObjectAdapter(data);
     });
 
     it("should return the data version number", function() {
