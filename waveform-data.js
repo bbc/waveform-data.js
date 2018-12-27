@@ -2,6 +2,6 @@
 
 var WaveformData = require("./lib/core");
 
-WaveformData.adapters = require("./lib/adapters");
+WaveformData.createFromAudio = require("./lib/builders/webaudio");
 
 module.exports = WaveformData;

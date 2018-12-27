@@ -2,8 +2,7 @@
 
 /* globals describe, it, beforeEach, DOMException, __dirname */
 
-var webAudioBuilder = require("../../../lib/builders/webaudio");
-var AudioWaveform = require("../../../waveform-data");
+var WaveformData = require("../../../waveform-data");
 
 var chai = require("chai");
 var sinon = require("sinon");
@@ -13,7 +12,7 @@ var expect = chai.expect;
 
 chai.use(sinonChai);
 
-describe("WaveformData WebAudio builder", function() {
+describe("WaveformData", function() {
   var sampleBuffer;
   var AudioContext = window.AudioContext || window.webkitAudioContext;
   var audioContext = new AudioContext();
@@ -25,15 +24,15 @@ describe("WaveformData WebAudio builder", function() {
     });
   });
 
-  describe("Constructor", function() {
+  describe(".createFromAudio", function() {
     it("should throw if audioContext is not the first argument", function() {
       expect(function() {
-        webAudioBuilder(new ArrayBuffer(), sinon.spy());
+        WaveformData.createFromAudio(new ArrayBuffer(), sinon.spy());
       }).to.throw(/AudioContext/);
     });
 
     it("should return an error if the audio buffer is invalid", function(done) {
-      webAudioBuilder(audioContext, new ArrayBuffer(1024), function(err, waveform) {
+      WaveformData.createFromAudio(audioContext, new ArrayBuffer(1024), function(err, waveform) {
         expect(err).to.be.an.instanceOf(DOMException);
         expect(waveform).to.not.be.ok;
 
@@ -42,9 +41,9 @@ describe("WaveformData WebAudio builder", function() {
     });
 
     it("should return a valid waveform in case of success", function(done) {
-      var result = webAudioBuilder(audioContext, sampleBuffer, function(err, waveform) {
+      WaveformData.createFromAudio(audioContext, sampleBuffer, function(err, waveform) {
         expect(err).to.not.be.ok;
-        expect(waveform).to.be.an.instanceOf(AudioWaveform);
+        expect(waveform).to.be.an.instanceOf(WaveformData);
         expect(waveform.channels).to.equal(1);
 
         // file length: 88200 samples
@@ -53,18 +52,14 @@ describe("WaveformData WebAudio builder", function() {
         expect(waveform.length).to.equal(173);
         done();
       });
-
-      if (result && "then" in result) {
-        result.catch(console.error.message);
-      }
     });
 
     it("should adjust the length of the waveform when using a different scale", function(done) {
       var options = { scale: 128 };
 
-      var result = webAudioBuilder(audioContext, sampleBuffer, options, function(err, waveform) {
+      WaveformData.createFromAudio(audioContext, sampleBuffer, options, function(err, waveform) {
         expect(err).to.not.be.ok;
-        expect(waveform).to.be.an.instanceOf(AudioWaveform);
+        expect(waveform).to.be.an.instanceOf(WaveformData);
         expect(waveform).to.have.property("offset");
         expect(waveform.channels).to.equal(1);
 
@@ -74,14 +69,10 @@ describe("WaveformData WebAudio builder", function() {
         expect(waveform.length).to.equal(690);
         done();
       });
-
-      if (result && "then" in result) {
-        result.catch(console.error.message);
-      }
     });
 
     it("should return waveform data points", function(done) {
-      var result = webAudioBuilder(audioContext, sampleBuffer, function(err, waveform) {
+      WaveformData.createFromAudio(audioContext, sampleBuffer, function(err, waveform) {
         expect(err).to.not.be.ok;
 
         expect(waveform.channels).to.equal(1);
@@ -93,16 +84,12 @@ describe("WaveformData WebAudio builder", function() {
         expect(waveform.channel(0).max_sample(waveform.offset_length - 1)).to.equal(22);
         done();
       });
-
-      if (result && "then" in result) {
-        result.catch(console.error.message);
-      }
     });
 
     it("should return correctly scaled waveform data points", function(done) {
       var options = { amplitude_scale: 2.0 };
 
-      var result = webAudioBuilder(audioContext, sampleBuffer, options, function(err, waveform) {
+      WaveformData.createFromAudio(audioContext, sampleBuffer, options, function(err, waveform) {
         expect(err).to.not.be.ok;
 
         expect(waveform.channel(0).min_sample(0)).to.equal(-45);
@@ -112,16 +99,12 @@ describe("WaveformData WebAudio builder", function() {
         expect(waveform.channel(0).max_sample(waveform.length - 1)).to.equal(44);
         done();
       });
-
-      if (result && "then" in result) {
-        result.catch(console.error.message);
-      }
     });
 
     it("should return multiple channels of waveform data points", function(done) {
       var options = { split_channels: true };
 
-      var result = webAudioBuilder(audioContext, sampleBuffer, options, function(err, waveform) {
+      WaveformData.createFromAudio(audioContext, sampleBuffer, options, function(err, waveform) {
         expect(err).to.not.be.ok;
 
         expect(waveform.channels).to.equal(4);
@@ -151,17 +134,13 @@ describe("WaveformData WebAudio builder", function() {
         expect(waveform.channel(3).max_sample(waveform.length - 1)).to.equal(0);
         done();
       });
-
-      if (result && "then" in result) {
-        result.catch(console.error.message);
-      }
     });
 
     it("should return an error if the scale_adjuster parameter is present", function() {
       var options = { scale_adjuster: 127 };
 
       expect(function() {
-        webAudioBuilder(audioContext, sampleBuffer, options);
+        WaveformData.createFromAudio(audioContext, sampleBuffer, options);
       }).to.throw(Error, /scale_adjuster/);
     });
   });
