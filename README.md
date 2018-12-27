@@ -132,6 +132,7 @@ fetch('https://example.com/audio/track.ogg')
 
 ```javascript
 const waveform = WaveformData.create(raw_data);
+const channel = waveform.channel(0);
 
 const interpolateHeight = (total_height) => {
   const amplitude = 256;
@@ -143,12 +144,12 @@ const ctx = canvas.getContext('2d');
 ctx.beginPath();
 
 // from 0 to 100
-waveform.min.forEach((val, x) => {
+channel.min_array().forEach((val, x) => {
   ctx.lineTo(x + 0.5, y(val) + 0.5));
 });
 
 // then looping back from 100 to 0
-waveform.max.reverse().forEach((val, x) => {
+channel.max_array().reverse().forEach((val, x) => {
   ctx.lineTo((waveform.offset_length - x) + 0.5, y(val) + 0.5);
 });
 
@@ -161,21 +162,25 @@ ctx.fill();
 
 ```javascript
 const waveform = WaveformData.create(raw_data);
+const channel = waveform.channel(0);
 const layout = d3.select(this).select('svg');
 const x = d3.scale.linear();
 const y = d3.scale.linear();
 const offsetX = 100;
 
-x.domain([0, waveform.adapter.length]).rangeRound([0, 1024]);
-y.domain([d3.min(waveform.min), d3.max(waveform.max)]).rangeRound([offsetX, -offsetX]);
+const min = channel.min_array();
+const max = channel.max_array();
+
+x.domain([0, waveform.length]).rangeRound([0, 1024]);
+y.domain([d3.min(min), d3.max(max)]).rangeRound([offsetX, -offsetX]);
 
 var area = d3.svg.area()
   .x((d, i) => x(i))
-  .y0((d, i) => y(waveform.min[i]))
+  .y0((d, i) => y(min[i]))
   .y1((d, i) => y(d));
 
 graph.select('path')
-  .datum(waveform.max)
+  .datum(max)
   .attr('transform', () => `translate(0, ${offsetX})`)
   .attr('d', area);
 ```
