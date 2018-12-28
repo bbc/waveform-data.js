@@ -140,36 +140,37 @@ describe("WaveformData Segment object", function() {
 
   it("should return the minimum values visible in the offset", function() {
     instance.set_segment(3, 6);
-    expect(instance.segments.default.min).to.have.lengthOf(3);
-    expect(instance.segments.default.min[0]).to.equal(instance.channel(0).min_sample(3));
-    expect(instance.segments.default.min[2]).to.equal(instance.channel(0).min_sample(5));
+    expect(instance.segments.default.min_array()).to.have.lengthOf(3);
+
+    expect(instance.segments.default.min_array()[0]).to.equal(instance.channel(0).min_sample(3));
+    expect(instance.segments.default.min_array()[2]).to.equal(instance.channel(0).min_sample(5));
 
     instance.offset(5, 9);
-    expect(instance.segments.default.min).to.have.lengthOf(1);
-    expect(instance.segments.default.min[0]).to.equal(instance.channel(0).min_sample(5));
+    expect(instance.segments.default.min_array()).to.have.lengthOf(1);
+    expect(instance.segments.default.min_array()[0]).to.equal(instance.channel(0).min_sample(5));
 
     instance.offset(7, 8);
-    expect(instance.segments.default.min).to.be.empty;
+    expect(instance.segments.default.min_array()).to.be.empty;
 
     instance.offset(4, 5);
-    expect(instance.segments.default.min).to.have.lengthOf(1);
-    expect(instance.segments.default.min[0]).to.equal(instance.channel(0).min_sample(4));
+    expect(instance.segments.default.min_array()).to.have.lengthOf(1);
+    expect(instance.segments.default.min_array()[0]).to.equal(instance.channel(0).min_sample(4));
   });
 
   it("should return the maximum values visible in the offset", function() {
     instance.set_segment(3, 6);
-    expect(instance.segments.default.max[0]).to.equal(instance.channel(0).max_sample(3));
-    expect(instance.segments.default.max[2]).to.equal(instance.channel(0).max_sample(5));
+    expect(instance.segments.default.max_array()[0]).to.equal(instance.channel(0).max_sample(3));
+    expect(instance.segments.default.max_array()[2]).to.equal(instance.channel(0).max_sample(5));
 
     instance.offset(5, 9);
-    expect(instance.segments.default.max).to.have.lengthOf(1);
-    expect(instance.segments.default.max[0]).to.equal(instance.channel(0).max_sample(5));
+    expect(instance.segments.default.max_array()).to.have.lengthOf(1);
+    expect(instance.segments.default.max_array()[0]).to.equal(instance.channel(0).max_sample(5));
 
     instance.offset(7, 8);
-    expect(instance.segments.default.max).to.have.lengthOf(0);
+    expect(instance.segments.default.max_array()).to.have.lengthOf(0);
 
     instance.offset(4, 5);
-    expect(instance.segments.default.max).to.have.lengthOf(1);
-    expect(instance.segments.default.max[0]).to.equal(instance.channel(0).max_sample(4));
+    expect(instance.segments.default.max_array()).to.have.lengthOf(1);
+    expect(instance.segments.default.max_array()[0]).to.equal(instance.channel(0).max_sample(4));
   });
 });
