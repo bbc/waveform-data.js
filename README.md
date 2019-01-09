@@ -144,7 +144,7 @@ ctx.beginPath();
 
 // from 0 to 100
 waveform.min.forEach((val, x) => {
-  ctx.lineTo(x + 0.5, y(val) + 0.5));
+  ctx.lineTo(x + 0.5, y(val) + 0.5);
 });
 
 // then looping back from 100 to 0
