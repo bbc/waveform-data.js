@@ -128,6 +128,18 @@ fetch('https://example.com/audio/track.ogg')
   });
 ```
 
+### With decoded AudioBuffer
+```javascript
+const webAudioBuilder = require('waveform-data/webaudio');
+const audioContext = new AudioContext();
+
+audioContext.decodeAudioData(arrayBuffer, (audioBuffer) => {
+  webAudioBuilder.fromAudioBuffer(audioBuffer, {}, (err, waveform) => {
+      console.log('waveform', waveform);
+  });
+})
+```
+
 ## Drawing in canvas
 
 ```javascript
