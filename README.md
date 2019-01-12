@@ -123,12 +123,17 @@ fetch('https://example.com/waveforms/track.json')
 
 You can also create waveform data from audio in the browser, using the
 [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API).
-However, note that this requires downloading the entire audio file to the
-browser, so is less efficient than pre-processing the audio server-side, using
-[audiowaveform](https://github.com/bbc/audiowaveform). The audio will be
-processed using a
+
+As input, you can either use an `ArrayBuffer` containing the original encoded
+audio (e.g., in MP3, Ogg Vorbis, or WAV format), or an `AudioBuffer` containing
+the decoded audio samples.
+
+Note that this approach is generally less efficient than pre-processing the
+audio server-side, using [audiowaveform](https://github.com/bbc/audiowaveform).
+To avoid blocking the browser's UI thread, he audio will be processed using a
 [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers),
-if supported by the browser, to avoid blocking the browser's UI thread.
+if supported by the browser.
+
 
 ```javascript
 const audioContext = new AudioContext();
@@ -137,6 +142,23 @@ fetch('https://example.com/audio/track.ogg')
   .then(response => response.arrayBuffer())
   .then(buffer => {
     WaveformData.createFromAudio(audioContext, buffer, (err, waveform) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+
+      console.log(`Waveform has ${waveform.channels} channels`);
+      console.log(`Waveform has length ${waveform.length} points`);
+    });
+  });
+```
+
+```javascript
+const audioContext = new AudioContext();
+
+audioContext.decodeAudioData(arrayBuffer)
+  .then((audioBuffer) => {
+    WaveformData.createFromAudio(audioBuffer, (err, waveform) => {
       if (err) {
         console.error(err);
         return;
