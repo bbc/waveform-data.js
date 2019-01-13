@@ -11,7 +11,7 @@
     "test-browsers": "xvfb-maybe ./node_modules/karma/bin/karma start",
     "test-node": "nyc --lines 0 mocha -R dot 'test/unit/*.js' 'test/unit/adapters/*.js'",
     "posttest-node": "npm run lint",
-    "lint": "eslint Gruntfile.js karma.conf.js lib test",
+    "lint": "eslint karma.conf.js lib test",
     "test-watch": "xvfb-maybe ./node_modules/karma/bin/karma start --no-single-run",
     "prepublish": "npm run build"
   },
