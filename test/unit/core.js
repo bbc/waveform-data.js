@@ -73,44 +73,6 @@ describe("WaveformData", function() {
       instance = new WaveformData(data, WaveformData);
     });
 
-    it("should enable us to create a valid offset of data", function() {
-      expect(instance.offset_length).to.equal(expectations.length);
-      expect(instance.offset_end).to.equal(expectations.length);
-
-      // remember, if data length = 10, we have 20 items in the array
-      // but it's internal and no one cares about it
-      // so we always think in terms of pixel display
-
-      // regular usage
-      instance.offset(2, 5); // last offset is 2 + 5 = 7
-      expect(instance.offset_length).to.equal(3);
-      expect(instance.offset_end).to.equal(5);
-
-      // ending after the length
-      instance.offset(5, 15);
-      expect(instance.offset_length).to.equal(5);  // because index 5 to 9 [total is 0 -> 9]
-      expect(instance.offset_end).to.equal(10);
-
-      // negative start and ends
-      expect(function() {
-        instance.offset(0, -5);
-      }).to.throw(Error);
-
-      expect(function() {
-        instance.offset(-5, 25);
-      }).to.throw(Error);
-
-      // starting after the length
-      expect(function() {
-        instance.offset(15, 25);
-      }).to.throw(Error);
-
-      // ending before the beginning (if you think the second argument is length)
-      expect(function() {
-        instance.offset(15, 5);
-      }).to.throw(Error);
-    });
-
     describe(".channels", function() {
       it("should return the correct number of channels", function() {
         expect(instance.channels).to.equal(1);
@@ -133,23 +95,33 @@ describe("WaveformData", function() {
       });
     });
 
-    describe(".min", function() {
-      beforeEach(function() {
-        instance.offset(2, 5);
+    describe("WaveformDataChannel", function() {
+      describe(".min_array()", function() {
+        it("should return an array containing the waveform minimum values", function() {
+          expect(instance.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+        });
       });
 
-      it("should return the 3 minimum values, at index 5, 7 and 9", function() {
-        expect(instance.channel(0).min_array()).to.deep.equal([0, -5, -5]);
-      });
-    });
-
-    describe(".max", function() {
-      beforeEach(function() {
-        instance.offset(2, 5);
+      describe(".max_array()", function() {
+        it("should return an array containing the waveform maximum values", function() {
+          expect(instance.channel(0).max_array()).to.deep.equal([0, 10, 0, 7, 7, 0, 0, 0, 0, 2]);
+        });
       });
 
-      it("should return the 3 minimum values, at index 6, 8 and 10", function() {
-        expect(instance.channel(0).max_array()).to.deep.equal([0, 7, 7]);
+      describe(".min_sample()", function() {
+        it("should return the correct minimum waveform value for a given index", function() {
+          expect(instance.channel(0).min_sample(0)).to.equal(0);
+          expect(instance.channel(0).min_sample(4)).to.equal(-5);
+          expect(instance.channel(0).min_sample(9)).to.equal(-2);
+        });
+      });
+
+      describe(".max_sample()", function() {
+        it("should return the correct maximum waveform value for a given index", function() {
+          expect(instance.channel(0).max_sample(0)).to.equal(0);
+          expect(instance.channel(0).max_sample(4)).to.equal(7);
+          expect(instance.channel(0).max_sample(9)).to.equal(2);
+        });
       });
     });
 
@@ -157,32 +129,11 @@ describe("WaveformData", function() {
       it("should return the length of the waveform", function() {
         expect(instance.length).to.equal(expectations.length);
       });
-
-      it("should return the length of the waveform when an offset is set", function() {
-        instance.offset(2, 5);
-        expect(instance.length).to.equal(expectations.length);
-      });
     });
 
     describe(".duration", function() {
       it("should return the duration of the media when no offset is set", function() {
         expect(instance.duration).to.equal(expectations.duration);
-      });
-
-      it("should return the duration of the media even when an offset is set", function() {
-        instance.offset(2, 5);
-        expect(instance.duration).to.equal(expectations.duration);
-      });
-    });
-
-    describe(".offset_duration", function() {
-      it("should return the duration of the media when no offset is set", function() {
-        expect(instance.offset_duration).to.equal(expectations.duration);
-      });
-
-      it("should return the duration of the offset even when an offset is set", function() {
-        instance.offset(2, 5);
-        expect(instance.offset_duration).to.equal(0.032);   // 3 * 512 / 48000
       });
     });
 
@@ -208,47 +159,6 @@ describe("WaveformData", function() {
       it("should compute the number of seconds per pixel for this set of data", function() {
         expect(instance.seconds_per_pixel).to.equal(0.010666666666666666); // 512 / 48000
       });
-    });
-
-    describe(".in_offset()", function() {
-      it("should consider a pixel index of 0 to be in the offset, when not set", function() {
-        expect(instance.in_offset(0)).to.be.true;
-      });
-
-      it("should consider a pixel index of 9 to be in the offset, when not set", function() {
-        expect(instance.in_offset(9)).to.be.true;
-      });
-
-      it("should consider a pixel index of 10 not to be in the offset", function() {
-        expect(instance.in_offset(10)).to.be.false;
-      });
-
-      it("should consider a pixel index of 4 to be in an offset of 4 to 6", function() {
-        instance.offset(4, 6);
-        expect(instance.in_offset(4)).to.be.true;
-      });
-
-      it("should consider a pixel index of 5 to be in an offset of 4 to 6", function() {
-        instance.offset(4, 6);
-        expect(instance.in_offset(5)).to.be.true;
-      });
-
-      it("should consider a pixel index of 6 not to be in an offset of 4 to 6", function() {
-        instance.offset(4, 6);
-        expect(instance.in_offset(6)).to.be.false;
-      });
-    });
-
-    it("should return the correct minimum waveform value for a given index", function() {
-      expect(instance.channel(0).min_sample(0)).to.equal(0);
-      expect(instance.channel(0).min_sample(4)).to.equal(-5);
-      expect(instance.channel(0).min_sample(9)).to.equal(-2);
-    });
-
-    it("should return the correct maximum waveform value for a given index", function() {
-      expect(instance.channel(0).max_sample(0)).to.equal(0);
-      expect(instance.channel(0).max_sample(4)).to.equal(7);
-      expect(instance.channel(0).max_sample(9)).to.equal(2);
     });
 
     describe(".resample()", function() {
@@ -336,25 +246,6 @@ describe("WaveformData", function() {
       });
     });
 
-    describe(".offset()", function() {
-      it("should throw an exception if start is negative", function() {
-        expect(function() {
-          instance.offset(-1, 10);
-        }).to.throw(Error);
-      });
-
-      it("should throw an exception if end is negative", function() {
-        expect(function() {
-          instance.offset(1, -1);
-        }).to.throw(Error);
-      });
-
-      it("should allow a zero offset length", function() {
-        instance.offset(0, 0);
-        expect(instance.offset_length).to.equal(0);
-      });
-    });
-
     describe(".adapter", function() {
       it("should not be exposed", function() {
         expect(instance.adapter).to.not.exist;
@@ -367,49 +258,6 @@ describe("WaveformData", function() {
       const data = fixtures.getBinaryData({ channels: 2 });
 
       instance = new WaveformData(data);
-    });
-
-    it("the default offset should cover the entire waveform duration", function() {
-      expect(instance.offset_start).to.equal(0);
-      expect(instance.offset_end).to.equal(expectations.length);
-      expect(instance.offset_length).to.equal(expectations.length);
-    });
-
-    describe(".offset()", function() {
-      it("should create a valid offset", function() {
-        // remember, if data length = 10, we have 20 items in the array
-        // but it's internal and no one cares about it
-        // so we always think in terms of pixel display
-
-        // regular usage
-        instance.offset(2, 5); // last offset is 2 + 5 = 7
-        expect(instance.offset_length).to.equal(3);
-        expect(instance.offset_end).to.equal(5);
-
-        // ending after the length
-        instance.offset(5, 15);
-        expect(instance.offset_length).to.equal(5);  // because index 5 to 9 [total is 0 -> 9]
-        expect(instance.offset_end).to.equal(10);
-
-        // negative start and ends
-        expect(function() {
-          instance.offset(0, -5);
-        }).to.throw(Error);
-
-        expect(function() {
-          instance.offset(-5, 25);
-        }).to.throw(Error);
-
-        // starting after the length
-        expect(function() {
-          instance.offset(15, 25);
-        }).to.throw(Error);
-
-        // ending before the beginning (if you think the second argument is length)
-        expect(function() {
-          instance.offset(15, 5);
-        }).to.throw(Error);
-      });
     });
 
     describe(".channels", function() {
@@ -433,49 +281,51 @@ describe("WaveformData", function() {
           instance.channel(-1);
         }).to.throw(RangeError);
       });
-    });
 
-    describe(".min", function() {
-      beforeEach(function() {
-        instance.offset(2, 5);
-      });
+      describe("WaveformDataChannel", function() {
+        describe(".min_array()", function() {
+          it("should return an array containing the waveform minimum values", function() {
+            expect(instance.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+            expect(instance.channel(1).min_array()).to.deep.equal([0, -8, -2, -6, -6, 0, 0, 0, 0, -3]);
+          });
+        });
 
-      it("should return the 3 minimum values within the offset range", function() {
-        expect(instance.channel(0).min_array()).to.deep.equal([0, -5, -5]);
-        expect(instance.channel(1).min_array()).to.deep.equal([-2, -6, -6]);
-      });
-    });
+        describe(".max_array()", function() {
+          it("should return an array containing the waveform maximum values", function() {
+            expect(instance.channel(0).max_array()).to.deep.equal([0, 10, 0, 7, 7, 0, 0, 0, 0, 2]);
+            expect(instance.channel(1).max_array()).to.deep.equal([0, 8, 2, 3, 3, 0, 0, 0, 0, 3]);
+          });
+        });
 
-    describe(".max", function() {
-      beforeEach(function() {
-        instance.offset(2, 5);
-      });
+        describe(".min_sample()", function() {
+          it("should return the proper minimum value for a given pixel index", function() {
+            expect(instance.channel(0).min_sample(0)).to.equal(0);
+            expect(instance.channel(0).min_sample(4)).to.equal(-5);
+            expect(instance.channel(0).min_sample(9)).to.equal(-2);
 
-      it("should return the 3 minimum values within the offset range", function() {
-        expect(instance.channel(0).max_array()).to.deep.equal([0, 7, 7]);
-        expect(instance.channel(1).max_array()).to.deep.equal([2, 3, 3]);
+            expect(instance.channel(1).min_sample(0)).to.equal(0);
+            expect(instance.channel(1).min_sample(4)).to.equal(-6);
+            expect(instance.channel(1).min_sample(9)).to.equal(-3);
+          });
+        });
+
+        describe(".max_sample()", function() {
+          it("should return the proper maximum value for a given pixel index", function() {
+            expect(instance.channel(0).max_sample(0)).to.equal(0);
+            expect(instance.channel(0).max_sample(4)).to.equal(7);
+            expect(instance.channel(0).max_sample(9)).to.equal(2);
+
+            expect(instance.channel(1).max_sample(0)).to.equal(0);
+            expect(instance.channel(1).max_sample(4)).to.equal(3);
+            expect(instance.channel(1).max_sample(9)).to.equal(3);
+          });
+        });
       });
     });
 
     describe(".duration", function() {
       it("should return the duration of the media when no offset is set", function() {
         expect(instance.duration).to.equal(expectations.duration);
-      });
-
-      it("should return the duration of the media even when an offset is set", function() {
-        instance.offset(2, 5);
-        expect(instance.duration).to.equal(expectations.duration);
-      });
-    });
-
-    describe(".offset_duration", function() {
-      it("should return the duration of the media when no offset is set", function() {
-        expect(instance.offset_duration).to.equal(expectations.duration);
-      });
-
-      it("should return the duration of the offset even when an offset is set", function() {
-        instance.offset(2, 5);
-        expect(instance.offset_duration).to.equal(0.032);   // 3 * 512 / 48000
       });
     });
 
@@ -501,55 +351,6 @@ describe("WaveformData", function() {
       it("should compute the number of seconds per pixel for this set of data", function() {
         expect(instance.seconds_per_pixel).to.equal(0.010666666666666666);    // 512 / 48000
       });
-    });
-
-    describe(".in_offset()", function() {
-      it("should consider a pixel index of 0 to be in the offset, when not set", function() {
-        expect(instance.in_offset(0)).to.be.true;
-      });
-
-      it("should consider a pixel index of 9 to be in the offset, when not set", function() {
-        expect(instance.in_offset(9)).to.be.true;
-      });
-
-      it("should consider a pixel index of 10 not to be in the offset", function() {
-        expect(instance.in_offset(10)).to.be.false;
-      });
-
-      it("should consider a pixel index of 4 to be in an offset of 4 to 6", function() {
-        instance.offset(4, 6);
-        expect(instance.in_offset(4)).to.be.true;
-      });
-
-      it("should consider a pixel index of 5 to be in an offset of 4 to 6", function() {
-        instance.offset(4, 6);
-        expect(instance.in_offset(5)).to.be.true;
-      });
-
-      it("should consider a pixel index of 6 not to be in an offset of 4 to 6", function() {
-        instance.offset(4, 6);
-        expect(instance.in_offset(6)).to.be.false;
-      });
-    });
-
-    it("should return the proper minimum value for a given pixel index", function() {
-      expect(instance.channel(0).min_sample(0)).to.equal(0);
-      expect(instance.channel(0).min_sample(4)).to.equal(-5);
-      expect(instance.channel(0).min_sample(9)).to.equal(-2);
-
-      expect(instance.channel(1).min_sample(0)).to.equal(0);
-      expect(instance.channel(1).min_sample(4)).to.equal(-6);
-      expect(instance.channel(1).min_sample(9)).to.equal(-3);
-    });
-
-    it("should return the proper maximum value for a given pixel index", function() {
-      expect(instance.channel(0).max_sample(0)).to.equal(0);
-      expect(instance.channel(0).max_sample(4)).to.equal(7);
-      expect(instance.channel(0).max_sample(9)).to.equal(2);
-
-      expect(instance.channel(1).max_sample(0)).to.equal(0);
-      expect(instance.channel(1).max_sample(4)).to.equal(3);
-      expect(instance.channel(1).max_sample(9)).to.equal(3);
     });
 
     describe(".resample()", function() {
@@ -641,25 +442,6 @@ describe("WaveformData", function() {
       });
     });
 
-    describe(".offset()", function() {
-      it("should throw an exception if start is negative", function() {
-        expect(function() {
-          instance.offset(-1, 10);
-        }).to.throw(Error);
-      });
-
-      it("should throw an exception if end is negative", function() {
-        expect(function() {
-          instance.offset(1, -1);
-        }).to.throw(Error);
-      });
-
-      it("should allow a zero offset length", function() {
-        instance.offset(0, 0);
-        expect(instance.offset_length).to.equal(0);
-      });
-    });
-
     describe(".adapter", function() {
       it("should not be exposed", function() {
         expect(instance.adapter).to.not.exist;
@@ -699,7 +481,7 @@ describe("WaveformData", function() {
     });
 
     it("should return a time of 0.010666666666666666 seconds for a given pixel index of 1", function() {
-      expect(instance.time(1)).to.equal(0.010666666666666666);     // 1 * 512 / 48000
+      expect(instance.time(1)).to.equal(0.010666666666666666); // 1 * 512 / 48000
     });
   });
 });
