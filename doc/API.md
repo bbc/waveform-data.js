@@ -1,8 +1,8 @@
-# API documentation
+# waveform-data.js API documentation
 
 * [WaveformData](#waveformdata)
   * [.create](#createdata)
-  * [.createFromAudio](#createfromaudioaudiocontext-audiodata-options-callback)
+  * [.createFromAudio](#createfromaudiooptions-callback)
   * [.sample_rate](#sample_rate)
   * [.samples_per_pixel](#samples_per_pixel)
   * [.seconds_per_pixel](#seconds_per_pixel)
@@ -23,8 +23,11 @@
 ## WaveformData
 
 This is the main object you use to interact with the waveform data. It provides
-access to the raw waveform data points and allows you to resample the data to
+access to the waveform data points and allows you to resample the data to
 display the waveform at zoom levels or fit to a given width.
+
+It also allows you to create waveform data from audio content using the Web
+Audio API.
 
 ### .create(data)
 
@@ -37,9 +40,9 @@ for details.
 
 #### Arguments
 
-| Name | Type                 |
-| ---- | -------------------- |
-| data | ArrayBuffer | Object |
+| Name   | Type                                                                                                                     |
+| ------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `data` | [`ArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) | `Object` |
 
 #### Examples
 
@@ -72,23 +75,33 @@ fetch('http://example.com/waveforms/track.json')
 Note that previous (v1.x) versions of **waveform-data.js** would accept JSON
 strings as input, but this is not supported from v2.0 onwards.
 
-### .createFromAudio(audioContext, audioData, [options], callback)
+### .createFromAudio(options, callback)
 
 Creates a [`WaveformData`](#waveformdata) object from audio using the Web
 Audio API.
 
 #### Arguments
 
-| Name                    | Type                           |
-| ----------------------- | ------------------------------ |
-| audioContext            | AudioContext                   |
-| audioData               | Buffer                         |
-| options.scale           | Number (integer, default: 512) |
-| options.amplitude_scale | Number (default: 1.0)          |
-| options.split_channels  | Boolean (default: false)       |
-| callback                | Function                       |
+| Name        | Type                 |
+| ----------- | -------------------- |
+| `options`   | `Object` (see below) |
+| `callback`  | Function             |
 
-#### Example
+#### Options
+
+| Name              | Type                                                                                                          |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- |
+| `audio_context`   | [`AudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext)                               |
+| `array_buffer`    | [`ArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) |
+| `audio_buffer`    | [`AudioBuffer`](https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer)                                 |
+| `scale`           | Number (integer, default: 512)                                                                                |
+| `amplitude_scale` | Number (default: 1.0)                                                                                         |
+| `split_channels`  | Boolean (default: false)                                                                                      |
+
+#### Examples
+
+To create a [`WaveformData`](#waveformdata) object from audio content in an
+[`ArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer):
 
 ```javascript
 const audioContext = new AudioContext();
@@ -96,9 +109,13 @@ const audioContext = new AudioContext();
 fetch('https://example.com/audio/track.ogg')
   .then(response => response.arrayBuffer())
   .then(buffer => {
-    const options = { scale: 512 };
+    const options = {
+      audio_context: audioContext,
+      array_buffer: buffer,
+      scale: 512
+    };
 
-    WaveformData.createFromAudio(audioContext, buffer, options, (err, waveform) => {
+    WaveformData.createFromAudio(options, (err, waveform) => {
       if (err) {
         console.error(err);
         return;
@@ -110,6 +127,31 @@ fetch('https://example.com/audio/track.ogg')
   });
 ```
 
+To create a [`WaveformData`](#waveformdata) object from an
+[`AudioBuffer`](https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer):
+
+```javascript
+const audioContext = new AudioContext();
+const sampleRate = audioContext.sampleRate;
+const audioBuffer = audioContext.createBuffer(2, sampleRate * 4, sampleRate);
+
+// TODO: Fill audioBuffer with audio content (4 seconds)
+I
+const options = {
+  audio_buffer: audioBuffer
+};
+
+WaveformData.createFromAudio(options, (err, waveform) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+
+  console.log(`Waveform has ${waveform.channels} channels`);
+  console.log(`Waveform has length ${waveform.length} points`);
+});
+```
+
 ### .sample_rate
 
 Returns the sample rate of the original audio, in Hz.
@@ -119,7 +161,7 @@ Returns the sample rate of the original audio, in Hz.
 ```javascript
 const waveform = WaveformData.create(buffer);
 
-console.log(waveform.sample_rate); // 44100
+console.log(waveform.sample_rate); // -> 44100
 ```
 
 ### .samples_per_pixel
@@ -133,7 +175,7 @@ more zoomed out).
 ```javascript
 const waveform = WaveformData.create(buffer);
 
-console.log(waveform.samples_per_pixel); // 512
+console.log(waveform.samples_per_pixel); // -> 512
 ```
 
 ### .seconds_per_pixel
@@ -145,7 +187,7 @@ Returns the amount of time (in seconds) represented by a single pixel.
 ```javascript
 var waveform = WaveformData.create(buffer);
 
-console.log(waveform.seconds_per_pixel); // 0.010666666666666666
+console.log(waveform.seconds_per_pixel); // -> 0.010666666666666666
 ```
 
 ### .pixels_per_second
@@ -157,7 +199,7 @@ Returns the number of pixels per second.
 ```javascript
 var waveform = WaveformData.create(buffer);
 
-console.log(waveform.pixels_per_second); // 93.75
+console.log(waveform.pixels_per_second); // -> 93.75
 ```
 
 ### .length
@@ -169,7 +211,7 @@ Returns the length of the waveform data, in pixels.
 ```javascript
 const waveform = WaveformData.create(buffer);
 
-console.log(waveform.length); // 1000
+console.log(waveform.length); // -> 1000
 ```
 
 ### .duration
@@ -184,7 +226,7 @@ length, number of samples per pixel, and audio sample rate.
 ```javascript
 const waveform = WaveformData.create(buffer);
 
-console.log(waveform.duration); // 10.32
+console.log(waveform.duration); // -> 10.32
 ```
 
 ### .at_time(time)
@@ -193,16 +235,16 @@ Returns the pixel index for a given time.
 
 #### Arguments
 
-| Name | Type             |
-| ---- | ---------------- |
-| time | Number (seconds) |
+| Name   | Type             |
+| ------ | ---------------- |
+| `time` | Number (seconds) |
 
 #### Example
 
 ```javascript
 const waveform = WaveformData.create(buffer);
 
-console.log(waveform.at_time(0.116)); // 10
+console.log(waveform.at_time(0.116)); // -> 10
 ```
 
 ### .time(index)
@@ -211,9 +253,9 @@ Returns the time in seconds for a given pixel index.
 
 #### Arguments
 
-| Name  | Type             |
-| ----- | ---------------- |
-| index | Number (integer) |
+| Name    | Type             |
+| ------- | ---------------- |
+| `index` | Number (integer) |
 
 #### Example
 
@@ -245,9 +287,9 @@ access to the waveform data for the given channel index.
 
 #### Arguments
 
-| Name  | Type             |
-| ----- | ---------------- |
-| index | Number (integer) |
+| Name    | Type             |
+| ------- | ---------------- |
+| `index` | Number (integer) |
 
 #### Example
 
@@ -266,11 +308,16 @@ data. Use this method to create waveform data at different zoom levels.
 
 #### Arguments
 
-| Name          | Type             |
-| ------------- | ---------------- |
-| options       | Object           |
-| options.width | Number (integer) |
-| options.scale | Number (integer) |
+| Name          | Type                 |
+| ------------- | -------------------- |
+| options       | `Object` (see below) |
+
+#### Options
+
+| Name    | Type             |
+| ------- | ---------------- |
+| `width` | Number (integer) |
+| `scale` | Number (integer) |
 
 #### Examples
 
@@ -319,9 +366,9 @@ Returns the waveform minimum at the given index position.
 
 #### Arguments
 
-| Name  | Type             |
-| ----- | ---------------- |
-| index | Number (integer) |
+| Name    | Type             |
+| ------- | ---------------- |
+| `index` | Number (integer) |
 
 #### Example
 
@@ -344,9 +391,9 @@ Returns the waveform maximum at the given index position.
 
 #### Arguments
 
-| Name  | Type             |
-| ----- | ---------------- |
-| index | Number (integer) |
+| Name    | Type             |
+| ------- | ---------------- |
+| `index` | Number (integer) |
 
 #### Example
 
