@@ -25,7 +25,7 @@ matrix:
     - sudo chown root /opt/google/chrome/chrome-sandbox
     - sudo chmod 4755 /opt/google/chrome/chrome-sandbox
 before_install:
-- npm cache clean
+- npm cache verify
 script:
 - npm run test-node
 - npm run test-browsers -- --browsers="$BROWSER"
