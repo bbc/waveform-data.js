@@ -1,6 +1,6 @@
 "use strict";
 
-/* globals context, describe, it, beforeEach, DOMException, __dirname */
+/* globals context, describe, it, beforeEach, __dirname */
 
 var WaveformData = require("../../../waveform-data");
 

@@ -6,7 +6,7 @@
   "homepage": "https://github.com/bbc/waveform-data.js",
   "scripts": {
     "build": "browserify -r ./waveform-data.js -s WaveformData -o dist/waveform-data.js",
-    "pretest": "npm run build",
+    "pretest": "npm run build && npm run lint",
     "test": "npm run test-node && npm run test-browsers",
     "test-browsers": "xvfb-maybe ./node_modules/karma/bin/karma start",
     "test-node": "nyc --lines 0 mocha -R dot 'test/unit/*.js' 'test/unit/adapters/*.js'",
