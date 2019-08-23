@@ -1,5 +1,13 @@
 # waveform-data.js
 
+## v3.0.0 (2019/08/23)
+
+ * Added support for multi-channel waveforms (@chrisn)
+ * Added fromAudioBuffer() method to create waveform from AudioBuffer
+   (@davidturissini)
+ * This release has some breaking API changes, refer to doc/migration-guide.md
+   for details of how to update your code.
+
 ## v2.1.2 (2018/11/10)
 
  * Version bump after updating npm access token (@chrisn)
