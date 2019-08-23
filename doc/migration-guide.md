@@ -81,3 +81,25 @@ const index = 10;
 const minValue = channel.min_sample(index);
 const maxValue = channel.max_sample(index);
 ```
+
+## Offsets, points, and segments
+
+The following API methods have been removed. Please use
+[Peaks.js](https://github.com/bbc/peaks.js) if you want to create and manage
+points and segments.
+
+```javascript
+waveformData.offset(start, end);
+const start = waveformData.offset_start;
+const length = waveformData.offset_length;
+const duration = waveformData.offset_duration;
+const inOffset = waveformData.in_offset(index);
+
+waveformData.set_segment(start, end, id);
+const segment = waveformData.segments[id];
+
+waveformData.set_point(index, id);
+const segment = waveformData.points[id];
+
+waveformData.remove_point(id);
+```
