@@ -6,17 +6,17 @@ matrix:
   fast_finish: true
   include:
   - os: osx
-    node_js: v6
+    node_js: v10
     sudo: required
     env: BROWSER=Safari
   - os: linux
-    node_js: v6
+    node_js: v10
     sudo: false
     env: BROWSER=Firefox
     addons:
       firefox: latest
   - os: linux
-    node_js: v6
+    node_js: v10
     sudo: required
     env: BROWSER=Chrome
     addons:
