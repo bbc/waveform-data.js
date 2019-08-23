@@ -1,24 +1,24 @@
 # waveform-data.js API documentation
 
 * [WaveformData](#waveformdata)
-  * [.create](#createdata)
-  * [.createFromAudio](#createfromaudiooptions-callback)
-  * [.sample_rate](#sample_rate)
-  * [.samples_per_pixel](#samples_per_pixel)
-  * [.seconds_per_pixel](#seconds_per_pixel)
-  * [.pixels_per_second](#pixels_per_second)
-  * [.length](#length)
-  * [.duration](#duration)
-  * [.at_time](#at_timetime)
-  * [.time](#timeindex)
-  * [.channels](#channels)
-  * [.channel](#channelindex)
-  * [.resample](#resampleoptions)
+  * [.create](#waveformDatacreatedata)
+  * [.createFromAudio](#waveformDatacreatefromaudiooptions-callback)
+  * [.sample_rate](#waveformDatasample_rate)
+  * [.scale](#waveformDatascale)
+  * [.seconds_per_pixel](#waveformDataseconds_per_pixel)
+  * [.pixels_per_second](#waveformDatapixels_per_second)
+  * [.length](#waveformDatalength)
+  * [.duration](#waveformDataduration)
+  * [.at_time](#waveformDataat_timetime)
+  * [.time](#waveformDatatimeindex)
+  * [.channels](#waveformDatachannels)
+  * [.channel](#waveformDatachannelindex)
+  * [.resample](#waveformDataresampleoptions)
 * [WaveformDataChannel](#waveformdatachannel)
-  * [.min_sample](#min_sampleindex)
-  * [.max_sample](#max_sampleindex)
-  * [.min_array](#min_array)
-  * [.max_array](#max_array)
+  * [.min_sample](#waveformDataChannelmin_sampleindex)
+  * [.max_sample](#waveformDataChannelmax_sampleindex)
+  * [.min_array](#waveformDataChannelmin_array)
+  * [.max_array](#waveformDataChannelmax_array)
 
 ## WaveformData
 
@@ -29,7 +29,7 @@ display the waveform at zoom levels or fit to a given width.
 It also allows you to create waveform data from audio content using the Web
 Audio API.
 
-### .create(data)
+### waveformData.create(data)
 
 Creates and returns a [`WaveformData`](#waveformdata) instance from the given
 data, which may be in binary (.dat) format in an
@@ -75,7 +75,7 @@ fetch('http://example.com/waveforms/track.json')
 Note that previous (v1.x) versions of **waveform-data.js** would accept JSON
 strings as input, but this is not supported from v2.0 onwards.
 
-### .createFromAudio(options, callback)
+### waveformData.createFromAudio(options, callback)
 
 Creates a [`WaveformData`](#waveformdata) object from audio using the Web
 Audio API.
@@ -136,7 +136,7 @@ const sampleRate = audioContext.sampleRate;
 const audioBuffer = audioContext.createBuffer(2, sampleRate * 4, sampleRate);
 
 // TODO: Fill audioBuffer with audio content (4 seconds)
-I
+
 const options = {
   audio_buffer: audioBuffer
 };
@@ -152,7 +152,7 @@ WaveformData.createFromAudio(options, (err, waveform) => {
 });
 ```
 
-### .sample_rate
+### waveformData.sample_rate
 
 Returns the sample rate of the original audio, in Hz.
 
@@ -164,7 +164,7 @@ const waveform = WaveformData.create(buffer);
 console.log(waveform.sample_rate); // -> 44100
 ```
 
-### .samples_per_pixel
+### waveformData.scale
 
 Returns the number of audio samples per pixel of the waveform data. This gives
 an indication of the zoom level (higher numbers mean lower resolution, i.e.,
@@ -175,34 +175,34 @@ more zoomed out).
 ```javascript
 const waveform = WaveformData.create(buffer);
 
-console.log(waveform.samples_per_pixel); // -> 512
+console.log(waveform.scale); // -> 512
 ```
 
-### .seconds_per_pixel
+### waveformData.seconds_per_pixel
 
 Returns the amount of time (in seconds) represented by a single pixel.
 
 #### Example
 
 ```javascript
-var waveform = WaveformData.create(buffer);
+const waveform = WaveformData.create(buffer);
 
 console.log(waveform.seconds_per_pixel); // -> 0.010666666666666666
 ```
 
-### .pixels_per_second
+### waveformData.pixels_per_second
 
 Returns the number of pixels per second.
 
 #### Example
 
 ```javascript
-var waveform = WaveformData.create(buffer);
+const waveform = WaveformData.create(buffer);
 
 console.log(waveform.pixels_per_second); // -> 93.75
 ```
 
-### .length
+### waveformData.length
 
 Returns the length of the waveform data, in pixels.
 
@@ -214,7 +214,7 @@ const waveform = WaveformData.create(buffer);
 console.log(waveform.length); // -> 1000
 ```
 
-### .duration
+### waveformData.duration
 
 Returns the approximate duration of the audio file, in seconds.
 
@@ -229,7 +229,7 @@ const waveform = WaveformData.create(buffer);
 console.log(waveform.duration); // -> 10.32
 ```
 
-### .at_time(time)
+### waveformData.at_time(time)
 
 Returns the pixel index for a given time.
 
@@ -247,7 +247,7 @@ const waveform = WaveformData.create(buffer);
 console.log(waveform.at_time(0.116)); // -> 10
 ```
 
-### .time(index)
+### waveformData.time(index)
 
 Returns the time in seconds for a given pixel index.
 
@@ -265,7 +265,7 @@ const waveform = WaveformData.create(buffer);
 console.log(waveform.time(10)); // 0.116
 ```
 
-### .channels
+### waveformData.channels
 
 Returns the number of waveform channels.
 
@@ -280,7 +280,7 @@ const waveform = WaveformData.create(buffer);
 console.log(waveform.channels); // 1
 ```
 
-### .channel(index)
+### waveformData.channel(index)
 
 Returns a [`WaveformDataChannel`](#waveformdatachannel) object that provides
 access to the waveform data for the given channel index.
@@ -301,7 +301,7 @@ for (let i = 0; i < waveform.channels; i++) {
 }
 ```
 
-### .resample(options)
+### waveformData.resample(options)
 
 Creates and returns a new [`WaveformData`](#waveformdata) object with resampled
 data. Use this method to create waveform data at different zoom levels.
@@ -360,7 +360,7 @@ const resampledWaveform = waveform.resample({ width: 500, from: 0, to: 500 });
 
 ## WaveformDataChannel
 
-### .min_sample(index)
+### waveformDataChannel.min_sample(index)
 
 Returns the waveform minimum at the given index position.
 
@@ -373,8 +373,8 @@ Returns the waveform minimum at the given index position.
 #### Example
 
 ```javascript
-var waveform = WaveformData.create(buffer);
-var channel = waveform.channel(0);
+const waveform = WaveformData.create(buffer);
+const channel = waveform.channel(0);
 
 for (let i = 0; i < waveform.length; i++) {
   const time = waveform.time(i);
@@ -385,7 +385,7 @@ for (let i = 0; i < waveform.length; i++) {
 }
 ```
 
-### .max_sample(index)
+### waveformDataChannel.max_sample(index)
 
 Returns the waveform maximum at the given index position.
 
@@ -398,8 +398,8 @@ Returns the waveform maximum at the given index position.
 #### Example
 
 ```javascript
-var waveform = WaveformData.create(buffer);
-var channel = waveform.channel(0);
+const waveform = WaveformData.create(buffer);
+const channel = waveform.channel(0);
 
 for (let i = 0; i < waveform.length; i++) {
   const time = waveform.time(i);
@@ -410,13 +410,13 @@ for (let i = 0; i < waveform.length; i++) {
 }
 ```
 
-### .min_array()
+### waveformDataChannel.min_array()
 
 Returns all the waveform minimum values within the current offset, as an array.
 
 ```javascript
-var waveform = WaveformData.create(buffer);
-var channel = waveform.channel(0);
+const waveform = WaveformData.create(buffer);
+const channel = waveform.channel(0);
 
 console.log(waveform.length); // -> 3
 
@@ -427,13 +427,13 @@ for (let i = 0; i < waveform.length; i++) {
 }
 ```
 
-### .max_array()
+### waveformDataChannel.max_array()
 
 Returns all the waveform maximum values within the current offset, as an array.
 
 ```javascript
-var waveform = WaveformData.create(buffer);
-var channel = waveform.channel(0);
+const waveform = WaveformData.create(buffer);
+const channel = waveform.channel(0);
 
 console.log(waveform.length); // -> 3
 

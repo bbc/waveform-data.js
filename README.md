@@ -2,8 +2,8 @@
 
 [![browser support](https://ci.testling.com/bbcrd/waveform-data.js.png)](https://ci.testling.com/bbcrd/waveform-data.js)
 
-**waveform-data.js** is a JavaScript library for creating __zoomable__,
-__browsable__ and __segmentable__ representations of audio waveforms.
+**waveform-data.js** is a JavaScript library for creating zoomable
+representations of audio waveforms to enable visualisation of audio content.
 
 **waveform-data.js** is part of a [BBC R&D Browser-based audio waveform visualisation software family](https://waveform.prototyping.bbc.co.uk):
 
@@ -12,8 +12,8 @@ __browsable__ and __segmentable__ representations of audio waveforms.
 - **waveform-data.js**: JavaScript library that provides access to precomputed waveform data files, or can generate waveform data using the Web Audio API.
 - [peaks.js](https://github.com/bbc/peaks.js): JavaScript UI component for interacting with waveforms.
 
-We use these projects daily in applications such as
-[BBC World Service Radio Archive](https://www.bbc.co.uk/rd/projects/worldservice-archive-proto) and __browser editing and sharing__ tools for BBC content editors.
+We use these projects within the BBC in applications such as the
+[BBC World Service Radio Archive](https://www.bbc.co.uk/rd/projects/worldservice-archive-proto) and browser-based editing and sharing tools for BBC content editors.
 
 ![Example of what it helps to build](waveform-example.png)
 
@@ -140,16 +140,10 @@ const audioContext = new AudioContext();
 
 fetch('https://example.com/audio/track.ogg')
   .then(response => response.arrayBuffer())
-  .then(buffer => {
-    WaveformData.createFromAudio(audioContext, buffer, (err, waveform) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-
-      console.log(`Waveform has ${waveform.channels} channels`);
-      console.log(`Waveform has length ${waveform.length} points`);
-    });
+  .then(buffer => WaveformData.createFromAudio(audioContext, buffer))
+  .then(waveform => {
+    console.log(`Waveform has ${waveform.channels} channels`);
+    console.log(`Waveform has length ${waveform.length} points`);
   });
 ```
 
@@ -157,8 +151,7 @@ fetch('https://example.com/audio/track.ogg')
 const audioContext = new AudioContext();
 
 audioContext.decodeAudioData(arrayBuffer)
-  .then((audioBuffer) => {
-    WaveformData.createFromAudio(audioBuffer, (err, waveform) => {
+  .then((audioBuffer) => WaveformData.createFromAudio(audioBuffer), (err, waveform) => {
       if (err) {
         console.error(err);
         return;
@@ -183,8 +176,8 @@ a visualization library such as [D3.js](https://d3js.org/).
 const waveform = WaveformData.create(raw_data);
 
 const scaleY = (amplitude, height) => {
-  var range = 256;
-  var offset = 128;
+  const range = 256;
+  const offset = 128;
 
   return height - ((amplitude + offset) * height) / range;
 }
@@ -229,7 +222,7 @@ const max = channel.max_array();
 x.domain([0, waveform.length]).rangeRound([0, 1024]);
 y.domain([d3.min(min), d3.max(max)]).rangeRound([offsetX, -offsetX]);
 
-var area = d3.svg.area()
+const area = d3.svg.area()
   .x((d, i) => x(i))
   .y0((d, i) => y(min[i]))
   .y1((d, i) => y(d));
