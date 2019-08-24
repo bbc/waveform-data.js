@@ -140,7 +140,24 @@ const audioContext = new AudioContext();
 
 fetch('https://example.com/audio/track.ogg')
   .then(response => response.arrayBuffer())
-  .then(buffer => WaveformData.createFromAudio(audioContext, buffer))
+  .then(buffer => {
+    const options = {
+      audio_context: audioContext,
+      array_buffer: buffer,
+      scale: 128
+    };
+
+    return new Promise((resolve, reject) => {
+      WaveformData.createFromAudio(options, (err, waveform) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve(waveform);
+        }
+      });
+    });
+  })
   .then(waveform => {
     console.log(`Waveform has ${waveform.channels} channels`);
     console.log(`Waveform has length ${waveform.length} points`);
@@ -151,15 +168,27 @@ fetch('https://example.com/audio/track.ogg')
 const audioContext = new AudioContext();
 
 audioContext.decodeAudioData(arrayBuffer)
-  .then((audioBuffer) => WaveformData.createFromAudio(audioBuffer), (err, waveform) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
+  .then((audioBuffer) => {
+    const options = {
+      audio_context: audioContext,
+      audio_boffer: audioBuffer,
+      scale: 128
+    };
 
-      console.log(`Waveform has ${waveform.channels} channels`);
-      console.log(`Waveform has length ${waveform.length} points`);
+    return new Promise((resolve, reject) => {
+      WaveformData.createFromAudio(options, (err, waveform) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve(waveform);
+        }
+      });
     });
+  })
+  .then(waveform => {
+    console.log(`Waveform has ${waveform.channels} channels`);
+    console.log(`Waveform has length ${waveform.length} points`);
   });
 ```
 
