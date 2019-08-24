@@ -134,7 +134,6 @@ To avoid blocking the browser's UI thread, he audio will be processed using a
 [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers),
 if supported by the browser.
 
-
 ```javascript
 const audioContext = new AudioContext();
 
@@ -164,6 +163,10 @@ fetch('https://example.com/audio/track.ogg')
   });
 ```
 
+If you have an `AudioBuffer` containing decoded audio samples, e.g., from
+[AudioContext.decodeAudioData](https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/decodeAudioData)
+then you can pass this directly to `WaveformData.createFromAudio`:
+
 ```javascript
 const audioContext = new AudioContext();
 
@@ -171,7 +174,7 @@ audioContext.decodeAudioData(arrayBuffer)
   .then((audioBuffer) => {
     const options = {
       audio_context: audioContext,
-      audio_boffer: audioBuffer,
+      audio_buffer: audioBuffer,
       scale: 128
     };
 
