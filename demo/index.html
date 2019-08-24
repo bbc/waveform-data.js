@@ -13,10 +13,6 @@
         width: 1000px;
       }
 
-      #waveform-container {
-        height: 250px;
-      }
-
       #demo-controls {
         margin: 0 auto 24px auto;
         width: 1000px;
@@ -64,6 +60,10 @@
 
     <div id="waveform-container">
       <canvas id="canvas" width="1000" height="250"></canvas>
+      <div>
+        <label for="offset">Offset</label>
+        <input type="range" id="offset" value="0">
+      </div>
     </div>
 
     <div id="demo-controls">
@@ -75,8 +75,7 @@
       <div id="controls">
         <button data-action="load-dat">Load binary waveform data</button>
         <button data-action="load-json">Load JSON waveform data</button>
-        <label for="offset">Offset</label>
-        <input type="range" id="offset" value="0">
+        <button data-action="generate">Generate using Web Audio API</button>
       </div>
     </div>
 
@@ -161,6 +160,41 @@
         fetch('07023003-2channel.json')
           .then(response => response.json())
           .then(json => WaveformData.create(json))
+          .then(waveform => {
+            console.log(`Waveform has ${waveform.channels} channels`);
+            console.log(`Waveform has length ${waveform.length} points`);
+
+            updateOffsetSlider(waveform);
+
+            drawWaveform(canvas, waveform, 0);
+
+            waveformData = waveform;
+          });
+      });
+
+      document.querySelector('button[data-action="generate"]').addEventListener('click', function() {
+        fetch('07023003.mp3')
+          .then(response => response.arrayBuffer())
+          .then(buffer => {
+            const audioContext = new AudioContext();
+
+            const options = {
+              audio_context: audioContext,
+              array_buffer: buffer,
+              scale: 128
+            };
+
+            return new Promise((resolve, reject) => {
+              WaveformData.createFromAudio(options, (err, waveform) => {
+                if (err) {
+                  reject(err);
+                }
+                else {
+                  resolve(waveform);
+                }
+              });
+            });
+          })
           .then(waveform => {
             console.log(`Waveform has ${waveform.channels} channels`);
             console.log(`Waveform has length ${waveform.length} points`);
