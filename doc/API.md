@@ -152,6 +152,34 @@ WaveformData.createFromAudio(options, (err, waveform) => {
 });
 ```
 
+To create a [`WaveformData`](#waveformdata) object with multi-channel waveform
+data:
+
+```javascript
+const audioContext = new AudioContext();
+
+fetch('https://example.com/audio/track.ogg')
+  .then(response => response.arrayBuffer())
+  .then(buffer => {
+    const options = {
+      audio_context: audioContext,
+      array_buffer: buffer,
+      scale: 512,
+      split_channels: true
+    };
+
+    WaveformData.createFromAudio(options, (err, waveform) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+
+      console.log(`Waveform has ${waveform.channels} channels`);
+      console.log(`Waveform has length ${waveform.length} points`);
+    });
+  });
+```
+
 ### waveformData.sample_rate
 
 Returns the sample rate of the original audio, in Hz.
