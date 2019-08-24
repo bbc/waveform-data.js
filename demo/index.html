@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>waveform-data.js Demo Page</title>
+    <style>
+      body {
+        font-family: 'Helvetica neue', Helvetica, Arial, sans-serif;
+      }
+
+      #titles, #waveform-container {
+        margin: 24px auto;
+        width: 1000px;
+      }
+
+      #waveform-container {
+        height: 250px;
+      }
+
+      #demo-controls {
+        margin: 0 auto 24px auto;
+        width: 1000px;
+        display: flex;
+        align-items: center;
+      }
+
+      #demo-controls button {
+        background: #fff;
+        border: 1px solid #919191;
+        cursor: pointer;
+      }
+
+      #audio {
+        flex: 0 0 30%;
+      }
+
+      #controls {
+        flex: 1;
+        margin-left: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="titles">
+      <h1>waveform-data.js</h1>
+      <p>
+        waveform-data.js is a JavaScript library that allows you to load and
+        manipulate audio waveform data files
+      </p>
+      <p>
+        It was developed by <a href="https://www.bbc.co.uk/rd">BBC R&amp;D</a>
+        to support <a href="https://github.com/bbc/peaks.js">Peaks.js</a>.
+        You can read more about the project
+        <a href="https://waveform.prototyping.bbc.co.uk/">here</a>.
+      </p>
+
+      <h2>Demo: Precomputed Waveform Data</h2>
+      <p>
+        This demo shows how to use waveform data precomputed using
+        <a href="https://github.com/bbc/audiowaveform">audiowaveform</a>.
+        The data is requested from the web server in binary or JSON format.
+      </p>
+    </div>
+
+    <div id="waveform-container">
+      <canvas id="canvas" width="1000" height="250"></canvas>
+    </div>
+
+    <div id="demo-controls">
+      <audio id="audio" controls="controls">
+        <source src="07023003.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+
+      <div id="controls">
+        <button data-action="load-dat">Load binary waveform data</button>
+        <button data-action="load-json">Load JSON waveform data</button>
+        <label for="offset">Offset</label>
+        <input type="range" id="offset" value="0">
+      </div>
+    </div>
+
+    <script src="waveform-data.js"></script>
+    <script>
+      let waveformData = null;
+
+      const canvas = document.getElementById('canvas');
+      const slider = document.getElementById('offset');
+
+      const scaleY = (amplitude, height) => {
+        const range = 256;
+        const offset = 128;
+
+        return height - ((amplitude + offset) * height) / range;
+      };
+
+      const drawWaveform = (canvas, waveform, offsetX) => {
+        const ctx = canvas.getContext('2d');
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (offsetX > waveform.length - canvas.width) {
+          offsetX = waveform.length - canvas.width;
+        }
+
+        const waveformHeight = canvas.height / waveform.channels;
+
+        for (let c = 0, offsetY = 0; c < waveform.channels; c++, offsetY += waveformHeight) {
+          const channel = waveform.channel(c);
+
+          ctx.beginPath();
+
+          for (let x = 0, i = offsetX; x < canvas.width && i < waveform.length; x++, i++) {
+            const val = channel.max_sample(i);
+
+            ctx.lineTo(x + 0.5, offsetY + scaleY(val, waveformHeight) + 0.5);
+          }
+
+          for (let x = canvas.width - 1, i = offsetX + canvas.width - 1; x >= 0; x--, i--) {
+            const val = channel.min_sample(i);
+
+            ctx.lineTo(x + 0.5, offsetY + scaleY(val, waveformHeight) + 0.5);
+          }
+
+          ctx.closePath();
+          ctx.stroke();
+          ctx.fill();
+        }
+      }
+
+      const updateOffsetSlider = (waveform) => {
+        slider.min = 0;
+        slider.max = waveform.length - canvas.width;
+        slider.step = 1;
+        slider.value = 0;
+      };
+
+      slider.addEventListener('input', (event) => {
+        const offsetX = parseInt(event.target.value, 10);
+
+        drawWaveform(canvas, waveformData, offsetX);
+      });
+
+      document.querySelector('button[data-action="load-dat"]').addEventListener('click', function() {
+        fetch('07023003-2channel.dat')
+          .then(response => response.arrayBuffer())
+          .then(buffer => WaveformData.create(buffer))
+          .then(waveform => {
+            console.log(`Waveform has ${waveform.channels} channels`);
+            console.log(`Waveform has length ${waveform.length} points`);
+
+            updateOffsetSlider(waveform);
+
+            drawWaveform(canvas, waveform, 0);
+
+            waveformData = waveform;
+          });
+      });
+
+      document.querySelector('button[data-action="load-json"]').addEventListener('click', function() {
+        fetch('07023003-2channel.json')
+          .then(response => response.json())
+          .then(json => WaveformData.create(json))
+          .then(waveform => {
+            console.log(`Waveform has ${waveform.channels} channels`);
+            console.log(`Waveform has length ${waveform.length} points`);
+
+            updateOffsetSlider(waveform);
+
+            drawWaveform(canvas, waveform, 0);
+
+            waveformData = waveform;
+          });
+      });
+    </script>
+  </body>
+</html>
