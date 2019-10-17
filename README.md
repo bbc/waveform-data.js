@@ -317,7 +317,7 @@ The file format used and consumed by `WaveformData` is documented [here](https:/
 
 # JavaScript API
 
-Please refer [here](docs/API.md) for full API documentation.
+Please refer [here](doc/API.md) for full API documentation.
 
 # Browser support
 
