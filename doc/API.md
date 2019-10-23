@@ -400,7 +400,7 @@ waveforms is not supported).
 | ------------- | ------------------------------------ |
 | ...waveforms  | One or more `WaveformData` instances |
 
-#### Examples
+#### Example
 
 To combine three waveforms into one long one:
 
@@ -415,7 +415,6 @@ console.log(wave2.length); // -> 300
 console.log(wave3.length); // -> 100
 console.log(combinedResult.length); // -> 900
 ```
-
 
 ## WaveformDataChannel
 
