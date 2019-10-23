@@ -15,7 +15,7 @@ describe("WaveformData", function() {
 
   beforeEach(function(done) {
     fs.readFile(__dirname + "/../../4channel.wav", function(err, buf) {
-      audioContext.decodeAudioData(buf.buffer, (audioBuffer) => {
+      audioContext.decodeAudioData(buf.buffer, function(audioBuffer) {
         sampleAudioBuffer = audioBuffer;
         done();
       });
