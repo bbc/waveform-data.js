@@ -95,55 +95,6 @@ describe("WaveformData", function() {
       });
     });
 
-    describe(".concat", function() {
-      var binaryWaveform, jsonWaveform;
-
-      beforeEach(function() {
-        binaryWaveform = new WaveformData(fixtures.getBinaryData({ channels: 1 }));
-        jsonWaveform = new WaveformData(fixtures.getJSONData({ channels: 1 }));
-      });
-
-      it("should return a new WaveformData object with the concatenated result from binary data", function() {
-        var result = binaryWaveform.concat(binaryWaveform);
-
-        expect(result.channels).to.equal(1);
-        expect(result.length).to.equal(expectations.length * 2);
-        expect(result.duration).to.equal(expectations.duration * 2);
-        expect(result.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
-      });
-
-      it("should return a new WaveformData object with the concatenated result from json data", function() {
-        var result = jsonWaveform.concat(jsonWaveform);
-
-        expect(result.channels).to.equal(1);
-        expect(result.length).to.equal(expectations.length * 2);
-        expect(result.duration).to.equal(expectations.duration * 2);
-        expect(result.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
-      });
-
-      it("throws an error if passing incompatible adapters", function() {
-        expect(function() {
-          binaryWaveform.append(jsonWaveform);
-        }).to.throw(Error);
-      });
-
-      it("throws an error if passing incompatible audio", function() {
-        expect(function() {
-          let stereoWaveform = new WaveformData(fixtures.getBinaryData({ channels: 2 }));
-
-          binaryWaveform.concat(stereoWaveform);
-        }).to.throw(Error);
-      });
-
-      it("can append multiple WaveformDatas at once", function() {
-        var result = binaryWaveform.concat(binaryWaveform, binaryWaveform);
-
-        expect(result.channels).to.equal(1);
-        expect(result.length).to.equal(expectations.length * 3);
-        expect(result.duration).to.equal(expectations.duration * 3);
-      });
-    });
-
     describe("WaveformDataChannel", function() {
       describe(".min_array()", function() {
         it("should return an array containing the waveform minimum values", function() {
@@ -292,6 +243,55 @@ describe("WaveformData", function() {
 
           expect(data).to.have.a.lengthOf(3);
         });
+      });
+    });
+
+    describe(".concat()", function() {
+      var binaryWaveform, jsonWaveform;
+
+      beforeEach(function() {
+        binaryWaveform = new WaveformData(fixtures.getBinaryData({ channels: 1 }));
+        jsonWaveform = new WaveformData(fixtures.getJSONData({ channels: 1 }));
+      });
+
+      it("should return a new WaveformData object with the concatenated result from binary data", function() {
+        var result = binaryWaveform.concat(binaryWaveform);
+
+        expect(result.channels).to.equal(1);
+        expect(result.length).to.equal(expectations.length * 2);
+        expect(result.duration).to.equal(expectations.duration * 2);
+        expect(result.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+      });
+
+      it("should return a new WaveformData object with the concatenated result from json data", function() {
+        var result = jsonWaveform.concat(jsonWaveform);
+
+        expect(result.channels).to.equal(1);
+        expect(result.length).to.equal(expectations.length * 2);
+        expect(result.duration).to.equal(expectations.duration * 2);
+        expect(result.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+      });
+
+      it("throws an error if passing incompatible adapters", function() {
+        expect(function() {
+          binaryWaveform.append(jsonWaveform);
+        }).to.throw(Error);
+      });
+
+      it("throws an error if passing incompatible audio", function() {
+        expect(function() {
+          let stereoWaveform = new WaveformData(fixtures.getBinaryData({ channels: 2 }));
+
+          binaryWaveform.concat(stereoWaveform);
+        }).to.throw(Error);
+      });
+
+      it("can append multiple WaveformDatas at once", function() {
+        var result = binaryWaveform.concat(binaryWaveform, binaryWaveform);
+
+        expect(result.channels).to.equal(1);
+        expect(result.length).to.equal(expectations.length * 3);
+        expect(result.duration).to.equal(expectations.duration * 3);
       });
     });
 
@@ -488,6 +488,55 @@ describe("WaveformData", function() {
 
           expect(data).to.have.a.lengthOf(3);
         });
+      });
+    });
+
+    describe(".concat()", function() {
+      var binaryWaveform, jsonWaveform;
+
+      beforeEach(function() {
+        binaryWaveform = new WaveformData(fixtures.getBinaryData({ channels: 2 }));
+        jsonWaveform = new WaveformData(fixtures.getJSONData({ channels: 2 }));
+      });
+
+      it("should return a new WaveformData object with the concatenated result from binary data", function() {
+        var result = binaryWaveform.concat(binaryWaveform);
+
+        expect(result.channels).to.equal(2);
+        expect(result.length).to.equal(expectations.length * 2);
+        expect(result.duration).to.equal(expectations.duration * 2);
+        expect(result.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+      });
+
+      it("should return a new WaveformData object with the concatenated result from json data", function() {
+        var result = jsonWaveform.concat(jsonWaveform);
+
+        expect(result.channels).to.equal(2);
+        expect(result.length).to.equal(expectations.length * 2);
+        expect(result.duration).to.equal(expectations.duration * 2);
+        expect(result.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+      });
+
+      it("throws an error if passing incompatible adapters", function() {
+        expect(function() {
+          binaryWaveform.append(jsonWaveform);
+        }).to.throw(Error);
+      });
+
+      it("throws an error if passing incompatible audio", function() {
+        expect(function() {
+          let stereoWaveform = new WaveformData(fixtures.getBinaryData({ channels: 1 }));
+
+          binaryWaveform.concat(stereoWaveform);
+        }).to.throw(Error);
+      });
+
+      it("can append multiple WaveformDatas at once", function() {
+        var result = binaryWaveform.concat(binaryWaveform, binaryWaveform);
+
+        expect(result.channels).to.equal(2);
+        expect(result.length).to.equal(expectations.length * 3);
+        expect(result.duration).to.equal(expectations.duration * 3);
       });
     });
 
