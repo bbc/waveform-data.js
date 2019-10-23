@@ -14,6 +14,7 @@
   * [.channels](#waveformDatachannels)
   * [.channel](#waveformDatachannelindex)
   * [.resample](#waveformDataresampleoptions)
+  * [.concat](#waveformDataconcatwaveforms)
 * [WaveformDataChannel](#waveformdatachannel)
   * [.min_sample](#waveformDataChannelmin_sampleindex)
   * [.max_sample](#waveformDataChannelmax_sampleindex)
@@ -29,7 +30,7 @@ display the waveform at zoom levels or fit to a given width.
 It also allows you to create waveform data from audio content using the Web
 Audio API.
 
-### waveformData.create(data)
+### WaveformData.create(data)
 
 Creates and returns a [`WaveformData`](#waveformdata) instance from the given
 data, which may be in binary (.dat) format in an
@@ -75,7 +76,7 @@ fetch('http://example.com/waveforms/track.json')
 Note that previous (v1.x) versions of **waveform-data.js** would accept JSON
 strings as input, but this is not supported from v2.0 onwards.
 
-### waveformData.createFromAudio(options, callback)
+### WaveformData.createFromAudio(options, callback)
 
 Creates a [`WaveformData`](#waveformdata) object from audio using the Web
 Audio API.
@@ -385,6 +386,36 @@ frame.
 const waveform = WaveformData.create(buffer);
 const resampledWaveform = waveform.resample({ width: 500, from: 0, to: 500 });
 ```
+
+### waveformData.concat(...waveforms)
+
+Concatenates the receiver with one or more other waveforms, returning a new
+[`WaveformData`](#waveformdata) object.
+The waveforms must be compatible objects (for instance, joining mono to stereo
+waveforms is not supported).
+
+#### Arguments
+
+| Name          | Type                                 |
+| ------------- | ------------------------------------ |
+| ...waveforms  | One or more `WaveformData` instances |
+
+#### Examples
+
+To combine three waveforms into one long one:
+
+```javascript
+const wave1 = WaveformData.create(buffer1);
+const wave2 = WaveformData.create(buffer2);
+const wave3 = WaveformData.create(buffer3);
+const combinedResult = wave1.concat(wave2, wave3);
+
+console.log(wave1.length); // -> 500
+console.log(wave2.length); // -> 300
+console.log(wave3.length); // -> 100
+console.log(combinedResult.length); // -> 900
+```
+
 
 ## WaveformDataChannel
 
