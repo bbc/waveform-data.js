@@ -8,7 +8,7 @@ declare module 'waveform-data' {
     }
 
     type WaveformDataType = {
-        resample: (options: number | {width: number, scale: number}) => WaveformData
+        resample: (options: number | {width: number, scale: number}) => WaveformDataType
         concat: (args?: Array<WaveformDataType>) => WaveformDataType
         length: number
         bits: number
