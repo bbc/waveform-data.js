@@ -50,7 +50,7 @@ declare module 'waveform-data' {
         at_time: (time: number) => number
         time: (time: number) => number
 
-        static create: (data: ArrayBuffer | AudioWaveForm) => WaveformData
+        static create: (data: ArrayBuffer | AudioWaveform) => WaveformData
         static createFromAudio: (options: WaveformAudioContextOptions | WaveformAudioBufferOptions, callback: WaveformFromAudioCallback) => void
     }
 
