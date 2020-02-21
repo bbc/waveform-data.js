@@ -18,7 +18,7 @@ declare module 'waveform-data' {
 
     export type WaveformFromAudioCallback = (error: null | DOMException, instance?: WaveformData, audioBuffer?: AudioBuffer) => void
 
-    export type AudioWaveform = {
+    export type JsonWaveformData = {
         version: number
         channels: number
         sample_rate: number
@@ -36,22 +36,22 @@ declare module 'waveform-data' {
     }
 
     declare class WaveformData {
-        resample: (options: number | { width: number, scale: number }) => WaveformData
-        concat: (...args: Array<WaveformData>) => WaveformData
-        readonly length: number
-        readonly bits: number
-        readonly duration: number
-        readonly pixels_per_second: number
-        readonly seconds_per_pixel: number
-        readonly channels: number
-        channel: (index: number) => WaveformDataChannel
-        readonly sample_rate: number
-        readonly scale: number
-        at_time: (time: number) => number
-        time: (time: number) => number
+        resample: (options: number | { width: number, scale: number }) => WaveformData;
+        concat: (...args: Array<WaveformData>) => WaveformData;
+        readonly length: number;
+        readonly bits: number;
+        readonly duration: number;
+        readonly pixels_per_second: number;
+        readonly seconds_per_pixel: number;
+        readonly channels: number;
+        channel: (index: number) => WaveformDataChannel;
+        readonly sample_rate: number;
+        readonly scale: number;
+        at_time: (time: number) => number;
+        time: (time: number) => number;
 
-        static create: (data: ArrayBuffer | AudioWaveform) => WaveformData
-        static createFromAudio: (options: WaveformAudioContextOptions | WaveformAudioBufferOptions, callback: WaveformFromAudioCallback) => void
+        static create: (data: ArrayBuffer | JsonWaveformData) => WaveformData;
+        static createFromAudio: (options: WaveformAudioContextOptions | WaveformAudioBufferOptions, callback: WaveformFromAudioCallback) => void;
     }
 
     export = WaveformData;
