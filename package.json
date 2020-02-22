@@ -1,6 +1,6 @@
 {
   "name": "waveform-data",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Audio Waveform Data Manipulation API – resample, offset and segment waveform data in JavaScript",
   "main": "waveform-data.js",
   "types": "waveform-data.d.ts",

@@ -1,5 +1,10 @@
 # waveform-data.js
 
+## v3.2.0 (2020/02/22)
+
+ * (#66) Added TypeScript declarations (@artemkosenko)
+ * Improved documentation (@chrisn)
+
 ## v3.1.0 (2019/10/23)
 
  * Added concat() method (@jdelStrother)
@@ -10,7 +15,7 @@
  * Added fromAudioBuffer() method to create waveform from AudioBuffer
    (@davidturissini)
  * This release has some breaking API changes, refer to doc/migration-guide.md
-   for details of how to update your code.
+   for details of how to update your code
 
 ## v2.1.2 (2018/11/10)
 
