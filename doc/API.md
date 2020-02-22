@@ -9,6 +9,7 @@
   * [.pixels_per_second](#waveformDatapixels_per_second)
   * [.length](#waveformDatalength)
   * [.duration](#waveformDataduration)
+  * [.bits](#waveformDatabits)
   * [.at_time](#waveformDataat_timetime)
   * [.time](#waveformDatatimeindex)
   * [.channels](#waveformDatachannels)
@@ -258,6 +259,18 @@ const waveform = WaveformData.create(buffer);
 console.log(waveform.duration); // -> 10.32
 ```
 
+### waveformData.bits
+
+Returns the number of bits per sample, either 8 or 16.
+
+#### Example
+
+```javascript
+const waveform = WaveformData.create(buffer);
+
+console.log(waveform.bits); // -> 8
+```
+
 ### waveformData.at_time(time)
 
 Returns the pixel index for a given time.
@@ -391,8 +404,9 @@ const resampledWaveform = waveform.resample({ width: 500, from: 0, to: 500 });
 
 Concatenates the receiver with one or more other waveforms, returning a new
 [`WaveformData`](#waveformdata) object.
-The waveforms must be compatible objects (for instance, joining mono to stereo
-waveforms is not supported).
+
+The waveforms must be compatible, i.e., have the same sample rate, scale,
+and number of channels.
 
 #### Arguments
 
@@ -470,7 +484,7 @@ for (let i = 0; i < waveform.length; i++) {
 
 ### waveformDataChannel.min_array()
 
-Returns all the waveform minimum values within the current offset, as an array.
+Returns all the waveform minimum values as an array.
 
 ```javascript
 const waveform = WaveformData.create(buffer);
@@ -487,7 +501,7 @@ for (let i = 0; i < waveform.length; i++) {
 
 ### waveformDataChannel.max_array()
 
-Returns all the waveform maximum values within the current offset, as an array.
+Returns all the waveform maximum values as an array.
 
 ```javascript
 const waveform = WaveformData.create(buffer);
