@@ -73,8 +73,8 @@
     "mocha": "~7.0.1",
     "nyc": "~15.0.0",
     "serve": "~11.3.0",
-    "sinon": "~8.1.1",
-    "sinon-chai": "~3.4.0",
+    "sinon": "~9.0.0",
+    "sinon-chai": "~3.5.0",
     "testling": "~1.7.3",
     "watchify": "~3.11.1",
     "xvfb-maybe": "~0.2.1"
