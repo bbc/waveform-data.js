@@ -4,6 +4,13 @@
   "description": "Audio Waveform Data Manipulation API – resample, offset and segment waveform data in JavaScript",
   "main": "waveform-data.js",
   "types": "waveform-data.d.ts",
+  "files": [
+    "dist/waveform-data.js",
+    "waveform-data.js",
+    "webaudio.js",
+    "waveform-data.d.ts",
+    "lib"
+  ],
   "homepage": "https://github.com/bbc/waveform-data.js",
   "scripts": {
     "build": "browserify -r ./waveform-data.js -s WaveformData -o dist/waveform-data.js",
