@@ -30,7 +30,8 @@ script:
 deploy:
   provider: npm
   email: irfs@bbc.co.uk
-  api_token:
+  skip_cleanup: true
+  api_key:
     secure: uxQCnWwhwW4BLJ4UR1285LqDWgnsWWSp2j4py/5wbObnxZGz48b5207aOiAT5Pjma+9p8Nnx1u5/3Vq6G8iPcoMU8Vsbf0/rsX25ncAA1Fi+JtcbAGW685Bj/BGE/dWNxSRd4hInAklRg1rFDe6eD/dNg7xwJA+oDCdAC+AXqgs=
   on:
     tags: true
