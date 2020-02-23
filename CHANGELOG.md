@@ -1,5 +1,9 @@
 # waveform-data.js
 
+## v3.3.0 (2020/02/23)
+
+ * Removed unnecessary files to reduce size of NPM package (@chrisn)
+
 ## v3.2.0 (2020/02/22)
 
  * (#66) Added TypeScript declarations (@artemkosenko)
