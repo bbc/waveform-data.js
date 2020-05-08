@@ -1,5 +1,13 @@
 # waveform-data.js
 
+## v3.3.2 (2020/05/08)
+
+ * Fixed TypeScript declarations (@chrisn)
+
+## v3.3.1 (2020/02/23)
+
+ * Version bump after fixing Travis CI config (@chrisn)
+
 ## v3.3.0 (2020/02/23)
 
  * Removed unnecessary files to reduce size of NPM package (@chrisn)
