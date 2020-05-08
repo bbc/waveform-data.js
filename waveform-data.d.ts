@@ -43,9 +43,9 @@ declare module 'waveform-data' {
      */
 
     audio_buffer: AudioBuffer
-  };
+  }
 
-  export type WaveformFromAudioCallback = (error: DOMException, instance: WaveformData, audioBuffer: AudioBuffer) => void;
+  type WaveformFromAudioCallback = (error: DOMException, waveformData: WaveformData, audioBuffer: AudioBuffer) => void;
 
   interface JsonWaveformData {
     version: number;
@@ -82,9 +82,9 @@ declare module 'waveform-data' {
      */
 
     max_array: () => Array<number>;
-  };
+  }
 
-  export class WaveformData {
+  class WaveformData {
 
     /**
      * Creates and returns a WaveformData instance from the given data,
@@ -125,7 +125,7 @@ declare module 'waveform-data' {
      * Returns the number of pixels per second
      */
 
-     readonly pixels_per_second: number;
+    readonly pixels_per_second: number;
 
     /**
      * Returns the length of the waveform data, in pixels
@@ -146,7 +146,7 @@ declare module 'waveform-data' {
      * waveform length, number of samples per pixel, and audio sample rate
      */
 
-     readonly duration: number;
+    readonly duration: number;
 
     /**
      * Returns the pixel index for a given time
@@ -191,5 +191,5 @@ declare module 'waveform-data' {
     concat: (...args: Array<WaveformData>) => WaveformData;
   }
 
-  export = WaveformData;
+  export default WaveformData;
 }
