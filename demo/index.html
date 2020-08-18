@@ -83,6 +83,7 @@
     <script>
       let waveformData = null;
 
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
       const canvas = document.getElementById('canvas');
       const slider = document.getElementById('offset');
 
