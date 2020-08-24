@@ -41,7 +41,7 @@
       <h1>waveform-data.js</h1>
       <p>
         waveform-data.js is a JavaScript library that allows you to load and
-        manipulate audio waveform data files
+        manipulate audio waveform data files.
       </p>
       <p>
         It was developed by <a href="https://www.bbc.co.uk/rd">BBC R&amp;D</a>
@@ -143,7 +143,14 @@
 
       document.querySelector('button[data-action="load-dat"]').addEventListener('click', function() {
         fetch('07023003-2channel.dat')
-          .then(response => response.arrayBuffer())
+          .then(response => {
+            if (response.ok) {
+              return response.arrayBuffer();
+            }
+            else {
+              throw new Error(`${response.status} ${response.statusText}`);
+            }
+          })
           .then(buffer => WaveformData.create(buffer))
           .then(waveform => {
             console.log(`Waveform has ${waveform.channels} channels`);
@@ -154,12 +161,22 @@
             drawWaveform(canvas, waveform, 0);
 
             waveformData = waveform;
+          })
+          .catch(err => {
+            console.error(err.message);
           });
       });
 
       document.querySelector('button[data-action="load-json"]').addEventListener('click', function() {
         fetch('07023003-2channel.json')
-          .then(response => response.json())
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            else {
+              throw new Error(`${response.status} ${response.statusText}`);
+            }
+          })
           .then(json => WaveformData.create(json))
           .then(waveform => {
             console.log(`Waveform has ${waveform.channels} channels`);
@@ -170,12 +187,22 @@
             drawWaveform(canvas, waveform, 0);
 
             waveformData = waveform;
+          })
+          .catch(err => {
+            console.error(err.message);
           });
       });
 
       document.querySelector('button[data-action="generate"]').addEventListener('click', function() {
         fetch('07023003.mp3')
-          .then(response => response.arrayBuffer())
+          .then(response => {
+            if (response.ok) {
+              return response.arrayBuffer();
+            }
+            else {
+              throw new Error(`${response.status} ${response.statusText}`);
+            }
+          })
           .then(buffer => {
             const audioContext = new AudioContext();
 
@@ -206,6 +233,9 @@
             drawWaveform(canvas, waveform, 0);
 
             waveformData = waveform;
+          })
+          .catch(err => {
+            console.error(err.message);
           });
       });
     </script>
