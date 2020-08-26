@@ -11,7 +11,7 @@ jobs:
     env: BROWSER=Safari
   - os: linux
     node_js: v10
-    env: BROWSER=Firefox
+    env: BROWSER=FirefoxHeadless
     addons:
       firefox: latest
   - os: linux

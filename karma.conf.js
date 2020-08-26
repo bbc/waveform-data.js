@@ -28,6 +28,13 @@ module.exports = function(config) {
       ]
     },
 
+    customLaunchers: {
+      FirefoxHeadless: {
+        base: "Firefox",
+        flags: ["-headless"]
+      }
+    },
+
     reporters: ["spec"],
 
     port: 8080,
