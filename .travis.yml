@@ -16,7 +16,7 @@ jobs:
       firefox: latest
   - os: linux
     node_js: v10
-    env: BROWSER=Chrome
+    env: BROWSER=ChromeHeadless
     addons:
       chrome: stable
     before_script:
