@@ -1,5 +1,12 @@
 # waveform-data.js
 
+## v3.3.3 (2020/08/28)
+
+ * Clean up Worker and AudioBuffer objects to avoid leaks (@jdelStrother)
+ * Added error handling to demo page, also add missing waveform data file
+   (@chrisn)
+ * Fixed demo page in Safari (@jdelStrother)
+
 ## v3.3.2 (2020/05/08)
 
  * Fixed TypeScript declarations (@chrisn)
