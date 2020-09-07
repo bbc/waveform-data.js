@@ -1,5 +1,9 @@
 # waveform-data.js
 
+## v3.3.4 (2020/09/07)
+
+ * Improve browser compatibility (@Dantist)
+
 ## v3.3.3 (2020/08/28)
 
  * Clean up Worker and AudioBuffer objects to avoid leaks (@jdelStrother)
