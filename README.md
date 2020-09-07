@@ -1,7 +1,5 @@
 # waveform-data.js [![Build Status](https://travis-ci.org/bbc/waveform-data.js.svg?branch=master)](https://travis-ci.org/bbc/waveform-data.js)
 
-[![browser support](https://ci.testling.com/bbcrd/waveform-data.js.png)](https://ci.testling.com/bbcrd/waveform-data.js)
-
 **waveform-data.js** is a JavaScript library for creating zoomable
 representations of audio waveforms to enable visualisation of audio content.
 
