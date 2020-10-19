@@ -391,15 +391,6 @@ const scale = waveform.scale; // -> 512
 const resampledWaveform = waveform.resample({ scale: scale / 2 }); // throws an Error
 ```
 
-You can resample a subset of the waveform, which is useful for
-performing fast animations involving a resampling per animation
-frame.
-
-```javascript
-const waveform = WaveformData.create(buffer);
-const resampledWaveform = waveform.resample({ width: 500, from: 0, to: 500 });
-```
-
 ### waveformData.concat(...waveforms)
 
 Concatenates the receiver with one or more other waveforms, returning a new
