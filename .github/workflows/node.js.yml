@@ -17,8 +17,11 @@ jobs:
       matrix:
         include:
           - node-version: 10.x
+          - node-version: 12.x
+          - node-version: 14.x
+          - node-version: 14.x
             browser: "ChromeHeadless"
-          - node-version: 10.x
+          - node-version: 14.x
             browser: "FirefoxHeadless"
 
     steps:
@@ -29,7 +32,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: npm run build --if-present
-    - run: npm run test-node
-    - run: npm run test-browsers -- --browsers="$BROWSER"
-      env:
-        BROWSER: ${{ matrix.browser }}
+    - if: ${{ matrix.browser }}
+      run: npm run test-browsers -- --browsers=${{ matrix.browser }}
+    - if: !${{ matrix.browser }}
+      run: npm run test-node
