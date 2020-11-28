@@ -17,9 +17,9 @@ jobs:
       matrix:
         include:
           - node-version: 10.x
-          - browser: "ChromeHeadless"
+            browser: "ChromeHeadless"
           - node-version: 10.x
-          - browser: "FirefoxHeadless"
+            browser: "FirefoxHeadless"
 
     steps:
     - uses: actions/checkout@v2
@@ -31,4 +31,4 @@ jobs:
     - run: npm run build --if-present
     - run: npm test
       env:
-        BROWSER=${{ matrix.browser }}
+        BROWSER: ${{ matrix.browser }}
