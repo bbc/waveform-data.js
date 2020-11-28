@@ -11,12 +11,15 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        include:
+          - node-version: 10.x
+          - browser: "ChromeHeadless"
+          - node-version: 10.x
+          - browser: "FirefoxHeadless"
 
     steps:
     - uses: actions/checkout@v2
@@ -27,3 +30,5 @@ jobs:
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
+      env:
+        BROWSER=${{ matrix.browser }}
