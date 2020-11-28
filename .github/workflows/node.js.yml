@@ -34,5 +34,5 @@ jobs:
     - run: npm run build --if-present
     - if: ${{ matrix.browser }}
       run: npm run test-browsers -- --browsers=${{ matrix.browser }}
-    - if: !${{ matrix.browser }}
+    - if: ${{ !matrix.browser }}
       run: npm run test-node
