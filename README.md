@@ -132,6 +132,8 @@ To avoid blocking the browser's UI thread, he audio will be processed using a
 [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers),
 if supported by the browser.
 
+You can disable the worker and run the processing in the main thread by setting `disable_worker` to `true` in the options.
+
 ```javascript
 const audioContext = new AudioContext();
 
