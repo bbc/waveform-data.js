@@ -82,7 +82,6 @@
     "serve": "~11.3.2",
     "sinon": "~9.2.4",
     "sinon-chai": "~3.5.0",
-    "testling": "~1.7.3",
     "watchify": "~4.0.0",
     "xvfb-maybe": "~0.2.1"
   },
