@@ -238,18 +238,28 @@ ctx.fill();
 
 ## D3.js example
 
+See [demo/d3.html](demo/d3.html).
+
+### HTML
+
+```html
+<div id="waveform-container"></div>
+```
+
+### JavaScript
+
 ```javascript
 const waveform = WaveformData.create(raw_data);
 const channel = waveform.channel(0);
-const layout = d3.select(this).select('svg');
-const x = d3.scale.linear();
-const y = d3.scale.linear();
+const container = d3.select('#waveform-container');
+const x = d3.scaleLinear();
+const y = d3.scaleLinear();
 const offsetX = 100;
 
 const min = channel.min_array();
 const max = channel.max_array();
 
-x.domain([0, waveform.length]).rangeRound([0, 1024]);
+x.domain([0, waveform.length]).rangeRound([0, 1000]);
 y.domain([d3.min(min), d3.max(max)]).rangeRound([offsetX, -offsetX]);
 
 const area = d3.svg.area()
@@ -257,10 +267,15 @@ const area = d3.svg.area()
   .y0((d, i) => y(min[i]))
   .y1((d, i) => y(d));
 
-graph.select('path')
+const graph = container.append('svg')
+  .style('width', '1000px')
+  .style('height', '200px')
   .datum(max)
+  .append('path')
   .attr('transform', () => `translate(0, ${offsetX})`)
-  .attr('d', area);
+  .attr('d', area)
+  .attr('stroke', 'black');
+
 ```
 
 ## In Node.js

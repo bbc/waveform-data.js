@@ -8,7 +8,7 @@
         font-family: 'Helvetica neue', Helvetica, Arial, sans-serif;
       }
 
-      #titles, #waveform-container {
+      #titles, #waveform-container, #waveform-controls {
         margin: 24px auto;
         width: 1000px;
       }
@@ -50,20 +50,14 @@
         <a href="https://waveform.prototyping.bbc.co.uk/">here</a>.
       </p>
 
-      <h2>Demo: Precomputed Waveform Data</h2>
+      <h2>Demo: Scalable Vector Graphics (SVG) using d3.js</h2>
       <p>
-        This demo shows how to use waveform data precomputed using
-        <a href="https://github.com/bbc/audiowaveform">audiowaveform</a>.
-        The data is requested from the web server in binary or JSON format.
+        This demo shows how to use <a href="https://d3js.org/">d3.js</a> to
+        draw a waveform image using <a href="https://developer.mozilla.org/en-US/docs/Web/SVG">SVG</a>.
       </p>
     </div>
 
     <div id="waveform-container">
-      <canvas id="canvas" width="1000" height="250"></canvas>
-      <div>
-        <label for="offset">Offset</label>
-        <input type="range" id="offset" value="0">
-      </div>
     </div>
 
     <div id="demo-controls">
@@ -79,67 +73,41 @@
       </div>
     </div>
 
+    <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="waveform-data.js"></script>
     <script>
-      let waveformData = null;
-
       const AudioContext = window.AudioContext || window.webkitAudioContext;
-      const canvas = document.getElementById('canvas');
-      const slider = document.getElementById('offset');
 
-      const scaleY = (amplitude, height) => {
-        const range = 256;
-        const offset = 128;
+      const drawWaveform = (waveform, color) => {
+        const channel = waveform.channel(0);
+        const container = d3.select('#waveform-container');
+        const x = d3.scaleLinear();
+        const y = d3.scaleLinear();
+        const offsetX = 100;
 
-        return height - ((amplitude + offset) * height) / range;
+        const min = channel.min_array();
+        const max = channel.max_array();
+
+        x.domain([0, waveform.length]).rangeRound([0, 1000]);
+        y.domain([d3.min(min), d3.max(max)]).rangeRound([offsetX, -offsetX]);
+
+        const area = d3.area()
+          .x((d, i) => x(i))
+          .y0((d, i) => y(min[i]))
+          .y1((d, i) => y(d));
+
+        container.select('svg').remove();
+
+        const graph = container.append('svg')
+          .style('width', '1000px')
+          .style('height', '200px')
+          .datum(max)
+          .append('path')
+          .attr('transform', () => `translate(0, ${offsetX})`)
+          .attr("d", area)
+          .attr('fill', color)
+          .attr('stroke', color);
       };
-
-      const drawWaveform = (canvas, waveform, offsetX) => {
-        const ctx = canvas.getContext('2d');
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        if (offsetX > waveform.length - canvas.width) {
-          offsetX = waveform.length - canvas.width;
-        }
-
-        const waveformHeight = canvas.height / waveform.channels;
-
-        for (let c = 0, offsetY = 0; c < waveform.channels; c++, offsetY += waveformHeight) {
-          const channel = waveform.channel(c);
-
-          ctx.beginPath();
-
-          for (let x = 0, i = offsetX; x < canvas.width && i < waveform.length; x++, i++) {
-            const val = channel.max_sample(i);
-
-            ctx.lineTo(x + 0.5, offsetY + scaleY(val, waveformHeight) + 0.5);
-          }
-
-          for (let x = canvas.width - 1, i = offsetX + canvas.width - 1; x >= 0; x--, i--) {
-            const val = channel.min_sample(i);
-
-            ctx.lineTo(x + 0.5, offsetY + scaleY(val, waveformHeight) + 0.5);
-          }
-
-          ctx.closePath();
-          ctx.stroke();
-          ctx.fill();
-        }
-      }
-
-      const updateOffsetSlider = (waveform) => {
-        slider.min = 0;
-        slider.max = waveform.length - canvas.width;
-        slider.step = 1;
-        slider.value = 0;
-      };
-
-      slider.addEventListener('input', (event) => {
-        const offsetX = parseInt(event.target.value, 10);
-
-        drawWaveform(canvas, waveformData, offsetX);
-      });
 
       document.querySelector('button[data-action="load-dat"]').addEventListener('click', function() {
         fetch('07023003-2channel.dat')
@@ -156,11 +124,7 @@
             console.log(`Waveform has ${waveform.channels} channels`);
             console.log(`Waveform has length ${waveform.length} points`);
 
-            updateOffsetSlider(waveform);
-
-            drawWaveform(canvas, waveform, 0);
-
-            waveformData = waveform;
+            drawWaveform(waveform, '#929982');
           })
           .catch(err => {
             console.error(err.message);
@@ -182,11 +146,7 @@
             console.log(`Waveform has ${waveform.channels} channels`);
             console.log(`Waveform has length ${waveform.length} points`);
 
-            updateOffsetSlider(waveform);
-
-            drawWaveform(canvas, waveform, 0);
-
-            waveformData = waveform;
+            drawWaveform(waveform, '#7a93ac');
           })
           .catch(err => {
             console.error(err.message);
@@ -228,11 +188,7 @@
             console.log(`Waveform has ${waveform.channels} channels`);
             console.log(`Waveform has length ${waveform.length} points`);
 
-            updateOffsetSlider(waveform);
-
-            drawWaveform(canvas, waveform, 0);
-
-            waveformData = waveform;
+            drawWaveform(waveform, '#b7999c');
           })
           .catch(err => {
             console.error(err.message);
