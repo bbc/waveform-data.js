@@ -582,4 +582,36 @@ describe("WaveformData", function() {
       expect(instance.time(1)).to.equal(0.010666666666666666); // 1 * 512 / 48000
     });
   });
+
+  describe(".toJSON()", function() {
+    it("should return a JavaScript object containing the waveform data", function() {
+      var data = fixtures.getBinaryData({ channels: 2 });
+      var instance = WaveformData.create(data);
+
+      expect(instance.toJSON()).to.deep.equal({
+        version: 2,
+        channels: 2,
+        sample_rate: 48000,
+        samples_per_pixel: 512,
+        bits: 8,
+        length: 10,
+        data: [
+          0, 0, 0, 0,
+          -10, 10, -8, 8,
+          0, 0, -2, 2,
+          -5, 7, -6, 3,
+          -5, 7, -6, 3,
+          0, 0, 0, 0,
+          0, 0, 0, 0,
+          0, 0, 0, 0,
+          0, 0, 0, 0,
+          -2, 2, -3, 3
+        ]
+      });
+    });
+
+    it("should allow a WaveformData instance to be stringified as JSON", function() {
+      expect(JSON.stringify(instance)).to.equal('{"version":2,"channels":2,"sample_rate":48000,"samples_per_pixel":512,"bits":8,"length":10,"data":[0,0,0,0,-10,10,-8,8,0,0,-2,2,-5,7,-6,3,-5,7,-6,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-2,2,-3,3]}');
+    });
+  });
 });

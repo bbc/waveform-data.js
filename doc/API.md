@@ -16,6 +16,7 @@
   * [.channel](#waveformDatachannelindex)
   * [.resample](#waveformDataresampleoptions)
   * [.concat](#waveformDataconcatwaveforms)
+  * [.toJSON](#waveformDatatojson)
 * [WaveformDataChannel](#waveformdatachannel)
   * [.min_sample](#waveformDataChannelmin_sampleindex)
   * [.max_sample](#waveformDataChannelmax_sampleindex)
@@ -419,6 +420,26 @@ console.log(wave1.length); // -> 500
 console.log(wave2.length); // -> 300
 console.log(wave3.length); // -> 100
 console.log(combinedResult.length); // -> 900
+```
+
+## waveformData.toJSON()
+
+Returns an object containing the waveform data.
+This means you can use [JSON.stringify()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify)
+to produce a JSON string representation of the waveform data.
+
+#### Example
+
+```javascript
+const waveform = WaveformData.create(buffer);
+
+console.log(waveform.toJSON());
+// { version: 2, channels: 1, sample_rate: 44100, samples_per_pixel: 512,
+//   bits: 8, length: 4, data: [0, 0, -1, 1, -2, 2, -3, 3] }
+
+console.log(JSON.stringify(waveform))
+// '{"version":2,"channels":1,"sample_rate":44100,"samples_per_pixel":512,
+//   "bits":8,"length":10,"data":[0,0,-1,1,-2,2,-3,3]}'
 ```
 
 ## WaveformDataChannel
