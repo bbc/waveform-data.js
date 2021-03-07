@@ -128,7 +128,7 @@ the decoded audio samples.
 
 Note that this approach is generally less efficient than pre-processing the
 audio server-side, using [audiowaveform](https://github.com/bbc/audiowaveform).
-To avoid blocking the browser's UI thread, he audio will be processed using a
+To avoid blocking the browser's UI thread, the audio will be processed using a
 [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers),
 if supported by the browser.
 
