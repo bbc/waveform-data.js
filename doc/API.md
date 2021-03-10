@@ -439,7 +439,7 @@ console.log(waveform.toJSON());
 
 console.log(JSON.stringify(waveform))
 // '{"version":2,"channels":1,"sample_rate":44100,"samples_per_pixel":512,
-//   "bits":8,"length":10,"data":[0,0,-1,1,-2,2,-3,3]}'
+//   "bits":8,"length":4,"data":[0,0,-1,1,-2,2,-3,3]}'
 ```
 
 ## WaveformDataChannel
