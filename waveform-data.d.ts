@@ -1,6 +1,6 @@
 declare module 'waveform-data' {
 
-  interface Options {
+  export interface Options {
 
     /**
      * Number of audio samples per pixel. Default: 512
@@ -21,7 +21,7 @@ declare module 'waveform-data' {
     split_channels?: boolean;
   }
 
-  interface WaveformAudioContextOptions extends Options {
+  export interface WaveformAudioContextOptions extends Options {
 
     /**
      * The Web Audio AudioContext to use
@@ -36,7 +36,7 @@ declare module 'waveform-data' {
     array_buffer: ArrayBuffer;
   }
 
-  interface WaveformAudioBufferOptions extends Options {
+  export interface WaveformAudioBufferOptions extends Options {
 
     /**
      * A Web Audio AudioBuffer containing decoded audio data
@@ -45,9 +45,9 @@ declare module 'waveform-data' {
     audio_buffer: AudioBuffer
   }
 
-  type WaveformFromAudioCallback = (error: DOMException, waveformData: WaveformData, audioBuffer: AudioBuffer) => void;
+  export type WaveformFromAudioCallback = (error: DOMException, waveformData: WaveformData, audioBuffer: AudioBuffer) => void;
 
-  interface JsonWaveformData {
+  export interface JsonWaveformData {
     version: number;
     channels: number;
     sample_rate: number;
@@ -57,7 +57,7 @@ declare module 'waveform-data' {
     data: Array<number>;
   }
 
-  interface WaveformDataChannel {
+  export interface WaveformDataChannel {
 
     /**
      * Returns the waveform minimum at the given index position
@@ -84,7 +84,7 @@ declare module 'waveform-data' {
     max_array: () => Array<number>;
   }
 
-  class WaveformData {
+  export class WaveformData {
 
     /**
      * Creates and returns a WaveformData instance from the given data,
