@@ -1,5 +1,16 @@
 # waveform-data.js
 
+## v4.0.0 (2021/04/24)
+
+ * Added disable_worker option to WaveformData.createFromAudio()
+   (@Christilut, @chrisn)
+ * Added WaveformData.toJSON() method (@chrisn)
+ * Updated TypeScript declarations (@Kangaroux, @chrisn)
+ * Added d3.js example, see demo/d3.html (@chrisn)
+ * Reworded error messages (@chrisn)
+ * The WaveformData.resample() method no longer accepts a single number
+   (@chrisn)
+
 ## v3.3.4 (2020/09/07)
 
  * Improve browser compatibility (@Dantist)
