@@ -207,8 +207,10 @@
             }
           })
           .then(buffer => {
+            const audioContext = new AudioContext();
+
             const options = {
-              audio_context: new AudioContext(),
+              audio_context: audioContext,
               array_buffer: buffer,
               scale: 128,
               disable_worker: document.getElementById('disable-worker').checked
