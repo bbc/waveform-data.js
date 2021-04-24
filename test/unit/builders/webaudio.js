@@ -46,7 +46,7 @@ describe("WaveformData", function() {
         });
       });
 
-      it("should return a valid waveform in case of success", function(done) {
+      it("should return a valid waveform", function(done) {
         var options = {
           audio_context: audioContext,
           array_buffer: sampleBuffer
@@ -61,6 +61,22 @@ describe("WaveformData", function() {
           // scale: 512 (default)
           // 88200 / 512 = 172, with 136 samples remaining, so 173 points total
           expect(waveform.length).to.equal(173);
+          done();
+        });
+      });
+
+      it("should return the decoded audio", function(done) {
+        var options = {
+          audio_context: audioContext,
+          array_buffer: sampleBuffer
+        };
+
+        WaveformData.createFromAudio(options, function(err, waveform, audioBuffer) {
+          expect(err).to.not.be.ok;
+
+          expect(audioBuffer).to.be.an.instanceOf(AudioBuffer);
+          expect(audioBuffer.numberOfChannels).to.equal(4);
+          expect(audioBuffer.length).to.equal(88200);
           done();
         });
       });
