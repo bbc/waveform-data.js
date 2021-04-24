@@ -189,6 +189,12 @@ declare module 'waveform-data' {
      */
 
     concat: (...args: Array<WaveformData>) => WaveformData;
+
+    /**
+     * Returns the waveform data as an object
+     */
+
+    toJSON: () => JsonWaveformData;
   }
 
   export default WaveformData;
