@@ -128,11 +128,18 @@ the decoded audio samples.
 
 Note that this approach is generally less efficient than pre-processing the
 audio server-side, using [audiowaveform](https://github.com/bbc/audiowaveform).
-To avoid blocking the browser's UI thread, the audio will be processed using a
-[Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers),
-if supported by the browser.
 
-You can disable the worker and run the processing in the main thread by setting `disable_worker` to `true` in the options.
+Waveform data is created in two steps:
+
+* If you pass an `ArrayBuffer` containing encoded audio, the audio is decoded
+  using the Web Audio API's [decodeAudioData](https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/decodeAudioData)
+  method. This must done on the browser's UI thread, so will be a blocking operation.
+
+* The decoded audio is processed to produce the waveform data. To avoid further
+  blocking the browser's UI thread, by default this step is done using a
+  [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers),
+  if supported by the browser. You can disable the worker and run the processing
+  in the main thread by setting `disable_worker` to `true` in the options.
 
 ```javascript
 const audioContext = new AudioContext();

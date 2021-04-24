@@ -92,14 +92,15 @@ Audio API.
 
 #### Options
 
-| Name              | Type                                                                                                          |
-| ----------------- | ------------------------------------------------------------------------------------------------------------- |
-| `audio_context`   | [`AudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext)                               |
-| `array_buffer`    | [`ArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) |
-| `audio_buffer`    | [`AudioBuffer`](https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer)                                 |
-| `scale`           | Number (integer, default: 512)                                                                                |
-| `amplitude_scale` | Number (default: 1.0)                                                                                         |
-| `split_channels`  | Boolean (default: false)                                                                                      |
+| Name              | Type                                                                                                          | Description |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- | - |
+| `audio_context`   | [`AudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext)                               | When using the `array_buffer` option to provide encoded audio, this should be a Web Audio `AudioContext` object, which will be used to decode the audio. Not required otherwise |
+| `array_buffer`    | [`ArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) | Contains encoded audio. If using this option, an `audio_context` is also required |
+| `audio_buffer`    | [`AudioBuffer`](https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer)                                 | Contains decoded audio. If using this option, an `audio_context` is not required |
+| `scale`           | Number (integer, default: `512`)                                                                              | Controls the resolution of the waveform data by specifying the number of input audio samples per output waveform data point |
+| `amplitude_scale` | Number (default: `1.0`)                                                                                       | Applies amplitude scaling to the waveform data. For example, set to `2.0` to double the waveform amplitude |
+| `split_channels`  | Boolean (default: `false`)                                                                                    | Set to `true` to produce separate waveform channels instead of combining all channels into a single waveform |
+| `disable_worker`  | Boolean (default: `false`)                                                                                    | Set to `true` to disable use of a [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers) |
 
 #### Examples
 
@@ -169,6 +170,44 @@ fetch('https://example.com/audio/track.ogg')
       array_buffer: buffer,
       scale: 512,
       split_channels: true
+    };
+
+    WaveformData.createFromAudio(options, (err, waveform) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+
+      console.log(`Waveform has ${waveform.channels} channels`);
+      console.log(`Waveform has length ${waveform.length} points`);
+    });
+  });
+```
+
+To create a [`WaveformData`](#waveformdata) object without using a web worker,
+set the `disable_worker` option to `true`. Waveform data is created in two steps:
+
+* If you pass an `ArrayBuffer` containing encoded audio, the audio is decoded
+  using the Web Audio API's [decodeAudioData](https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/decodeAudioData)
+  method. This must done on the browser's UI thread, so will be a blocking operation.
+
+* The decoded audio is processed to produce the waveform data. To avoid further
+  blocking the browser's UI thread, by default this step is done using a
+  [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers),
+  if supported by the browser. You can disable the worker and run the processing
+  in the main thread by setting `disable_worker` to `true` in the options.
+
+```javascript
+const audioContext = new AudioContext();
+
+fetch('https://example.com/audio/track.ogg')
+  .then(response => response.arrayBuffer())
+  .then(buffer => {
+    const options = {
+      audio_context: audioContext,
+      array_buffer: buffer,
+      scale: 512,
+      disable_worker: true
     };
 
     WaveformData.createFromAudio(options, (err, waveform) => {
