@@ -65,6 +65,26 @@ describe("WaveformData", function() {
         });
       });
 
+      it("should return a valid waveform without using a worker", function(done) {
+        var options = {
+          audio_context: audioContext,
+          array_buffer: sampleBuffer,
+          disable_worker: true
+        };
+
+        WaveformData.createFromAudio(options, function(err, waveform) {
+          expect(err).to.not.be.ok;
+          expect(waveform).to.be.an.instanceOf(WaveformData);
+          expect(waveform.channels).to.equal(1);
+
+          // file length: 88200 samples
+          // scale: 512 (default)
+          // 88200 / 512 = 172, with 136 samples remaining, so 173 points total
+          expect(waveform.length).to.equal(173);
+          done();
+        });
+      });
+
       it("should return the decoded audio", function(done) {
         var options = {
           audio_context: audioContext,

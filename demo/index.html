@@ -75,7 +75,10 @@
       <div id="controls">
         <button data-action="load-dat">Load binary waveform data</button>
         <button data-action="load-json">Load JSON waveform data</button>
+        <br/>
         <button data-action="generate">Generate using Web Audio API</button>
+        <input type="checkbox" id="disable-worker">
+        <label for="disable-worker">Disable worker</label>
       </div>
     </div>
 
@@ -204,12 +207,11 @@
             }
           })
           .then(buffer => {
-            const audioContext = new AudioContext();
-
             const options = {
-              audio_context: audioContext,
+              audio_context: new AudioContext(),
               array_buffer: buffer,
-              scale: 128
+              scale: 128,
+              disable_worker: document.getElementById('disable-worker').checked
             };
 
             return new Promise((resolve, reject) => {
