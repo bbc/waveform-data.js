@@ -26,7 +26,7 @@ xhr.addEventListener('load', (event) => {
 xhr.send();
 ```
 
-write:
+with:
 
 ```javascript
 xhr.addEventListener('load', (event) => {
@@ -35,6 +35,7 @@ xhr.addEventListener('load', (event) => {
   console.log(waveform.duration);
 });
 ```
+
 ## WaveformData Attributes
 
 Attributes such as `sample_rate`, `scale`, `length`, etc., are no longer
