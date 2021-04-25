@@ -114,17 +114,6 @@ describe("WaveformData", function() {
           done();
         });
       });
-
-      it("should return an error if the scale_adjuster parameter is present", function() {
-        var options = {
-          audio_buffer: sampleAudioBuffer,
-          scale_adjuster: 127
-        };
-
-        expect(function() {
-          WaveformData.createFromAudio(options);
-        }).to.throw(Error, /scale_adjuster/);
-      });
     });
   });
 });
