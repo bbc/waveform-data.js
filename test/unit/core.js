@@ -98,13 +98,15 @@ describe("WaveformData", function() {
     describe("WaveformDataChannel", function() {
       describe(".min_array()", function() {
         it("should return an array containing the waveform minimum values", function() {
-          expect(instance.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+          expect(instance.channel(0).min_array())
+            .to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
         });
       });
 
       describe(".max_array()", function() {
         it("should return an array containing the waveform maximum values", function() {
-          expect(instance.channel(0).max_array()).to.deep.equal([0, 10, 0, 7, 7, 0, 0, 0, 0, 2]);
+          expect(instance.channel(0).max_array())
+            .to.deep.equal([0, 10, 0, 7, 7, 0, 0, 0, 0, 2]);
         });
       });
 
@@ -162,7 +164,7 @@ describe("WaveformData", function() {
     });
 
     describe(".resample()", function() {
-      it("should throw an error if attempting to resample to a width larger than the waveform length", function() {
+      it("should throw an error if the given width is larger than the waveform length", function() {
         expect(function() {
           instance.resample(11);
         }).to.throw(Error);
@@ -200,22 +202,24 @@ describe("WaveformData", function() {
       });
 
       // if we double the scale, it should fit in half the previous size (which means 5px)
-      describe("full resample by scale", function() {
-        it("should downsize the number of data by 2 if we request a half-size scaled resampled waveform", function() {
+      describe("resample with given scale", function() {
+        it("should return a waveform with half the number of points", function() {
           expect(instance.resample({ scale: 1024 }).length)
             .to.equal(expectations.resampled_length);
         });
 
-        it("should downsize the duration by 2 if we request a half-size scaled resampled waveform", function() {
+        it("should return a waveform with half the duration", function() {
           expect(instance.resample({ scale: 1024 }).duration)
             .to.equal(expectations.duration);
         });
 
-        it("should resample to a set of expected values", function() {
+        it("should return expected waveform data values", function() {
           var resampled = instance.resample({ scale: 1024 });
 
-          expect(resampled.channel(0).min_array()).to.deep.equal(expectations.resampled_values.channels[0].min);
-          expect(resampled.channel(0).max_array()).to.deep.equal(expectations.resampled_values.channels[0].max);
+          expect(resampled.channel(0).min_array())
+            .to.deep.equal(expectations.resampled_values.channels[0].min);
+          expect(resampled.channel(0).max_array())
+            .to.deep.equal(expectations.resampled_values.channels[0].max);
         });
       });
 
@@ -254,39 +258,43 @@ describe("WaveformData", function() {
         jsonWaveform = new WaveformData(fixtures.getJSONData({ channels: 1 }));
       });
 
-      it("should return a new WaveformData object with the concatenated result from binary data", function() {
+      it("should concatenate with binary data", function() {
         var result = binaryWaveform.concat(binaryWaveform);
 
+        expect(result).to.be.an.instanceOf(WaveformData);
         expect(result.channels).to.equal(1);
         expect(result.length).to.equal(expectations.length * 2);
         expect(result.duration).to.equal(expectations.duration * 2);
-        expect(result.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+        expect(result.channel(0).min_array())
+          .to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
       });
 
-      it("should return a new WaveformData object with the concatenated result from json data", function() {
+      it("should concatenate with JSON data", function() {
         var result = jsonWaveform.concat(jsonWaveform);
 
+        expect(result).to.be.an.instanceOf(WaveformData);
         expect(result.channels).to.equal(1);
         expect(result.length).to.equal(expectations.length * 2);
         expect(result.duration).to.equal(expectations.duration * 2);
-        expect(result.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+        expect(result.channel(0).min_array())
+          .to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
       });
 
-      it("throws an error if passing incompatible adapters", function() {
+      it("should throw an error given incompatible adapters", function() {
         expect(function() {
           binaryWaveform.append(jsonWaveform);
         }).to.throw(Error);
       });
 
-      it("throws an error if passing incompatible audio", function() {
+      it("should throw an error given incompatible audio", function() {
         expect(function() {
-          let stereoWaveform = new WaveformData(fixtures.getBinaryData({ channels: 2 }));
+          var stereoWaveform = new WaveformData(fixtures.getBinaryData({ channels: 2 }));
 
           binaryWaveform.concat(stereoWaveform);
         }).to.throw(Error);
       });
 
-      it("can append multiple WaveformDatas at once", function() {
+      it("should append multiple WaveformData instances", function() {
         var result = binaryWaveform.concat(binaryWaveform, binaryWaveform);
 
         expect(result.channels).to.equal(1);
@@ -334,15 +342,19 @@ describe("WaveformData", function() {
       describe("WaveformDataChannel", function() {
         describe(".min_array()", function() {
           it("should return an array containing the waveform minimum values", function() {
-            expect(instance.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
-            expect(instance.channel(1).min_array()).to.deep.equal([0, -8, -2, -6, -6, 0, 0, 0, 0, -3]);
+            expect(instance.channel(0).min_array())
+              .to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+            expect(instance.channel(1).min_array())
+              .to.deep.equal([0, -8, -2, -6, -6, 0, 0, 0, 0, -3]);
           });
         });
 
         describe(".max_array()", function() {
           it("should return an array containing the waveform maximum values", function() {
-            expect(instance.channel(0).max_array()).to.deep.equal([0, 10, 0, 7, 7, 0, 0, 0, 0, 2]);
-            expect(instance.channel(1).max_array()).to.deep.equal([0, 8, 2, 3, 3, 0, 0, 0, 0, 3]);
+            expect(instance.channel(0).max_array())
+              .to.deep.equal([0, 10, 0, 7, 7, 0, 0, 0, 0, 2]);
+            expect(instance.channel(1).max_array())
+              .to.deep.equal([0, 8, 2, 3, 3, 0, 0, 0, 0, 3]);
           });
         });
 
@@ -456,11 +468,15 @@ describe("WaveformData", function() {
         it("should resample to a set of expected values", function() {
           var resampled = instance.resample({ scale: 1024 });
 
-          expect(resampled.channel(0).min_array()).to.deep.equal(expectations.resampled_values.channels[0].min);
-          expect(resampled.channel(0).max_array()).to.deep.equal(expectations.resampled_values.channels[0].max);
+          expect(resampled.channel(0).min_array())
+            .to.deep.equal(expectations.resampled_values.channels[0].min);
+          expect(resampled.channel(0).max_array())
+            .to.deep.equal(expectations.resampled_values.channels[0].max);
 
-          expect(resampled.channel(1).min_array()).to.deep.equal(expectations.resampled_values.channels[1].min);
-          expect(resampled.channel(1).max_array()).to.deep.equal(expectations.resampled_values.channels[1].max);
+          expect(resampled.channel(1).min_array())
+            .to.deep.equal(expectations.resampled_values.channels[1].min);
+          expect(resampled.channel(1).max_array())
+            .to.deep.equal(expectations.resampled_values.channels[1].max);
         });
       });
 
