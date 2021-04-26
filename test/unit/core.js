@@ -521,7 +521,8 @@ describe("WaveformData", function() {
         expect(result.channels).to.equal(2);
         expect(result.length).to.equal(expectations.length * 2);
         expect(result.duration).to.equal(expectations.duration * 2);
-        expect(result.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+        expect(result.channel(0).min_array())
+          .to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
       });
 
       it("should return a new WaveformData object with the concatenated result from json data", function() {
@@ -530,7 +531,8 @@ describe("WaveformData", function() {
         expect(result.channels).to.equal(2);
         expect(result.length).to.equal(expectations.length * 2);
         expect(result.duration).to.equal(expectations.duration * 2);
-        expect(result.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+        expect(result.channel(0).min_array())
+          .to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
       });
 
       it("throws an error if passing incompatible adapters", function() {
