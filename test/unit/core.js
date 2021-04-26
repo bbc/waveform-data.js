@@ -166,7 +166,7 @@ describe("WaveformData", function() {
     describe(".resample()", function() {
       it("should throw an error if the given width is larger than the waveform length", function() {
         expect(function() {
-          instance.resample(11);
+          instance.resample({ width: 11 });
         }).to.throw(Error);
       });
 
@@ -417,7 +417,7 @@ describe("WaveformData", function() {
     describe(".resample()", function() {
       it("should throw an error if attempting to resample to a width larger than the waveform length", function() {
         expect(function() {
-          instance.resample(11);
+          instance.resample({ width: 11 });
         }).to.throw(Error);
       });
 
