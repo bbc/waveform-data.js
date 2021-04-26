@@ -22,11 +22,11 @@ describe("WaveformData", function() {
     it("should not build an instance for an unknown data type", function() {
       expect(function() {
         WaveformData.create(0);
-      }).to.throw("Could not detect a WaveformData adapter from the input.");
+      }).to.throw(/Could not detect a WaveformData adapter from the input/);
 
       expect(function() {
         WaveformData.create(null);
-      }).to.throw("Could not detect a WaveformData adapter from the input.");
+      }).to.throw(/Could not detect a WaveformData adapter from the input/);
     });
 
     it("should not create from a JSON string", function() {
@@ -34,7 +34,7 @@ describe("WaveformData", function() {
 
       expect(function() {
         WaveformData.create(JSON.stringify(data));
-      }).to.throw("Could not detect a WaveformData adapter from the input.");
+      }).to.throw(/Could not detect a WaveformData adapter from the input/);
     });
 
     it("should create from a JavaScript object", function() {
@@ -54,7 +54,7 @@ describe("WaveformData", function() {
     it("should not create from an XHR object", function() {
       expect(function() {
         WaveformData.create(new XMLHttpRequest());
-      }).to.throw("Could not detect a WaveformData adapter from the input.");
+      }).to.throw(/Could not detect a WaveformData adapter from the input/);
     });
 
     it("should not build an instance for an unknown version", function() {
@@ -185,7 +185,7 @@ describe("WaveformData", function() {
       it("should throw an error if both width and scale are missing", function() {
         expect(function() {
           instance.resample({});
-        }).to.throw(Error);
+        }).to.throw(Error, /Missing/);
       });
 
       describe("full resample by width", function() {
@@ -436,7 +436,7 @@ describe("WaveformData", function() {
       it("should throw an error if both width and scale are missing", function() {
         expect(function() {
           instance.resample({});
-        }).to.throw(Error);
+        }).to.throw(Error, /Missing/);
       });
 
       describe("full resample by width", function() {
