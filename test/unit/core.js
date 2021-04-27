@@ -415,7 +415,7 @@ describe("WaveformData", function() {
     });
 
     describe(".resample()", function() {
-      it("should throw an error if attempting to resample to a width larger than the waveform length", function() {
+      it("should throw an error if the given width is larger than the waveform length", function() {
         expect(function() {
           instance.resample({ width: 11 });
         }).to.throw(Error);
@@ -455,12 +455,12 @@ describe("WaveformData", function() {
 
       // if we double the scale, it should fit in half the previous size (which means 5px)
       describe("full resample by scale", function() {
-        it("should downsize the number of data by 2 if we request a half-size scaled resampled waveform", function() {
+        it("should return a waveform with half the number of points", function() {
           expect(instance.resample({ scale: 1024 }))
             .to.have.lengthOf(expectations.resampled_length);
         });
 
-        it("should downsize the duration by 2 if we request a half-size scaled resampled waveform", function() {
+        it("should return a waveform with half the duration", function() {
           expect(instance.resample({ scale: 1024 }))
             .to.have.property("duration", expectations.duration);
         });
@@ -515,7 +515,7 @@ describe("WaveformData", function() {
         jsonWaveform = new WaveformData(fixtures.getJSONData({ channels: 2 }));
       });
 
-      it("should return a new WaveformData object with the concatenated result from binary data", function() {
+      it("should return a new object with the concatenated result from binary data", function() {
         var result = binaryWaveform.concat(binaryWaveform);
 
         expect(result.channels).to.equal(2);
@@ -525,7 +525,7 @@ describe("WaveformData", function() {
           .to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
       });
 
-      it("should return a new WaveformData object with the concatenated result from json data", function() {
+      it("should return a new object with the concatenated result from json data", function() {
         var result = jsonWaveform.concat(jsonWaveform);
 
         expect(result.channels).to.equal(2);
@@ -580,7 +580,7 @@ describe("WaveformData", function() {
       expect(instance.at_time(1)).to.equal(93);
     });
 
-    it("should be able to convert between pixel indexes and times without losing precision", function() {
+    it("should convert between pixel indexes and times without losing precision", function() {
       expect(instance.at_time(instance.time(0))).to.equal(0);
       expect(instance.at_time(instance.time(14))).to.equal(14);
       expect(instance.at_time(instance.time(93))).to.equal(93);
@@ -592,11 +592,11 @@ describe("WaveformData", function() {
       expect(instance.time(0)).to.equal(0);
     });
 
-    it("should return a time of 0.0015999999999999999 seconds for a given pixel index of 0.15", function() {
+    it("should return the time in seconds for a given pixel index of 0.15", function() {
       expect(instance.time(0.15)).to.equal(0.0015999999999999999); // 0.15 * 512 / 48000
     });
 
-    it("should return a time of 0.010666666666666666 seconds for a given pixel index of 1", function() {
+    it("should return the time in seconds for a given pixel index of 1", function() {
       expect(instance.time(1)).to.equal(0.010666666666666666); // 1 * 512 / 48000
     });
   });
@@ -629,7 +629,12 @@ describe("WaveformData", function() {
     });
 
     it("should allow a WaveformData instance to be stringified as JSON", function() {
-      expect(JSON.stringify(instance)).to.equal('{"version":2,"channels":2,"sample_rate":48000,"samples_per_pixel":512,"bits":8,"length":10,"data":[0,0,0,0,-10,10,-8,8,0,0,-2,2,-5,7,-6,3,-5,7,-6,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-2,2,-3,3]}');
+      expect(JSON.stringify(instance)).to.equal(
+        "{\"version\":2,\"channels\":2,\"sample_rate\":48000," +
+        "\"samples_per_pixel\":512,\"bits\":8,\"length\":10," +
+        "\"data\":[0,0,0,0,-10,10,-8,8,0,0,-2,2,-5,7,-6,3," +
+        "-5,7,-6,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-2,2,-3,3]}"
+      );
     });
   });
 });
