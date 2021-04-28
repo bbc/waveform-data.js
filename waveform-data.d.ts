@@ -103,8 +103,8 @@ declare module 'waveform-data' {
      */
 
     static createFromAudio: (
-      options: WaveformAudioContextOptions | WaveformAudioBufferOptions,
-      callback: WaveformFromAudioCallback
+      options: WaveformDataAudioContextOptions | WaveformDataAudioBufferOptions,
+      callback: WaveformDataFromAudioCallback
     ) => void;
 
     /**
