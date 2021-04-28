@@ -637,4 +637,60 @@ describe("WaveformData", function() {
       );
     });
   });
+
+  describe(".toArrayBuffer()", function() {
+    context("given JSON data with 2 channels", function() {
+      it("should return an arraybuffer of the right length", function() {
+        var data = fixtures.getJSONData({ channels: 2 });
+        var instance = WaveformData.create(data);
+        var buffer = instance.toArrayBuffer();
+
+        expect(buffer).to.be.an.instanceOf(ArrayBuffer);
+        expect(buffer.byteLength).to.equal(64); // 24 bytes header + 40 bytes data
+      });
+
+      it("should construct WaveformData from arraybuffer", function() {
+        var data = fixtures.getJSONData({ channels: 2 });
+        var instance = WaveformData.create(data);
+        var buffer = instance.toArrayBuffer();
+        var waveform = WaveformData.create(buffer);
+
+        expect(waveform.length).to.equal(10);
+        expect(waveform.bits).to.equal(8);
+        expect(waveform.sample_rate).to.equal(48000);
+        expect(waveform.scale).to.equal(512);
+        expect(waveform.channels).to.equal(2);
+        expect(waveform.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+        expect(waveform.channel(0).max_array()).to.deep.equal([0, 10, 0, 7, 7, 0, 0, 0, 0, 2]);
+        expect(waveform.channel(1).min_array()).to.deep.equal([0, -8, -2, -6, -6, 0, 0, 0, 0, -3]);
+        expect(waveform.channel(1).max_array()).to.deep.equal([0, 8, 2, 3, 3, 0, 0, 0, 0, 3]);
+      });
+    });
+
+    context("given binary data with 1 channel", function() {
+      it("should return an arraybuffer of the right length", function() {
+        var data = fixtures.getBinaryData({ channels: 1 });
+        var instance = WaveformData.create(data);
+        var buffer = instance.toArrayBuffer();
+
+        expect(buffer).to.be.an.instanceOf(ArrayBuffer);
+        expect(buffer.byteLength).to.equal(40); // 20 bytes header + 20 bytes data
+      });
+
+      it("should construct WaveformData from arraybuffer", function() {
+        var data = fixtures.getBinaryData({ channels: 1 });
+        var instance = WaveformData.create(data);
+        var buffer = instance.toArrayBuffer();
+        var waveform = WaveformData.create(buffer);
+
+        expect(waveform.length).to.equal(10);
+        expect(waveform.bits).to.equal(8);
+        expect(waveform.sample_rate).to.equal(48000);
+        expect(waveform.scale).to.equal(512);
+        expect(waveform.channels).to.equal(1);
+        expect(waveform.channel(0).min_array()).to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+        expect(waveform.channel(0).max_array()).to.deep.equal([0, 10, 0, 7, 7, 0, 0, 0, 0, 2]);
+      });
+    });
+  });
 });

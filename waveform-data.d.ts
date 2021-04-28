@@ -199,6 +199,12 @@ declare module 'waveform-data' {
      */
 
     toJSON: () => JsonWaveformData;
+
+    /**
+     * Returns the waveform data as an object
+     */
+
+    toArrayBuffer: () => ArrayBuffer;
   }
 
   export default WaveformData;

@@ -17,6 +17,7 @@
   * [.resample](#waveformDataresampleoptions)
   * [.concat](#waveformDataconcatwaveforms)
   * [.toJSON](#waveformDatatojson)
+  * [.toArrayBuffer](#waveformDatatoarraybuffer)
 * [WaveformDataChannel](#waveformdatachannel)
   * [.min_sample](#waveformDataChannelmin_sampleindex)
   * [.max_sample](#waveformDataChannelmax_sampleindex)
@@ -479,6 +480,24 @@ console.log(waveform.toJSON());
 console.log(JSON.stringify(waveform))
 // '{"version":2,"channels":1,"sample_rate":44100,"samples_per_pixel":512,
 //   "bits":8,"length":4,"data":[0,0,-1,1,-2,2,-3,3]}'
+```
+
+## waveformData.toArrayBuffer()
+
+Returns an object containing the waveform data in [binary format](https://github.com/bbc/audiowaveform/blob/master/doc/DataFormat.md).
+
+#### Example
+
+```javascript
+WaveformData.createFromAudio(buffer, function(err, waveformData) {
+  const waveformData = waveform.toArrayBuffer();
+
+  console.log(waveformData);
+  // ArrayBuffer {
+  //   [Uint8Contents]: <02 00 00 00 01 00 00 00 44 68 AC 00 00 80 00 00 00 65 14 etc.>,
+  //   byteLength: 20908
+  // }
+});
 ```
 
 ## WaveformDataChannel
