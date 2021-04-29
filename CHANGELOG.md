@@ -1,5 +1,10 @@
 # waveform-data.js
 
+## v4.1.0 (2021/04/29)
+
+ * Added WaveformData.toArrayBuffer() method (@chrisn)
+ * Fixed TypeScript declarations (@wong2)
+
 ## v4.0.0 (2021/04/24)
 
  * Added disable_worker option to WaveformData.createFromAudio()
