@@ -43,7 +43,7 @@ module.exports = function(config) {
     logLevel: config.LOG_INFO,
     autoWatch: !isCI,
     browsers: isCI ? ["Firefox"] : ["Chrome", "Safari", "Firefox"],
-    captureTimeout: 5000,
+    captureTimeout: 30000,
     singleRun: true
   });
 };
