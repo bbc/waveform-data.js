@@ -201,7 +201,7 @@ declare module 'waveform-data' {
     toJSON: () => JsonWaveformData;
 
     /**
-     * Returns the waveform data as an object
+     * Returns the waveform data in binary format as an ArrayBuffer
      */
 
     toArrayBuffer: () => ArrayBuffer;
