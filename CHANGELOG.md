@@ -1,5 +1,9 @@
 # waveform-data.js
 
+## v4.1.1 (2021/08/01)
+
+ * Fixed handling of 16-bit binary waveform data (@chrisn)
+
 ## v4.1.0 (2021/04/29)
 
  * Added WaveformData.toArrayBuffer() method (@chrisn)
