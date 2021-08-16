@@ -70,7 +70,7 @@ describe("WaveformData", function() {
     beforeEach(function() {
       const data = fixtures.getBinaryData({ channels: 1 });
 
-      instance = new WaveformData(data);
+      instance = WaveformData.create(data);
     });
 
     describe(".channels", function() {
@@ -254,8 +254,8 @@ describe("WaveformData", function() {
       var binaryWaveform, jsonWaveform;
 
       beforeEach(function() {
-        binaryWaveform = new WaveformData(fixtures.getBinaryData({ channels: 1 }));
-        jsonWaveform = new WaveformData(fixtures.getJSONData({ channels: 1 }));
+        binaryWaveform = WaveformData.create(fixtures.getBinaryData({ channels: 1 }));
+        jsonWaveform = WaveformData.create(fixtures.getJSONData({ channels: 1 }));
       });
 
       it("should concatenate with binary data", function() {
@@ -288,7 +288,7 @@ describe("WaveformData", function() {
 
       it("should throw an error given incompatible audio", function() {
         expect(function() {
-          var stereoWaveform = new WaveformData(fixtures.getBinaryData({ channels: 2 }));
+          var stereoWaveform = WaveformData.create(fixtures.getBinaryData({ channels: 2 }));
 
           binaryWaveform.concat(stereoWaveform);
         }).to.throw(Error);
@@ -314,7 +314,7 @@ describe("WaveformData", function() {
     beforeEach(function() {
       const data = fixtures.getBinaryData({ channels: 2 });
 
-      instance = new WaveformData(data);
+      instance = WaveformData.create(data);
     });
 
     describe(".channels", function() {
@@ -511,8 +511,8 @@ describe("WaveformData", function() {
       var binaryWaveform, jsonWaveform;
 
       beforeEach(function() {
-        binaryWaveform = new WaveformData(fixtures.getBinaryData({ channels: 2 }));
-        jsonWaveform = new WaveformData(fixtures.getJSONData({ channels: 2 }));
+        binaryWaveform = WaveformData.create(fixtures.getBinaryData({ channels: 2 }));
+        jsonWaveform = WaveformData.create(fixtures.getJSONData({ channels: 2 }));
       });
 
       it("should return a new object with the concatenated result from binary data", function() {
@@ -543,7 +543,7 @@ describe("WaveformData", function() {
 
       it("throws an error if passing incompatible audio", function() {
         expect(function() {
-          let stereoWaveform = new WaveformData(fixtures.getBinaryData({ channels: 1 }));
+          let stereoWaveform = WaveformData.create(fixtures.getBinaryData({ channels: 1 }));
 
           binaryWaveform.concat(stereoWaveform);
         }).to.throw(Error);
