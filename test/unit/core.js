@@ -667,6 +667,17 @@ describe("WaveformData", function() {
       });
     });
 
+    context("given JSON data with 16-bit values", function() {
+      it("should return an arraybuffer of the right length", function() {
+        var data = fixtures.getJSONData({ channels: 2, bits: 16 });
+        var instance = WaveformData.create(data);
+        var buffer = instance.toArrayBuffer();
+
+        expect(buffer).to.be.an.instanceOf(ArrayBuffer);
+        expect(buffer.byteLength).to.equal(104); // 24 bytes header + 80 bytes data
+      });
+    });
+
     context("given binary data with 1 channel", function() {
       it("should return an arraybuffer of the right length", function() {
         var data = fixtures.getBinaryData({ channels: 1 });
