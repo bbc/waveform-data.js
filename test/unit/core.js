@@ -197,7 +197,8 @@ describe("WaveformData", function() {
           expect(resampled.sample_rate).to.equal(instance.sample_rate);
           expect(resampled.channels).to.equal(instance.channels);
           expect(resampled.bits).to.equal(8);
-          expect(resampled._adapter.version).to.equal(instance._adapter.version);
+          // Resampling updates the waveform data header version
+          expect(resampled._adapter.version).to.equal(2);
         });
       });
 
@@ -220,32 +221,6 @@ describe("WaveformData", function() {
             .to.deep.equal(expectations.resampled_values.channels[0].min);
           expect(resampled.channel(0).max_array())
             .to.deep.equal(expectations.resampled_values.channels[0].max);
-        });
-      });
-
-      describe("partial resampling at a specific time", function() {
-        it("should accept only a positive input_index value", function() {
-          expect(function() {
-            instance.resample({ scale: 1024, input_index: -1 });
-          }).to.throw(RangeError);
-        });
-
-        it("should accept only a positive output_index value", function() {
-          expect(function() {
-            instance.resample({ scale: 1024, output_index: -1 });
-          }).to.throw(RangeError);
-        });
-
-        it("should throw an exception if any of the 4 mandatories options are missing", function() {
-          expect(function() {
-            instance.resample({ scale: 1024, input_index: 1, output_index: 1 });
-          }).to.throw(Error);
-        });
-
-        it("should crop the sample count to the defined length option value", function() {
-          var data = instance.resample({ scale: 1024, input_index: 1, output_index: 1, width: 3 });
-
-          expect(data).to.have.a.lengthOf(3);
         });
       });
     });
@@ -477,32 +452,6 @@ describe("WaveformData", function() {
             .to.deep.equal(expectations.resampled_values.channels[1].min);
           expect(resampled.channel(1).max_array())
             .to.deep.equal(expectations.resampled_values.channels[1].max);
-        });
-      });
-
-      describe("partial resampling at a specific time", function() {
-        it("should accept only a positive input_index value", function() {
-          expect(function() {
-            instance.resample({ scale: 1024, input_index: -1 });
-          }).to.throw(RangeError);
-        });
-
-        it("should accept only a positive output_index value", function() {
-          expect(function() {
-            instance.resample({ scale: 1024, output_index: -1 });
-          }).to.throw(RangeError);
-        });
-
-        it("should throw an exception if any of the 4 mandatories options are missing", function() {
-          expect(function() {
-            instance.resample({ scale: 1024, input_index: 1, output_index: 1 });
-          }).to.throw(Error);
-        });
-
-        it("should crop the sample count to the defined length option value", function() {
-          var data = instance.resample({ scale: 1024, input_index: 1, output_index: 1, width: 3 });
-
-          expect(data).to.have.a.lengthOf(3);
         });
       });
     });
