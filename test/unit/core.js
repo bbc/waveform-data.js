@@ -8,12 +8,6 @@ var WaveformDataChannel = require("../../lib/channel");
 var fixtures = require("../fixtures");
 var expect = require("chai").expect;
 
-if (global.XMLHttpRequest === undefined) {
-  global.XMLHttpRequest = function() {
-    return null;
-  };
-}
-
 describe("WaveformData", function() {
   var instance;
   var expectations = fixtures.getExpectedData();
@@ -49,12 +43,6 @@ describe("WaveformData", function() {
 
       expect(WaveformData.create(data))
         .to.be.an.instanceOf(WaveformData);
-    });
-
-    it("should not create from an XHR object", function() {
-      expect(function() {
-        WaveformData.create(new XMLHttpRequest());
-      }).to.throw(/Unknown data format/);
     });
 
     it("should not build an instance for an unknown version", function() {
