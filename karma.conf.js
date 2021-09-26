@@ -1,10 +1,6 @@
 "use strict";
 
-/* globals process */
-
 module.exports = function(config) {
-  var isCI = Boolean(process.env.CI);
-
   config.set({
     basePath: "",
 
@@ -41,8 +37,8 @@ module.exports = function(config) {
     runnerPort: 9100,
     colors: true,
     logLevel: config.LOG_INFO,
-    autoWatch: !isCI,
-    browsers: isCI ? ["Firefox"] : ["Chrome", "Safari", "Firefox"],
+    autoWatch: false,
+    browsers: ["ChromeHeadless"],
     captureTimeout: 30000,
     singleRun: true
   });
