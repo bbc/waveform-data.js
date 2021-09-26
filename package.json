@@ -17,7 +17,7 @@
     "pretest": "npm run build && npm run lint",
     "test": "npm run test-node && npm run test-browsers",
     "test-browsers": "karma start",
-    "test-node": "nyc --lines 0 mocha -R dot 'test/unit/*.js' 'test/unit/adapters/*.js'",
+    "test-node": "nyc --lines 0 mocha -R dot 'test/unit/*.js'",
     "posttest-node": "npm run lint",
     "lint": "eslint karma.conf.js lib test",
     "test-watch": "karma start --no-single-run",
