@@ -22,11 +22,11 @@ describe("WaveformData", function() {
     it("should not build an instance for an unknown data type", function() {
       expect(function() {
         WaveformData.create(0);
-      }).to.throw(/Could not detect a WaveformData adapter from the input/);
+      }).to.throw(/Unknown data format/);
 
       expect(function() {
         WaveformData.create(null);
-      }).to.throw(/Could not detect a WaveformData adapter from the input/);
+      }).to.throw(/Unknown data format/);
     });
 
     it("should not create from a JSON string", function() {
@@ -34,7 +34,7 @@ describe("WaveformData", function() {
 
       expect(function() {
         WaveformData.create(JSON.stringify(data));
-      }).to.throw(/Could not detect a WaveformData adapter from the input/);
+      }).to.throw(/Unknown data format/);
     });
 
     it("should create from a JavaScript object", function() {
@@ -54,7 +54,7 @@ describe("WaveformData", function() {
     it("should not create from an XHR object", function() {
       expect(function() {
         WaveformData.create(new XMLHttpRequest());
-      }).to.throw(/Could not detect a WaveformData adapter from the input/);
+      }).to.throw(/Unknown data format/);
     });
 
     it("should not build an instance for an unknown version", function() {
@@ -186,7 +186,7 @@ describe("WaveformData", function() {
           });
 
           describe(".resample()", function() {
-            it("should throw an error if the given width is larger than the waveform length", function() {
+            it("should throw an error if the width is larger than the waveform length", function() {
               expect(function() {
                 instance.resample({ width: 11 });
               }).to.throw(Error);
@@ -220,7 +220,7 @@ describe("WaveformData", function() {
                 expect(resampled.channels).to.equal(instance.channels);
                 expect(resampled.bits).to.equal(instance.bits);
                 // Resampling updates the waveform data header version
-                expect(resampled._adapter.version).to.equal(2);
+                expect(resampled._version()).to.equal(2);
               });
             });
 
@@ -262,8 +262,9 @@ describe("WaveformData", function() {
               expect(result.channels).to.equal(1);
               expect(result.length).to.equal(expectations.length * 2);
               expect(result.duration).to.equal(expectations.duration * 2);
-              expect(result.channel(0).min_array())
-                .to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+              expect(result.channel(0).min_array()).to.deep.equal(
+                [0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]
+              );
             });
 
             it("should concatenate with JSON data", function() {
@@ -273,8 +274,9 @@ describe("WaveformData", function() {
               expect(result.channels).to.equal(1);
               expect(result.length).to.equal(expectations.length * 2);
               expect(result.duration).to.equal(expectations.duration * 2);
-              expect(result.channel(0).min_array())
-                .to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
+              expect(result.channel(0).min_array()).to.deep.equal(
+                [0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]
+              );
             });
 
             it("should throw an error given incompatible adapters", function() {
@@ -297,12 +299,6 @@ describe("WaveformData", function() {
               expect(result.channels).to.equal(1);
               expect(result.length).to.equal(expectations.length * 3);
               expect(result.duration).to.equal(expectations.duration * 3);
-            });
-          });
-
-          describe(".adapter", function() {
-            it("should not be exposed", function() {
-              expect(instance.adapter).to.not.exist;
             });
           });
         });
@@ -443,7 +439,7 @@ describe("WaveformData", function() {
           });
 
           describe(".resample()", function() {
-            it("should throw an error if the given width is larger than the waveform length", function() {
+            it("should throw an error if the width is larger than the waveform length", function() {
               expect(function() {
                 instance.resample({ width: 11 });
               }).to.throw(Error);
@@ -468,11 +464,11 @@ describe("WaveformData", function() {
             });
 
             describe("full resample by width", function() {
-              it("should resample to 5 elements if a width of 5 is requested", function() {
+              it("should resample to the given width", function() {
                 expect(instance.resample({ width: 5 })).to.have.a.lengthOf(5);
               });
 
-              it("should resample to an expected duration if a width of 5 is requested", function() {
+              it("should return the correct duration", function() {
                 expect(instance.resample({ width: 5 }).duration).equal(expectations.duration);
               });
 
@@ -517,30 +513,15 @@ describe("WaveformData", function() {
               jsonWaveform = WaveformData.create(fixtures.getJSONData({ channels: 2 }));
             });
 
-            it("should return a new object with the concatenated result from binary data", function() {
-              var result = binaryWaveform.concat(binaryWaveform);
+            it("should return a new object with the concatenated result", function() {
+              var result = binaryWaveform.concat(jsonWaveform);
 
               expect(result.channels).to.equal(2);
               expect(result.length).to.equal(expectations.length * 2);
               expect(result.duration).to.equal(expectations.duration * 2);
-              expect(result.channel(0).min_array())
-                .to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
-            });
-
-            it("should return a new object with the concatenated result from json data", function() {
-              var result = jsonWaveform.concat(jsonWaveform);
-
-              expect(result.channels).to.equal(2);
-              expect(result.length).to.equal(expectations.length * 2);
-              expect(result.duration).to.equal(expectations.duration * 2);
-              expect(result.channel(0).min_array())
-                .to.deep.equal([0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]);
-            });
-
-            it("throws an error if passing incompatible adapters", function() {
-              expect(function() {
-                binaryWaveform.append(jsonWaveform);
-              }).to.throw(Error);
+              expect(result.channel(0).min_array()).to.deep.equal(
+                [0, -10, 0, -5, -5, 0, 0, 0, 0, -2, 0, -10, 0, -5, -5, 0, 0, 0, 0, -2]
+              );
             });
 
             it("throws an error if passing incompatible audio", function() {
@@ -552,17 +533,11 @@ describe("WaveformData", function() {
             });
 
             it("can append multiple WaveformDatas at once", function() {
-              var result = binaryWaveform.concat(binaryWaveform, binaryWaveform);
+              var result = binaryWaveform.concat(binaryWaveform, jsonWaveform);
 
               expect(result.channels).to.equal(2);
               expect(result.length).to.equal(expectations.length * 3);
               expect(result.duration).to.equal(expectations.duration * 3);
-            });
-          });
-
-          describe(".adapter", function() {
-            it("should not be exposed", function() {
-              expect(instance.adapter).to.not.exist;
             });
           });
         });
