@@ -44,19 +44,6 @@
   "bugs": {
     "url": "https://github.com/bbc/waveform-data.js/issues"
   },
-  "testling": {
-    "files": "test/unit/*.js",
-    "harness": "mocha-bdd",
-    "browsers": [
-      "ie/9..10",
-      "ff/latest..nightly",
-      "chrome/latest..canary",
-      "opera/latest..next",
-      "safari/latest",
-      "ipad/latest",
-      "android/latest"
-    ]
-  },
   "nyc": {
     "check-coverage": true,
     "reporter": [
