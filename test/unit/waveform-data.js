@@ -2,7 +2,7 @@
 
 /* globals beforeEach, context, describe, it */
 
-var WaveformData = require("../../waveform-data");
+var WaveformData = require("../../lib/waveform-data");
 var WaveformDataChannel = require("../../lib/channel");
 
 var fixtures = require("../fixtures");

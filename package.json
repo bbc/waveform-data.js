@@ -6,14 +6,12 @@
   "types": "waveform-data.d.ts",
   "files": [
     "dist/waveform-data.js",
-    "waveform-data.js",
-    "webaudio.js",
     "waveform-data.d.ts",
     "lib"
   ],
   "homepage": "https://github.com/bbc/waveform-data.js",
   "scripts": {
-    "build": "browserify -r ./waveform-data.js -s WaveformData -o dist/waveform-data.js",
+    "build": "browserify -r ./lib/waveform-data.js -s WaveformData -o dist/waveform-data.js",
     "pretest": "npm run build && npm run lint",
     "test": "npm run test-node && npm run test-browsers",
     "test-browsers": "karma start",
