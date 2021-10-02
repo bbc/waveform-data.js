@@ -1,6 +1,6 @@
 "use strict";
 
-var WaveformDataChannel = require("./channel");
+var WaveformDataChannel = require("./waveform-data-channel");
 var processWorker = require("./builders/audiodecoder");
 var waveformUtils = require("./waveform-utils");
 

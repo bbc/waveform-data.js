@@ -3,7 +3,7 @@
 /* globals beforeEach, context, describe, it */
 
 var WaveformData = require("../../src/waveform-data");
-var WaveformDataChannel = require("../../src/channel");
+var WaveformDataChannel = require("../../src/waveform-data-channel");
 
 var fixtures = require("../fixtures");
 var expect = require("chai").expect;
