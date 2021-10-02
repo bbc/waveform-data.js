@@ -2,8 +2,8 @@
 
 /* globals beforeEach, context, describe, it */
 
-var WaveformData = require("../../lib/waveform-data");
-var WaveformDataChannel = require("../../lib/channel");
+var WaveformData = require("../../src/waveform-data");
+var WaveformDataChannel = require("../../src/channel");
 
 var fixtures = require("../fixtures");
 var expect = require("chai").expect;

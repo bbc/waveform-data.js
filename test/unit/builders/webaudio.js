@@ -2,7 +2,7 @@
 
 /* globals context, describe, it, beforeEach, __dirname */
 
-var WaveformData = require("../../../lib/waveform-data");
+var WaveformData = require("../../../src/waveform-data");
 
 var chai = require("chai");
 var sinon = require("sinon");

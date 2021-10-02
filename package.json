@@ -7,17 +7,17 @@
   "files": [
     "dist/waveform-data.js",
     "waveform-data.d.ts",
-    "lib"
+    "src"
   ],
   "homepage": "https://github.com/bbc/waveform-data.js",
   "scripts": {
-    "build": "browserify -r ./lib/waveform-data.js -s WaveformData -o dist/waveform-data.js",
+    "build": "browserify -r ./src/waveform-data.js -s WaveformData -o dist/waveform-data.js",
     "pretest": "npm run build && npm run lint",
     "test": "npm run test-node && npm run test-browsers",
     "test-browsers": "karma start",
     "test-node": "nyc --lines 0 mocha -R dot 'test/unit/*.js'",
     "posttest-node": "npm run lint",
-    "lint": "eslint karma.conf.js lib test",
+    "lint": "eslint karma.conf.js src test",
     "test-watch": "karma start --no-single-run",
     "prepare": "npm run build",
     "prestart": "npm run build && npm run copy-files",
