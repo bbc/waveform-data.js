@@ -4,6 +4,7 @@
 var commonjs = require("@rollup/plugin-commonjs");
 var resolve = require("@rollup/plugin-node-resolve").nodeResolve;
 var babel = require("@rollup/plugin-babel");
+var path = require("path");
 
 module.exports = function(config) {
   config.set({
@@ -48,6 +49,13 @@ module.exports = function(config) {
         format: "iife",
         name: "WaveformData",
         sourcemap: "inline"
+      },
+      onwarn: function(warning) {
+        if (warning.code === "CIRCULAR_DEPENDENCY" &&
+            warning.importer.indexOf(path.normalize("node_modules/chai/lib") === 0)) {
+          // Chai contains circular references, but they are not fatal and can be ignored.
+          return;
+        }
       }
     },
 
