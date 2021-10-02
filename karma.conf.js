@@ -5,7 +5,7 @@ module.exports = function(config) {
     basePath: "",
 
     files: [
-      { pattern: "lib/**/*.js", included: false, served: false, watched: true },
+      { pattern: "src/**/*.js", included: false, served: false, watched: true },
       "test/unit/**/*.js"
     ],
 
