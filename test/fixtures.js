@@ -1,6 +1,4 @@
-"use strict";
-
-function getJSONData(options) {
+export function getJSONData(options) {
   if (!options) {
     options = {};
   }
@@ -63,7 +61,7 @@ function getJSONData(options) {
   return data;
 }
 
-function getExpectedData(options) {
+export function getExpectedData(options) {
   return {
     length: 10,
     sample_rate: 48000,
@@ -87,7 +85,7 @@ function getExpectedData(options) {
   };
 }
 
-function getBinaryData(options) {
+export function getBinaryData(options) {
   if (!options) {
     options = {};
   }
@@ -141,9 +139,3 @@ function getBinaryData(options) {
 
   return view.buffer;
 }
-
-module.exports = {
-  getJSONData: getJSONData,
-  getBinaryData: getBinaryData,
-  getExpectedData: getExpectedData
-};

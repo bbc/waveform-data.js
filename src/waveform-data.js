@@ -1,19 +1,19 @@
 "use strict";
 
-var WaveformDataChannel = require("./waveform-data-channel");
-var processWorker = require("./builders/audiodecoder");
-var waveformUtils = require("./waveform-utils");
+import WaveformDataChannel from "./waveform-data-channel";
+import processWorker from "./builders/audiodecoder";
+import { isJsonWaveformData, isBinaryWaveformData, convertJsonToBinary } from "./waveform-utils";
 
 /**
  * Provides access to waveform data.
  */
 
 function WaveformData(data) {
-  if (waveformUtils.isJsonWaveformData(data)) {
-    data = waveformUtils.convertJsonToBinary(data);
+  if (isJsonWaveformData(data)) {
+    data = convertJsonToBinary(data);
   }
 
-  if (waveformUtils.isBinaryWaveformData(data)) {
+  if (isBinaryWaveformData(data)) {
     this._data = new DataView(data);
     this._offset = this._version() === 2 ? 24 : 20;
 
@@ -530,4 +530,4 @@ WaveformData.prototype = {
   }
 };
 
-module.exports = WaveformData;
+export default WaveformData;

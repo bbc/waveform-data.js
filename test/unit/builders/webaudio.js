@@ -1,26 +1,20 @@
-"use strict";
+import WaveformData from "../../../src/waveform-data";
 
-/* globals context, describe, it, beforeEach, __dirname */
-
-var WaveformData = require("../../../src/waveform-data");
-
-var chai = require("chai");
-var sinon = require("sinon");
-var fs = require("fs");
-var sinonChai = require("sinon-chai");
-var expect = chai.expect;
-
-chai.use(sinonChai);
+import { expect } from "chai";
 
 describe("WaveformData", function() {
   var sampleBuffer;
   var AudioContext = window.AudioContext || window.webkitAudioContext;
   var audioContext = new AudioContext();
 
-  beforeEach(function(done) {
-    fs.readFile(__dirname + "/../../4channel.wav", function(err, buf) {
-      sampleBuffer = buf.buffer;
-      done();
+  beforeEach(function() {
+    return fetch("/base/test/data/4channel.wav").then(function(response) {
+      if (response.ok) {
+        return response.arrayBuffer();
+      }
+    })
+    .then(function(buffer) {
+      sampleBuffer = buffer;
     });
   });
 

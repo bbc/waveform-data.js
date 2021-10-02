@@ -1,0 +1,2 @@
+# This is needed for 'npm run test-node'
+require: '@babel/register'

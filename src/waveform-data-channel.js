@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * Provides access to the waveform data for a single audio channel.
  */
@@ -73,4 +71,4 @@ WaveformDataChannel.prototype.max_array = function() {
   );
 };
 
-module.exports = WaveformDataChannel;
+export default WaveformDataChannel;

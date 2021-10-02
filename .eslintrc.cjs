@@ -1,8 +1,11 @@
 module.exports = {
   "env": {
     "browser": true,
-    "es6": true,
-    "commonjs": true
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2015,
+    "sourceType": "module"
   },
   "extends": "eslint:recommended",
   "plugins": [
@@ -82,4 +85,3 @@ module.exports = {
     "chai-friendly/no-unused-expressions": "error"
   }
 };
-

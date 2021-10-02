@@ -1,7 +1,5 @@
-"use strict";
-
-var InlineWorker = require("inline-worker");
-var MainThreadWorker = require("../util/main-thread-worker");
+import InlineWorker from "inline-worker";
+import MainThreadWorker from "../util/main-thread-worker";
 
 /**
  * AudioBuffer-based WaveformData generator
@@ -161,4 +159,4 @@ function processWorker(workerArgs, callback) {
   worker.postMessage(workerArgs);
 }
 
-module.exports = processWorker;
+export default processWorker;

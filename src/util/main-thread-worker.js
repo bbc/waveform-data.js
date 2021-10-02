@@ -1,5 +1,3 @@
-"use strict";
-
 function MainThreadWorker(func) {
   this._listeners = {};
 
@@ -36,4 +34,4 @@ MainThreadWorker.prototype.close = function() {
   this._listeners = {};
 };
 
-module.exports = MainThreadWorker;
+export default MainThreadWorker;

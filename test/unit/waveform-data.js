@@ -1,16 +1,13 @@
-"use strict";
+import WaveformData from "../../src/waveform-data";
+import WaveformDataChannel from "../../src/waveform-data-channel";
 
-/* globals beforeEach, context, describe, it */
+import { getExpectedData, getJSONData, getBinaryData } from "../fixtures";
 
-var WaveformData = require("../../src/waveform-data");
-var WaveformDataChannel = require("../../src/waveform-data-channel");
-
-var fixtures = require("../fixtures");
-var expect = require("chai").expect;
+import { expect } from "chai";
 
 describe("WaveformData", function() {
   var instance;
-  var expectations = fixtures.getExpectedData();
+  var expectations = getExpectedData();
 
   describe(".create", function() {
     it("should not build an instance for an unknown data type", function() {
@@ -24,7 +21,7 @@ describe("WaveformData", function() {
     });
 
     it("should not create from a JSON string", function() {
-      const data = fixtures.getJSONData({ channels: 1 });
+      const data = getJSONData({ channels: 1 });
 
       expect(function() {
         WaveformData.create(JSON.stringify(data));
@@ -32,21 +29,21 @@ describe("WaveformData", function() {
     });
 
     it("should create from a JavaScript object", function() {
-      const data = fixtures.getJSONData({ channels: 1 });
+      const data = getJSONData({ channels: 1 });
 
       expect(WaveformData.create(data))
         .to.be.an.instanceOf(WaveformData);
     });
 
     it("should create from an ArrayBuffer containing binary waveform data", function() {
-      const data = fixtures.getBinaryData({ channels: 2 });
+      const data = getBinaryData({ channels: 2 });
 
       expect(WaveformData.create(data))
         .to.be.an.instanceOf(WaveformData);
     });
 
     it("should not build an instance for an unknown version", function() {
-      const data = fixtures.getBinaryData({ version: 3 });
+      const data = getBinaryData({ version: 3 });
 
       expect(function() {
         WaveformData.create(data);
@@ -59,8 +56,8 @@ describe("WaveformData", function() {
       [8, 16].forEach(function(bits) {
         context("with " + bits + "-bit " + format + " data", function() {
           beforeEach(function() {
-            const data = format === "binary" ? fixtures.getBinaryData({ channels: 1, bits: bits })
-                                             : fixtures.getJSONData({ channels: 1, bits: bits });
+            const data = format === "binary" ? getBinaryData({ channels: 1, bits: bits })
+                                             : getJSONData({ channels: 1, bits: bits });
 
             instance = WaveformData.create(data);
           });
@@ -239,8 +236,8 @@ describe("WaveformData", function() {
             var binaryWaveform, jsonWaveform;
 
             beforeEach(function() {
-              binaryWaveform = WaveformData.create(fixtures.getBinaryData({ channels: 1 }));
-              jsonWaveform = WaveformData.create(fixtures.getJSONData({ channels: 1 }));
+              binaryWaveform = WaveformData.create(getBinaryData({ channels: 1 }));
+              jsonWaveform = WaveformData.create(getJSONData({ channels: 1 }));
             });
 
             it("should concatenate with binary data", function() {
@@ -275,7 +272,7 @@ describe("WaveformData", function() {
 
             it("should throw an error given incompatible audio", function() {
               expect(function() {
-                var stereoWaveform = WaveformData.create(fixtures.getBinaryData({ channels: 2 }));
+                var stereoWaveform = WaveformData.create(getBinaryData({ channels: 2 }));
 
                 binaryWaveform.concat(stereoWaveform);
               }).to.throw(Error);
@@ -299,8 +296,8 @@ describe("WaveformData", function() {
       [8, 16].forEach(function(bits) {
         context("with " + bits + "-bit " + format + " data", function() {
           beforeEach(function() {
-            const data = format === "binary" ? fixtures.getBinaryData({ channels: 2, bits: bits })
-                                            : fixtures.getJSONData({ channels: 2, bits: bits });
+            const data = format === "binary" ? getBinaryData({ channels: 2, bits: bits })
+                                            : getJSONData({ channels: 2, bits: bits });
 
             instance = WaveformData.create(data);
           });
@@ -497,8 +494,8 @@ describe("WaveformData", function() {
             var binaryWaveform, jsonWaveform;
 
             beforeEach(function() {
-              binaryWaveform = WaveformData.create(fixtures.getBinaryData({ channels: 2 }));
-              jsonWaveform = WaveformData.create(fixtures.getJSONData({ channels: 2 }));
+              binaryWaveform = WaveformData.create(getBinaryData({ channels: 2 }));
+              jsonWaveform = WaveformData.create(getJSONData({ channels: 2 }));
             });
 
             it("should return a new object with the concatenated result", function() {
@@ -514,7 +511,7 @@ describe("WaveformData", function() {
 
             it("throws an error if passing incompatible audio", function() {
               expect(function() {
-                let stereoWaveform = WaveformData.create(fixtures.getBinaryData({ channels: 1 }));
+                let stereoWaveform = WaveformData.create(getBinaryData({ channels: 1 }));
 
                 binaryWaveform.concat(stereoWaveform);
               }).to.throw(Error);
@@ -571,7 +568,7 @@ describe("WaveformData", function() {
 
   describe(".toJSON()", function() {
     beforeEach(function() {
-      var data = fixtures.getBinaryData({ channels: 2 });
+      var data = getBinaryData({ channels: 2 });
 
       instance = WaveformData.create(data);
     });
@@ -612,7 +609,7 @@ describe("WaveformData", function() {
   describe(".toArrayBuffer()", function() {
     context("given JSON data with 2 channels", function() {
       it("should return an arraybuffer of the right length", function() {
-        var data = fixtures.getJSONData({ channels: 2 });
+        var data = getJSONData({ channels: 2 });
         var instance = WaveformData.create(data);
         var buffer = instance.toArrayBuffer();
 
@@ -621,7 +618,7 @@ describe("WaveformData", function() {
       });
 
       it("should construct WaveformData from arraybuffer", function() {
-        var data = fixtures.getJSONData({ channels: 2 });
+        var data = getJSONData({ channels: 2 });
         var instance = WaveformData.create(data);
         var buffer = instance.toArrayBuffer();
         var waveform = WaveformData.create(buffer);
@@ -640,7 +637,7 @@ describe("WaveformData", function() {
 
     context("given JSON data with 16-bit values", function() {
       it("should return an arraybuffer of the right length", function() {
-        var data = fixtures.getJSONData({ channels: 2, bits: 16 });
+        var data = getJSONData({ channels: 2, bits: 16 });
         var instance = WaveformData.create(data);
         var buffer = instance.toArrayBuffer();
 
@@ -651,7 +648,7 @@ describe("WaveformData", function() {
 
     context("given binary data with 1 channel", function() {
       it("should return an arraybuffer of the right length", function() {
-        var data = fixtures.getBinaryData({ channels: 1 });
+        var data = getBinaryData({ channels: 1 });
         var instance = WaveformData.create(data);
         var buffer = instance.toArrayBuffer();
 
@@ -660,7 +657,7 @@ describe("WaveformData", function() {
       });
 
       it("should construct WaveformData from arraybuffer", function() {
-        var data = fixtures.getBinaryData({ channels: 1 });
+        var data = getBinaryData({ channels: 1 });
         var instance = WaveformData.create(data);
         var buffer = instance.toArrayBuffer();
         var waveform = WaveformData.create(buffer);

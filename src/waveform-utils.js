@@ -1,6 +1,4 @@
-"use strict";
-
-function isJsonWaveformData(data) {
+export function isJsonWaveformData(data) {
   return data &&
     typeof data === "object" &&
     "sample_rate" in data &&
@@ -10,7 +8,7 @@ function isJsonWaveformData(data) {
     "data" in data;
 }
 
-function isBinaryWaveformData(data) {
+export function isBinaryWaveformData(data) {
   var isCompatible = data && typeof data === "object" && "byteLength" in data;
 
   if (isCompatible) {
@@ -25,7 +23,7 @@ function isBinaryWaveformData(data) {
   return isCompatible;
 }
 
-function convertJsonToBinary(data) {
+export function convertJsonToBinary(data) {
   var waveformData = data.data;
   var channels = data.channels || 1;
   var header_size = 24; // version 2
@@ -67,9 +65,3 @@ function convertJsonToBinary(data) {
 
   return array_buffer;
 }
-
-module.exports = {
-  isJsonWaveformData: isJsonWaveformData,
-  isBinaryWaveformData: isBinaryWaveformData,
-  convertJsonToBinary: convertJsonToBinary
-};
