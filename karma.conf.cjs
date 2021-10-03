@@ -68,7 +68,6 @@ module.exports = function(config) {
 
     reporters: ["spec", "coverage"],
 
-    // configure the test coverage reporter
     coverageReporter: {
       reporters: [
         { type: "html", dir: "coverage", subdir: "." },

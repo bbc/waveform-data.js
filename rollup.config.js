@@ -32,17 +32,12 @@ export default [
         ]
       }
     ],
-    external: [],
-    watch: {
-      include: 'src/**',
-    },
     plugins: [
       commonjs(),
       resolve({ browser: true }),
       babel({ babelHelpers: 'bundled' })
     ]
   },
-  // dist/waveform-data.esm.js is an ES module bundle
   {
     input: 'src/waveform-data.js',
     output: [
@@ -53,6 +48,13 @@ export default [
         sourcemap: true,
         sourcemapPathTransform,
         freeze: false
+      },
+      {
+        file: 'dist/waveform-data.cjs.js',
+        name: 'waveform-data',
+        format: 'cjs',
+        // Corresonds to 'module.exports = WaveformData'
+        exports: 'default'
       }
     ],
     plugins: [

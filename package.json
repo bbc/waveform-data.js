@@ -2,8 +2,9 @@
   "name": "waveform-data",
   "version": "4.1.1",
   "description": "Audio Waveform Data Manipulation API – resample, offset and segment waveform data in JavaScript",
-  "main": "./dist/waveform-data.min.js",
+  "main": "./dist/waveform-data.cjs.js",
   "module": "./dist/waveform-data.esm.js",
+  "browser": "./dist/waveform-data.min.js",
   "types": "waveform-data.d.ts",
   "files": [
     "dist/waveform-data.js",
