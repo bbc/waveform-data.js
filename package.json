@@ -3,8 +3,7 @@
   "version": "4.1.1",
   "description": "Audio Waveform Data Manipulation API – resample, offset and segment waveform data in JavaScript",
   "main": "./dist/waveform-data.cjs.js",
-  "module": "./dist/waveform-data.esm.js",
-  "browser": "./dist/waveform-data.min.js",
+  "browser": "./dist/waveform-data.esm.js",
   "types": "waveform-data.d.ts",
   "files": [
     "dist/waveform-data.js",
@@ -12,7 +11,6 @@
     "dist/waveform-data.min.js",
     "dist/waveform-data.min.js.map",
     "dist/waveform-data.esm.js",
-    "dist/waveform-data.esm.js.map",
     "waveform-data.d.ts",
     "src"
   ],
@@ -21,7 +19,7 @@
     "lint": "eslint karma.conf.cjs src test",
     "prebuild": "npm run lint",
     "build": "rollup -c",
-    "postbuild": "copyfiles --up 1 dist/waveform-data.js dist/waveform-data.js.map dist/waveform-data.min.js dist/waveform-data.min.js.map dist/waveform-data.esm.js dist/waveform-data.esm.js.map demo",
+    "postbuild": "copyfiles --up 1 dist/waveform-data.js dist/waveform-data.js.map dist/waveform-data.min.js dist/waveform-data.min.js.map demo",
     "pretest": "npm run lint",
     "test": "npm run test-node && npm run test-browsers",
     "test-node": "mocha -R dot 'test/unit/tests-node.js'",

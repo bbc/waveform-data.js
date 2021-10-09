@@ -42,9 +42,7 @@ export default [
       {
         file: 'dist/waveform-data.esm.js',
         name: 'waveform-data',
-        format: 'es',
-        sourcemap: true,
-        sourcemapPathTransform
+        format: 'es'
       },
       {
         file: 'dist/waveform-data.cjs.js',
