@@ -1,5 +1,9 @@
 # waveform-data.js
 
+## v4.2.1 (2021/10/09)
+
+ * Added missing CommonJS module dist file (@chrisn)
+
 ## v4.2.0 (2021/10/09)
 
  * Updated to use ES module format. Replaced browserify with Rollup
