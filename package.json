@@ -6,6 +6,7 @@
   "browser": "./dist/waveform-data.esm.js",
   "types": "waveform-data.d.ts",
   "files": [
+    "dist/waveform-data.cjs.js",
     "dist/waveform-data.js",
     "dist/waveform-data.js.map",
     "dist/waveform-data.min.js",
