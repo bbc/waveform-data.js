@@ -1,29 +1,43 @@
-# How to contribute
+# Contributing
 
-Hello and thanks for volunteering a contribution to this project.
+Thank you for your interest in waveform-data.js!
 
-Here are the **two main rules** we encurage you to follow:
+We love hearing feedback from people who use our software, so if you build something interesting using this library, please let us know.
 
-1. Create a new branch for any new contribution/bug/feature
-1. Follow the existing code style to keep a consistent code layout
+Contributions are welcomed and encouraged. If you're thinking of fixing a bug or writing a new feature, please first read the following guidelines.
 
-## Fixing/Altering/Improving
+## Making changes
 
-Any proposal made should follow these basic rules:
+* Before creating a pull request, we prefer that you first discuss the change you want to make, either by raising an issue, or contacting us directly, e.g, [by email](mailto:irfs@bbc.co.uk).
 
-* maintain backward compatibility with the existing APIs
-* ask yourself if it's in the scope of this API or in the scope of your existing software
-* if possible, don't narrow the browser support by using an exotic - hence useful - language feature
-or a third-party library
+* If we agree with your feature proposal, we'll work with you to develop and integrate the feature. But please bear with us, as we may not always be able to respond immediately.
 
-## Submitting changes
+* Pull requests should focus on making a single change. Avoid combining multiple unrelated changes in a single pull request. This allows for easier review and increases the chance that your pull request will be accepted as is.
 
-In any case, **don't worry about making a mistake**. We will work things out with you,
-by either adjusting the code or relocating it to a better place in the API.
+* Please avoid making commits directly to your copy of the `master` branch. This branch is reserved for aggregating changes from other people, and for mainline development from the core contributors. If you commit to `master`, it's likely that your local fork will diverge from the [upstream repository](https://github.com/bbc/waveform-data.js).
 
-Nonetheless:
+* Before working on a change, please ensure your local fork is up to date with the code in the upstream repository, and create a [feature branch](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow) for your changes.
 
-* Submit the pull request
-* Expect a code review from the maintainers of the project (even if the tests are *green*)
-* Don't hesitate to bump the pull request issue if it's stagnating
-* Courtesy. Always. We are humans, not machines
+* Please don't change the `version` field in [package.json](https://github.com/bbc/peaks.js/blob/master/package.json), or update [CHANGELOG.md](https://github.com/bbc/peaks.js/blob/master/CHANGELOG.md). We'll do that when [preparing a new release](#preparing-a-new-release).
+
+* Please follow the existing coding conventions, and ensure that there are no linting errors (`npm run lint`). The eslint config doesn't specify all our coding conventions, so please try to be consistent.
+
+* For commit messages, please follow [these guidelines](https://chris.beams.io/posts/git-commit/), although we're not fussy about use of imperative mood vs past tense. In particular, avoid commit messages that include [Angular-style metadata](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit-message-header).
+
+* Please add test cases for your feature, and ensure all tests are passing (`npm run test`).
+
+* When merging a feature branch, core contributors may choose to squash your commits, so that the feature is merged as a single logical change.
+
+### Preparing a new release
+
+When it's time to publish a new release version, e.g,. to npm, create a single commit on `master` with the following changes only:
+
+* Increment the `version` field in [package.json](https://github.com/bbc/waveform-data.js/blob/master/package.json).
+
+* Describe the new features in this release in [CHANGELOG.md](https://github.com/bbc/waveform-data.js/blob/master/CHANGELOG.md).
+
+* Tag this commit using the form `vX.Y.Z` and push the commit using `git push origin master --tags`.
+
+* In GitHub, [create a Release](https://github.com/bbc/waveform-data.js/releases/new) from this tag, with the tag name as Release title, i.e., vX.Y.Z.
+
+* Creating a Release triggers a [GitHub Action workflow](https://github.com/bbc/waveform-data.js/blob/master/.github/workflows/npm-publish.yml) that publishes to NPM.
