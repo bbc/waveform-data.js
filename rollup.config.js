@@ -18,15 +18,13 @@ export default [
         file: 'dist/waveform-data.js',
         format: 'umd',
         name: 'WaveformData',
-        sourcemap: true,
-        freeze: false
+        sourcemap: true
       },
       {
         file: 'dist/waveform-data.min.js',
         format: 'umd',
         name: 'WaveformData',
         sourcemap: true,
-        freeze: false,
         plugins: [
           terser()
         ]
@@ -46,8 +44,7 @@ export default [
         name: 'waveform-data',
         format: 'es',
         sourcemap: true,
-        sourcemapPathTransform,
-        freeze: false
+        sourcemapPathTransform
       },
       {
         file: 'dist/waveform-data.cjs.js',
