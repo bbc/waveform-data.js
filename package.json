@@ -77,13 +77,11 @@
     "mocha": "~9.1.2",
     "rollup": "~2.58.0",
     "rollup-plugin-terser": "~7.0.2",
+    "rollup-plugin-web-worker-loader": "~1.6.1",
     "serve": "~12.0.1",
     "sinon": "~11.1.2",
     "sinon-chai": "~3.7.0",
     "watchify": "~4.0.0",
     "xvfb-maybe": "~0.2.1"
-  },
-  "dependencies": {
-    "inline-worker": "~1.1.0"
   }
 }

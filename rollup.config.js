@@ -2,6 +2,7 @@ import { babel } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
+import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import path from 'path';
 
 import pkg from './package.json';
@@ -33,6 +34,7 @@ export default [
     plugins: [
       commonjs(),
       resolve({ browser: true }),
+      webWorkerLoader(),
       babel({ babelHelpers: 'bundled' })
     ]
   },
@@ -55,6 +57,7 @@ export default [
     plugins: [
       commonjs(),
       resolve({ browser: true }),
+      webWorkerLoader(),
       babel({ babelHelpers: 'bundled' })
     ]
   }

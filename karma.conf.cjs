@@ -4,6 +4,7 @@
 var commonjs = require("@rollup/plugin-commonjs");
 var resolve = require("@rollup/plugin-node-resolve").nodeResolve;
 var babel = require("@rollup/plugin-babel");
+var webWorkerLoader = require("rollup-plugin-web-worker-loader");
 var path = require("path");
 
 module.exports = function(config) {
@@ -34,15 +35,11 @@ module.exports = function(config) {
       plugins: [
         commonjs(),
         resolve({ browser: true }),
+        webWorkerLoader(),
         babel.babel({
           babelHelpers: "bundled",
           exclude: "node_modules/**",
-          plugins: [
-            ["istanbul", {
-              // Coverage reporting doesn't work with InlineWorker
-              exclude: ["src/builders/audiodecoder.js", "test/**/*.js"]
-            }]
-          ]
+          plugins: ["istanbul"]
         })
       ],
       output: {

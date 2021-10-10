@@ -1,6 +1,7 @@
 import WaveformDataChannel from "./waveform-data-channel";
-import processWorker from "./builders/audiodecoder";
+import { generateWaveformData } from "./waveform-generator";
 import { isJsonWaveformData, isBinaryWaveformData, convertJsonToBinary } from "./waveform-utils";
+import WaveformDataWorker from "web-worker:./waveform-data-worker";
 
 /**
  * Provides access to waveform data.
@@ -58,16 +59,30 @@ function createFromAudioBuffer(audio_buffer, options, callback) {
     audio_buffer_obj.channels[channel] = audio_buffer.getChannelData(channel);
   }
 
-  processWorker({
-    scale: options.scale,
-    amplitude_scale: options.amplitude_scale,
-    split_channels: options.split_channels,
-    audio_buffer: audio_buffer_obj,
-    disable_worker: options.disable_worker
-  },
-  function(waveform_data) {
-    callback(null, new WaveformData(waveform_data), audio_buffer);
-  });
+  if (options.disable_worker) {
+    var buffer = generateWaveformData({
+      scale: options.scale,
+      amplitude_scale: options.amplitude_scale,
+      split_channels: options.split_channels,
+      audio_buffer: audio_buffer_obj
+    });
+
+    callback(null, new WaveformData(buffer), audio_buffer);
+  }
+  else {
+    var worker = new WaveformDataWorker();
+
+    worker.onmessage = function(evt) {
+      callback(null, new WaveformData(evt.data), audio_buffer);
+    };
+
+    worker.postMessage({
+      scale: options.scale,
+      amplitude_scale: options.amplitude_scale,
+      split_channels: options.split_channels,
+      audio_buffer: audio_buffer_obj
+    });
+  }
 }
 
 function createFromArrayBuffer(audioContext, audioData, options, callback) {
