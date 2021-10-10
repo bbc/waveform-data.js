@@ -1,5 +1,3 @@
-"use strict";
-
 import WaveformDataChannel from "./waveform-data-channel";
 import processWorker from "./builders/audiodecoder";
 import { isJsonWaveformData, isBinaryWaveformData, convertJsonToBinary } from "./waveform-utils";
