@@ -1,15 +1,7 @@
 import { babel } from '@rollup/plugin-babel';
-import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import webWorkerLoader from 'rollup-plugin-web-worker-loader';
-import path from 'path';
-
-import pkg from './package.json';
-
-function sourcemapPathTransform(sourcePath) {
-  return path.join('node_modules', pkg.name, './src', sourcePath);
-}
 
 export default [
   {
@@ -32,7 +24,6 @@ export default [
       }
     ],
     plugins: [
-      commonjs(),
       resolve({ browser: true }),
       webWorkerLoader(),
       babel({ babelHelpers: 'bundled' })
@@ -45,7 +36,19 @@ export default [
         file: 'dist/waveform-data.esm.js',
         name: 'waveform-data',
         format: 'es'
-      },
+      }
+    ],
+    plugins: [
+      resolve({ browser: true }),
+      webWorkerLoader({
+        targetPlatform: 'browser'
+      }),
+      babel({ babelHelpers: 'bundled' })
+    ]
+  },
+  {
+    input: 'src/waveform-data.js',
+    output: [
       {
         file: 'dist/waveform-data.cjs.js',
         name: 'waveform-data',
@@ -55,10 +58,10 @@ export default [
       }
     ],
     plugins: [
-      commonjs(),
       resolve({ browser: true }),
       webWorkerLoader(),
       babel({ babelHelpers: 'bundled' })
     ]
   }
+
 ];
