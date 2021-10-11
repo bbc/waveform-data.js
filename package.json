@@ -17,7 +17,7 @@
   ],
   "homepage": "https://github.com/bbc/waveform-data.js",
   "scripts": {
-    "lint": "eslint karma.conf.cjs src test",
+    "lint": "eslint karma.conf.cjs rollup.config.js src test",
     "prebuild": "npm run lint",
     "build": "rollup -c",
     "postbuild": "copyfiles --up 1 dist/waveform-data.js dist/waveform-data.js.map dist/waveform-data.min.js dist/waveform-data.min.js.map demo",
