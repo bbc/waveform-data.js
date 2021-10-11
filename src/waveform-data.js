@@ -47,24 +47,27 @@ function getOptions(options) {
   return opts;
 }
 
-function createFromAudioBuffer(audio_buffer, options, callback) {
-  var audio_buffer_obj = {
-    length: audio_buffer.length,
-    sampleRate: audio_buffer.sampleRate,
-    channels: []
-  };
+function getChannelData(audio_buffer) {
+  var channels = [];
 
-  // Fill in the channels data.
-  for (var channel = 0; channel < audio_buffer.numberOfChannels; ++channel) {
-    audio_buffer_obj.channels[channel] = audio_buffer.getChannelData(channel);
+  for (var i = 0; i < audio_buffer.numberOfChannels; ++i) {
+    channels.push(audio_buffer.getChannelData(i).buffer);
   }
+
+  return channels;
+}
+
+function createFromAudioBuffer(audio_buffer, options, callback) {
+  var channels = getChannelData(audio_buffer);
 
   if (options.disable_worker) {
     var buffer = generateWaveformData({
       scale: options.scale,
       amplitude_scale: options.amplitude_scale,
       split_channels: options.split_channels,
-      audio_buffer: audio_buffer_obj
+      length: audio_buffer.length,
+      sample_rate: audio_buffer.sampleRate,
+      channels: channels
     });
 
     callback(null, new WaveformData(buffer), audio_buffer);
@@ -80,8 +83,10 @@ function createFromAudioBuffer(audio_buffer, options, callback) {
       scale: options.scale,
       amplitude_scale: options.amplitude_scale,
       split_channels: options.split_channels,
-      audio_buffer: audio_buffer_obj
-    });
+      length: audio_buffer.length,
+      sample_rate: audio_buffer.sampleRate,
+      channels: channels
+    }, channels);
   }
 }
 

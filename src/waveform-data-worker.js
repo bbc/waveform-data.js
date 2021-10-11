@@ -5,6 +5,5 @@ onmessage = function(evt) {
 
   // Transfer buffer to the calling thread
   this.postMessage(buffer, [buffer]);
-  // this.removeEventListener("message", listener);
   this.close();
 };
