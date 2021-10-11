@@ -58,6 +58,8 @@ import WaveformData from 'waveform-data';
 
 ### Using RequireJS
 
+The UMD bundle can be used with RequireJS:
+
 ```javascript
 define(['WaveformData'], function(WaveformData) {
   // ...

@@ -33,6 +33,12 @@ display the waveform at zoom levels or fit to a given width.
 It also allows you to create waveform data from audio content using the Web
 Audio API.
 
+Use the following code to import it:
+
+```javascript
+import WaveformData from 'waveform-data';
+```
+
 ### WaveformData.create(data)
 
 Creates and returns a [`WaveformData`](#waveformdata) instance from the given
