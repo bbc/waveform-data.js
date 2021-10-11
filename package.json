@@ -22,7 +22,7 @@
     "build": "rollup -c",
     "postbuild": "copyfiles --up 1 dist/waveform-data.js dist/waveform-data.js.map dist/waveform-data.min.js dist/waveform-data.min.js.map demo",
     "pretest": "npm run lint",
-    "test": "npm run test-node npm run test-browsers",
+    "test": "npm run test-node && npm run test-browsers",
     "test-node": "npm run test-node-cjs && npm run test-node-esm",
     "test-node-cjs": "mocha -R dot 'test/unit/tests-node-cjs.js'",
     "test-node-esm": "mocha -R dot 'test/unit/tests-node-esm.js'",
