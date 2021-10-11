@@ -26,9 +26,9 @@ npm install --save waveform-data
 
 # Usage and examples
 
-`dist/waveform-data.js` is delivered as a [UMD](https://github.com/umdjs/umd)
+waveform-data.js is available as a [UMD](https://github.com/umdjs/umd)
 module so it can be used from a `<script>` tag, or as a RequireJS or CommonJS
-module.
+module. See dist/waveform-data.js and dist/waveform-data.min.js.
 
 ## Importing waveform-data.js
 
@@ -50,6 +50,8 @@ Simply add **waveform-data.js** in a `script` tag in your HTML page:
 
 ### Using ES6
 
+An ES6 module build is provided for use with bundlers such as Webpack and Rollup. See dist/waveform-data.esm.js.
+
 ```javascript
 import WaveformData from 'waveform-data';
 ```
@@ -63,6 +65,8 @@ define(['WaveformData'], function(WaveformData) {
 ```
 
 ### Using CommonJS (Node.js)
+
+A CommonJS build is provided for use with Node.js. See dist/waveform-data.cjs.js.
 
 ```javascript
 const WaveformData = require('waveform-data');
