@@ -1,5 +1,3 @@
-// import WaveformData from "./waveform-data";
-
 import { getExpectedData, getJSONData, getBinaryData } from "../fixtures";
 
 import { expect } from "chai";
