@@ -21,6 +21,7 @@ jobs:
           - node-version: 10.x
           - node-version: 12.x
           - node-version: 14.x
+          - node-version: 16.x
           - node-version: 14.x
             browser: "ChromeHeadless"
           - node-version: 14.x
