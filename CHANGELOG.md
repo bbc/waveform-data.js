@@ -1,5 +1,12 @@
 # waveform-data.js
 
+## v4.3.0 (2021/10/12)
+
+ * Replaced inline-worker with rollup-plugin-web-worker-loader (@chrisn)
+
+ * (#78) Fixed "Uncaught ReferenceError" when waveform-data.js is used
+   in an Angular app (@chrisn)
+
 ## v4.2.1 (2021/10/09)
 
  * Added missing CommonJS module dist file (@chrisn)
