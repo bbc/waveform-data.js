@@ -24,11 +24,11 @@ module.exports = function(config) {
 
     files: [
       { pattern: "test/data/4channel.wav", included: false, served: true },
-      { pattern: "test/unit/tests.js", type: "module", included: true }
+      { pattern: "test/unit/tests-browser.js", type: "module", included: true }
     ],
 
     preprocessors: {
-      "test/unit/tests.js": ["rollup"]
+      "test/unit/tests-browser.js": ["rollup"]
     },
 
     rollupPreprocessor: {
