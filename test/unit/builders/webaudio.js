@@ -39,6 +39,43 @@ export default function waveformDataAudioContextTests(WaveformData) {
           });
         });
 
+        it("shouldn't cause an unhandledrejection on error", function(done) {
+          var options = {
+            audio_context: audioContext,
+            array_buffer: new ArrayBuffer(1024)
+          };
+
+          function listener() {
+            done("This shouldn't be reached");
+          }
+          window.addEventListener("unhandledrejection", listener);
+
+          WaveformData.createFromAudio(options, function(err, waveform) {
+            expect(err).to.be.an.instanceOf(DOMException);
+            setTimeout(function() {
+              window.removeEventListener("unhandledrejection", listener);
+              done();
+            });
+          });
+        });
+
+        it("should only invoke the callback once on error", function(done) {
+          var options = {
+            audio_context: audioContext,
+            array_buffer: new ArrayBuffer(1024)
+          };
+          var count = 0;
+
+          WaveformData.createFromAudio(options, function(err, waveform) {
+            expect(err).to.be.an.instanceOf(DOMException);
+            count++;
+            setTimeout(function() {
+              expect(count).to.eq(1);
+              done();
+            });
+          });
+        });
+
         it("should return a valid waveform", function(done) {
           var options = {
             audio_context: audioContext,
