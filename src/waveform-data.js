@@ -102,15 +102,21 @@ function createFromArrayBuffer(audioContext, audioData, options, callback) {
     }
 
     callback(error);
+    // prevent double-calling the callback on errors:
+    callback = function() { };
   }
 
-  audioContext.decodeAudioData(
+  var promise = audioContext.decodeAudioData(
     audioData,
     function(audio_buffer) {
       createFromAudioBuffer(audio_buffer, options, callback);
     },
     errorCallback
   );
+
+  if (promise) {
+    promise.catch(errorCallback);
+  }
 }
 
 /**
