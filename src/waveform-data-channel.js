@@ -52,11 +52,14 @@ WaveformDataChannel.prototype.set_max_sample = function(index, sample) {
  */
 
 WaveformDataChannel.prototype.min_array = function() {
-  return this._waveformData._offsetValues(
-    0,
-    this._waveformData.length,
-    this._channelIndex * 2
-  );
+  var length = this._waveformData.length;
+  var values = [];
+
+  for (var i = 0; i < length; i++) {
+    values.push(this.min_sample(i));
+  }
+
+  return values;
 };
 
 /**
@@ -64,11 +67,14 @@ WaveformDataChannel.prototype.min_array = function() {
  */
 
 WaveformDataChannel.prototype.max_array = function() {
-  return this._waveformData._offsetValues(
-    0,
-    this._waveformData.length,
-    this._channelIndex * 2 + 1
-  );
+  var length = this._waveformData.length;
+  var values = [];
+
+  for (var i = 0; i < length; i++) {
+    values.push(this.max_sample(i));
+  }
+
+  return values;
 };
 
 export default WaveformDataChannel;

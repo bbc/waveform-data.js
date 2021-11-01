@@ -370,23 +370,6 @@ WaveformData.prototype = {
   },
 
   /**
-   * Return the unpacked values for a particular offset.
-   */
-
-  _offsetValues: function getOffsetValues(start, length, correction) {
-    var values = [];
-    var channels = this.channels;
-
-    correction += (start * channels * 2); // offset the positioning query
-
-    for (var i = 0; i < length; i++) {
-      values.push(this._at((i * channels * 2) + correction));
-    }
-
-    return values;
-  },
-
-  /**
    * Returns the data format version number.
    */
 
