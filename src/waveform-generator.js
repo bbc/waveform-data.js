@@ -2,7 +2,8 @@
  * AudioBuffer-based WaveformData generator
  *
  * Adapted from BlockFile::CalcSummary in Audacity, with permission.
- * See https://github.com/audacity/audacity/blob/1108c1376c09166162335fab4743008cba57c4ee/src/BlockFile.cpp#L198
+ * See https://github.com/audacity/audacity/blob/
+ *   1108c1376c09166162335fab4743008cba57c4ee/src/BlockFile.cpp#L198
  */
 
  var INT8_MAX = 127;
