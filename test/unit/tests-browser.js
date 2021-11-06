@@ -1,9 +1,14 @@
-import { WaveformData, resampleWaveformData, concatWaveformData } from "../../src/waveform-data";
+import { WaveformData, resampleWaveformData, concatWaveformData,
+  createWaveformDataFromAudioBuffer, createWaveformDataFromEncodedAudio } from "../../src/index";
 
 import waveformDataTests from "./waveform-data";
-import waveformDataAudioBufferTests from "./builders/audiobuffer";
-import waveformDataAudioContextTests from "./builders/webaudio";
+import waveformDataAudioBufferTests from "./create-from-audio-buffer-test";
+import waveformDataAudioContextTests from "./create-from-encoded-audio-test";
+import resampleWaveformDataTests from "./resample-test";
+import concatWaveformDataTests from "./concat-test";
 
-waveformDataTests(WaveformData, resampleWaveformData, concatWaveformData);
-waveformDataAudioBufferTests(WaveformData);
-waveformDataAudioContextTests(WaveformData);
+waveformDataTests(WaveformData);
+waveformDataAudioBufferTests(WaveformData, createWaveformDataFromAudioBuffer);
+waveformDataAudioContextTests(WaveformData, createWaveformDataFromEncodedAudio);
+resampleWaveformDataTests(WaveformData, resampleWaveformData);
+concatWaveformDataTests(WaveformData, concatWaveformData);

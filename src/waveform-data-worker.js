@@ -1,4 +1,4 @@
-import { generateWaveformData } from "./waveform-generator";
+import generateWaveformData from "./generate";
 
 onmessage = function(evt) {
   var buffer = generateWaveformData(evt.data);

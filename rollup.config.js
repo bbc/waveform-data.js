@@ -5,7 +5,7 @@ import webWorkerLoader from "rollup-plugin-web-worker-loader";
 
 export default [
   {
-    input: "src/waveform-data.js",
+    input: "src/index.js",
     output: [
       {
         file: "dist/waveform-data.js",
@@ -30,7 +30,7 @@ export default [
     ]
   },
   {
-    input: "src/waveform-data.js",
+    input: "src/index.js",
     output: [
       {
         file: "dist/waveform-data.esm.js",
@@ -48,7 +48,7 @@ export default [
     ]
   },
   {
-    input: "src/waveform-data.js",
+    input: "src/index.js",
     output: [
       {
         file: "dist/waveform-data.cjs.js",

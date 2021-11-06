@@ -131,4 +131,4 @@ function generateWaveformData(options) {
   return buffer;
 }
 
-export { generateWaveformData };
+export default generateWaveformData;

@@ -3,5 +3,9 @@ var resampleWaveformData = require("../../dist/waveform-data.cjs").resampleWavef
 var concatWaveformData = require("../../dist/waveform-data.cjs").concatWaveformData;
 
 import waveformDataTests from "./waveform-data";
+import resampleWaveformDataTests from "./resample-test";
+import concatWaveformDataTests from "./concat-test";
 
-waveformDataTests(WaveformData, resampleWaveformData, concatWaveformData);
+waveformDataTests(WaveformData, concatWaveformData);
+resampleWaveformDataTests(WaveformData, resampleWaveformData);
+concatWaveformDataTests(WaveformData, concatWaveformData);
