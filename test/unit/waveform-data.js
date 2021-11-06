@@ -428,15 +428,27 @@ export default function waveformDataTests(WaveformData) {
                 }).to.throw(Error);
               });
 
-              it("should throw an error if the scale value is not a positive integer", function() {
+              it("should throw an error if the width is not a number", function() {
                 expect(function() {
-                  instance.resample({ scale: 0 });
-                }).to.throw(RangeError);
+                  instance.resample({ width: "5" });
+                }).to.throw(Error);
               });
 
               it("should throw an error if the width value is not a positive integer", function() {
                 expect(function() {
                   instance.resample({ width: 0 });
+                }).to.throw(RangeError);
+              });
+
+              it("should throw an error if the scale value is not a number", function() {
+                expect(function() {
+                  instance.resample({ scale: "1024" });
+                }).to.throw(RangeError);
+              });
+
+              it("should throw an error if the scale value is not a positive integer", function() {
+                expect(function() {
+                  instance.resample({ scale: 0 });
                 }).to.throw(RangeError);
               });
 

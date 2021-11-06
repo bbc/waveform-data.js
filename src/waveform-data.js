@@ -150,6 +150,39 @@ WaveformData.createFromAudio = function(options, callback) {
 
 WaveformData.prototype = {
 
+  _getResampleOptions(options) {
+    var opts = {};
+
+    opts.scale = options.scale;
+    opts.width = options.width;
+
+    if (opts.width != null && (typeof opts.width !== "number" || opts.width <= 0)) {
+      throw new RangeError("WaveformData.resample(): width should be a positive integer value");
+    }
+
+    if (opts.scale != null && (typeof opts.scale !== "number" || opts.scale <= 0)) {
+      throw new RangeError("WaveformData.resample(): scale should be a positive integer value");
+    }
+
+    if (!opts.scale && !opts.width) {
+      throw new Error("WaveformData.resample(): Missing scale or width option");
+    }
+
+    if (opts.width) {
+      // Calculate the target scale for the resampled waveform
+      opts.scale = Math.floor(this.duration * this.sample_rate / opts.width);
+    }
+
+    if (opts.scale < this.scale) {
+      throw new Error(
+        "WaveformData.resample(): Zoom level " + opts.scale +
+        " too low, minimum: " + this.scale
+      );
+    }
+
+    return opts;
+  },
+
   /**
    * Creates and returns a new WaveformData object with resampled data.
    * Use this method to create waveform data at different zoom levels.
@@ -159,20 +192,7 @@ WaveformData.prototype = {
    */
 
   resample: function(options) {
-    options.scale = typeof options.scale === "number" ? options.scale : null;
-    options.width = typeof options.width === "number" ? options.width : null;
-
-    if (options.width != null && options.width <= 0) {
-      throw new RangeError("WaveformData.resample(): width should be a positive integer value");
-    }
-
-    if (options.scale != null && options.scale <= 0) {
-      throw new RangeError("WaveformData.resample(): scale should be a positive integer value");
-    }
-
-    if (!options.scale && !options.width) {
-      throw new Error("WaveformData.resample(): Missing scale or width option");
-    }
+    options = this._getResampleOptions(options);
 
     // Scale we want to reach
     var output_samples_per_pixel = options.scale ||
@@ -226,13 +246,6 @@ WaveformData.prototype = {
 
     var min_value = this.bits === 8 ? -128 : -32768;
     var max_value = this.bits === 8 ?  127 :  32767;
-
-    if (output_samples_per_pixel < scale) {
-      throw new Error(
-        "WaveformData.resample(): Zoom level " + output_samples_per_pixel +
-        " too low, minimum: " + scale
-      );
-    }
 
     var where, prev_where, stop, value, last_input_index;
 
