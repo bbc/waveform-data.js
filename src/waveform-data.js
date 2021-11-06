@@ -225,7 +225,8 @@ WaveformResampler.prototype.next = function() {
   var i;
 
   while (this._input_index < this._input_buffer_size && count < total) {
-    while (Math.floor(this.sample_at_pixel(this._output_index) / this._scale) === this._input_index) {
+    while (Math.floor(this.sample_at_pixel(this._output_index) / this._scale) ===
+           this._input_index) {
       if (this._output_index > 0) {
         for (i = 0; i < channels; ++i) {
           channel = this._outputWaveformData.channel(i);
