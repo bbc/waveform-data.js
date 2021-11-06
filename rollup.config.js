@@ -35,7 +35,8 @@ export default [
       {
         file: "dist/waveform-data.esm.js",
         name: "waveform-data",
-        format: "es"
+        format: "es",
+        exports: "named"
       }
     ],
     plugins: [
@@ -53,8 +54,7 @@ export default [
         file: "dist/waveform-data.cjs.js",
         name: "waveform-data",
         format: "cjs",
-        // Corresonds to "module.exports = WaveformData"
-        exports: "default"
+        exports: "named"
       }
     ],
     plugins: [

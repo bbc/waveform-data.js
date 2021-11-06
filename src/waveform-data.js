@@ -148,8 +148,8 @@ WaveformData.createFromAudio = function(options, callback) {
   }
 };
 
-function WaveformResampler(options) {
-  this._inputData = options.waveformData;
+function WaveformResampler(waveformData, options) {
+  this._inputData = waveformData;
 
   // Scale we want to reach
   this._output_samples_per_pixel = options.scale;
@@ -305,123 +305,6 @@ WaveformResampler.prototype.getOutputData = function() {
 };
 
 WaveformData.prototype = {
-
-  _getResampleOptions(options) {
-    var opts = {};
-
-    opts.scale = options.scale;
-    opts.width = options.width;
-
-    if (opts.width != null && (typeof opts.width !== "number" || opts.width <= 0)) {
-      throw new RangeError("WaveformData.resample(): width should be a positive integer value");
-    }
-
-    if (opts.scale != null && (typeof opts.scale !== "number" || opts.scale <= 0)) {
-      throw new RangeError("WaveformData.resample(): scale should be a positive integer value");
-    }
-
-    if (!opts.scale && !opts.width) {
-      throw new Error("WaveformData.resample(): Missing scale or width option");
-    }
-
-    if (opts.width) {
-      // Calculate the target scale for the resampled waveform
-      opts.scale = Math.floor(this.duration * this.sample_rate / opts.width);
-    }
-
-    if (opts.scale < this.scale) {
-      throw new Error(
-        "WaveformData.resample(): Zoom level " + opts.scale +
-        " too low, minimum: " + this.scale
-      );
-    }
-
-    opts.abortSignal = options.abortSignal;
-
-    return opts;
-  },
-
-  resample: function(options) {
-    options = this._getResampleOptions(options);
-    options.waveformData = this;
-
-    var resampler = new WaveformResampler(options);
-
-    while (!resampler.next()) {
-      // nothing
-    }
-
-    return new WaveformData(resampler.getOutputData());
-  },
-
-  /**
-   * Concatenates with one or more other waveforms, returning a new WaveformData object.
-   */
-
-  concat: function() {
-    var self = this;
-    var otherWaveforms = Array.prototype.slice.call(arguments);
-
-    // Check that all the supplied waveforms are compatible
-    otherWaveforms.forEach(function(otherWaveform) {
-      if (self.channels !== otherWaveform.channels ||
-        self.sample_rate !== otherWaveform.sample_rate ||
-        self.bits !== otherWaveform.bits ||
-        self.scale !== otherWaveform.scale) {
-        throw new Error("WaveformData.concat(): Waveforms are incompatible");
-      }
-    });
-
-    var combinedBuffer = this._concatBuffers.apply(this, otherWaveforms);
-
-    return WaveformData.create(combinedBuffer);
-  },
-
-  /**
-   * Returns a new ArrayBuffer with the concatenated waveform.
-   * All waveforms must have identical metadata (version, channels, etc)
-   */
-
-  _concatBuffers: function() {
-    var otherWaveforms = Array.prototype.slice.call(arguments);
-    var headerSize = this._offset;
-    var totalSize = headerSize;
-    var totalDataLength = 0;
-    var bufferCollection = [this].concat(otherWaveforms).map(function(w) {
-      return w._data.buffer;
-    });
-    var i, buffer;
-
-    for (i = 0; i < bufferCollection.length; i++) {
-      buffer = bufferCollection[i];
-      var dataSize = new DataView(buffer).getInt32(16, true);
-
-      totalSize += buffer.byteLength - headerSize;
-      totalDataLength += dataSize;
-    }
-
-    var totalBuffer = new ArrayBuffer(totalSize);
-    var sourceHeader = new DataView(bufferCollection[0]);
-    var totalBufferView = new DataView(totalBuffer);
-
-    // Copy the header from the first chunk
-    for (i = 0; i < headerSize; i++) {
-      totalBufferView.setUint8(i, sourceHeader.getUint8(i));
-    }
-    // Rewrite the data-length header item to reflect all of the samples concatenated together
-    totalBufferView.setInt32(16, totalDataLength, true);
-
-    var offset = 0;
-    var dataOfTotalBuffer = new Uint8Array(totalBuffer, headerSize);
-
-    for (i = 0; i < bufferCollection.length; i++) {
-      buffer = bufferCollection[i];
-      dataOfTotalBuffer.set(new Uint8Array(buffer, headerSize), offset);
-      offset += buffer.byteLength - headerSize;
-    }
-
-    return totalBuffer;
-  },
 
   /**
    * Returns the data format version number.
@@ -591,4 +474,131 @@ WaveformData.prototype = {
   }
 };
 
-export default WaveformData;
+/**
+ * Returns a new ArrayBuffer with the concatenated waveform.
+ * All waveforms must have identical metadata (version, channels, etc)
+ */
+
+function concatBuffers(waveforms) {
+  var headerSize = waveforms[0]._offset;
+  var totalSize = headerSize;
+  var totalDataLength = 0;
+  var buffers = waveforms.map(function(waveform) {
+    return waveform._data.buffer;
+  });
+  var i;
+
+  for (i = 0; i < buffers.length; i++) {
+    var dataSize = new DataView(buffers[i]).getInt32(16, true);
+
+    totalSize += buffers[i].byteLength - headerSize;
+    totalDataLength += dataSize;
+  }
+
+  var outputBuffer = new ArrayBuffer(totalSize);
+  var sourceHeader = new DataView(buffers[0]);
+  var outputBufferView = new DataView(outputBuffer);
+
+  // Copy the header from the first chunk
+  for (i = 0; i < headerSize; i++) {
+    outputBufferView.setUint8(i, sourceHeader.getUint8(i));
+  }
+
+  // Rewrite the data-length header item to reflect all of the samples
+  // concatenated together
+  outputBufferView.setInt32(16, totalDataLength, true);
+
+  var offset = 0;
+  var outputBufferData = new Uint8Array(outputBuffer, headerSize);
+
+  for (i = 0; i < buffers.length; i++) {
+    outputBufferData.set(new Uint8Array(buffers[i], headerSize), offset);
+    offset += buffers[i].byteLength - headerSize;
+  }
+
+  return outputBuffer;
+}
+
+/**
+ * Concatenates with one or more other waveforms, returning a new WaveformData object.
+ */
+
+function concatWaveformData() {
+  var waveforms = Array.prototype.slice.call(arguments);
+
+  if (!waveforms[0]) {
+    throw new Error("concatWaveformData(): One or more waveforms are required");
+  }
+
+  // Check that all the supplied waveforms are compatible
+  for (var i = 1; i < waveforms.length; i++) {
+    if (waveforms[i].channels !== waveforms[0].channels ||
+      waveforms[i].sample_rate !== waveforms[0].sample_rate ||
+      waveforms[i].bits !== waveforms[0].bits ||
+      waveforms[i].scale !== waveforms[0].scale ||
+      waveforms[i].version !== waveforms[0].version) {
+      throw new Error("concatWaveformData(): Waveforms are incompatible");
+    }
+  }
+
+  var combinedBuffer = concatBuffers(waveforms);
+
+  return WaveformData.create(combinedBuffer);
+}
+
+function getResampleOptions(waveformData, options) {
+  var opts = {};
+
+  if (!options) {
+    throw new Error("WaveformData.resample(): Missing options");
+  }
+
+  opts.scale = options.scale;
+  opts.width = options.width;
+
+  if (opts.width != null && (typeof opts.width !== "number" || opts.width <= 0)) {
+    throw new RangeError("WaveformData.resample(): width should be a positive integer value");
+  }
+
+  if (opts.scale != null && (typeof opts.scale !== "number" || opts.scale <= 0)) {
+    throw new RangeError("WaveformData.resample(): scale should be a positive integer value");
+  }
+
+  if (!opts.scale && !opts.width) {
+    throw new Error("WaveformData.resample(): Missing scale or width option");
+  }
+
+  if (opts.width) {
+    // Calculate the target scale for the resampled waveform
+    opts.scale = Math.floor(waveformData.duration * waveformData.sample_rate / opts.width);
+  }
+
+  if (opts.scale < waveformData.scale) {
+    throw new Error(
+      "WaveformData.resample(): Zoom level " + opts.scale +
+      " too low, minimum: " + waveformData.scale
+    );
+  }
+
+  opts.abortSignal = options.abortSignal;
+
+  return opts;
+}
+
+function resampleWaveformData(waveformData, options) {
+  options = getResampleOptions(waveformData, options);
+
+  var resampler = new WaveformResampler(waveformData, options);
+
+  while (!resampler.next()) {
+    // nothing
+  }
+
+  return new WaveformData(resampler.getOutputData());
+}
+
+export {
+  WaveformData,
+  resampleWaveformData,
+  concatWaveformData
+};

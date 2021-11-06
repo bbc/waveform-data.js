@@ -1,5 +1,5 @@
-import WaveformData from "../../dist/waveform-data.esm";
+import { WaveformData, resampleWaveformData, concatWaveformData } from "../../dist/waveform-data.esm";
 
 import waveformDataTests from "./waveform-data";
 
-waveformDataTests(WaveformData);
+waveformDataTests(WaveformData, resampleWaveformData, concatWaveformData);

@@ -55,6 +55,7 @@
     "> 0.2%",
     "IE 10"
   ],
+  "sideEffects": "false",
   "devDependencies": {
     "@babel/preset-env": "~7.16.0",
     "@babel/register": "~7.16.0",

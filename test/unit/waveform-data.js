@@ -2,7 +2,7 @@ import { getExpectedData, getJSONData, getBinaryData } from "../fixtures";
 
 import { expect } from "chai";
 
-export default function waveformDataTests(WaveformData) {
+export default function waveformDataTests(WaveformData, resampleWaveformData, concatWaveformData) {
   describe("WaveformData", function() {
     var instance;
     var expectations = getExpectedData();
@@ -168,34 +168,40 @@ export default function waveformDataTests(WaveformData) {
               });
             });
 
-            describe(".resample()", function() {
+            describe("resampleWaveformData", function() {
               it("should throw an error if the width is larger than the waveform length", function() {
                 expect(function() {
-                  instance.resample({ width: 11 });
+                  resampleWaveformData(instance, { width: 11 });
                 }).to.throw(Error);
               });
 
               it("should throw an error if the scale value is not a positive integer", function() {
                 expect(function() {
-                  instance.resample({ scale: 0 });
+                  resampleWaveformData(instance, { scale: 0 });
                 }).to.throw(RangeError);
               });
 
               it("should throw an error if the width value is not a positive integer", function() {
                 expect(function() {
-                  instance.resample({ width: 0 });
+                  resampleWaveformData(instance, { width: 0 });
                 }).to.throw(RangeError);
+              });
+
+              it("should throw an error if the options object is missing", function() {
+                expect(function() {
+                  resampleWaveformData(instance);
+                }).to.throw(Error, /Missing/);
               });
 
               it("should throw an error if both width and scale are missing", function() {
                 expect(function() {
-                  instance.resample({});
+                  resampleWaveformData(instance, {});
                 }).to.throw(Error, /Missing/);
               });
 
               describe("full resample by width", function() {
                 it("should resample to 5 elements if a width of 5 is requested", function() {
-                  const resampled = instance.resample({ width: 5 });
+                  const resampled = resampleWaveformData(instance, { width: 5 });
 
                   expect(resampled).to.be.an.instanceOf(WaveformData);
                   expect(resampled.length).to.equal(5);
@@ -210,17 +216,17 @@ export default function waveformDataTests(WaveformData) {
               // if we double the scale, it should fit in half the previous size (which means 5px)
               describe("resample with given scale", function() {
                 it("should return a waveform with half the number of points", function() {
-                  expect(instance.resample({ scale: 1024 }).length)
+                  expect(resampleWaveformData(instance, { scale: 1024 }).length)
                     .to.equal(expectations.resampled_length);
                 });
 
                 it("should return a waveform with half the duration", function() {
-                  expect(instance.resample({ scale: 1024 }).duration)
+                  expect(resampleWaveformData(instance, { scale: 1024 }).duration)
                     .to.equal(expectations.duration);
                 });
 
                 it("should return expected waveform data values", function() {
-                  var resampled = instance.resample({ scale: 1024 });
+                  var resampled = resampleWaveformData(instance, { scale: 1024 });
 
                   expect(resampled.channel(0).min_array())
                     .to.deep.equal(expectations.resampled_values.channels[0].min);
@@ -230,7 +236,7 @@ export default function waveformDataTests(WaveformData) {
               });
             });
 
-            describe(".concat()", function() {
+            describe("concatWaveformData()", function() {
               var binaryWaveform, jsonWaveform;
 
               beforeEach(function() {
@@ -239,7 +245,7 @@ export default function waveformDataTests(WaveformData) {
               });
 
               it("should concatenate with binary data", function() {
-                var result = binaryWaveform.concat(binaryWaveform);
+                var result = concatWaveformData(binaryWaveform, binaryWaveform);
 
                 expect(result).to.be.an.instanceOf(WaveformData);
                 expect(result.channels).to.equal(1);
@@ -251,7 +257,7 @@ export default function waveformDataTests(WaveformData) {
               });
 
               it("should concatenate with JSON data", function() {
-                var result = jsonWaveform.concat(jsonWaveform);
+                var result = concatWaveformData(jsonWaveform, jsonWaveform);
 
                 expect(result).to.be.an.instanceOf(WaveformData);
                 expect(result.channels).to.equal(1);
@@ -262,22 +268,16 @@ export default function waveformDataTests(WaveformData) {
                 );
               });
 
-              it("should throw an error given incompatible adapters", function() {
-                expect(function() {
-                  binaryWaveform.append(jsonWaveform);
-                }).to.throw(Error);
-              });
-
               it("should throw an error given incompatible audio", function() {
                 expect(function() {
                   var stereoWaveform = WaveformData.create(getBinaryData({ channels: 2 }));
 
-                  binaryWaveform.concat(stereoWaveform);
+                  concatWaveformData(binaryWaveform, stereoWaveform);
                 }).to.throw(Error);
               });
 
               it("should append multiple WaveformData instances", function() {
-                var result = binaryWaveform.concat(binaryWaveform, binaryWaveform);
+                var result = concatWaveformData(binaryWaveform, binaryWaveform, binaryWaveform);
 
                 expect(result.channels).to.equal(1);
                 expect(result.length).to.equal(expectations.length * 3);
@@ -421,71 +421,77 @@ export default function waveformDataTests(WaveformData) {
               });
             });
 
-            describe(".resample()", function() {
+            describe("resampleWaveformData()", function() {
               it("should throw an error if the width is larger than the waveform length", function() {
                 expect(function() {
-                  instance.resample({ width: 11 });
+                  resampleWaveformData(instance, { width: 11 });
                 }).to.throw(Error);
               });
 
               it("should throw an error if the width is not a number", function() {
                 expect(function() {
-                  instance.resample({ width: "5" });
+                  resampleWaveformData(instance, { width: "5" });
                 }).to.throw(Error);
               });
 
               it("should throw an error if the width value is not a positive integer", function() {
                 expect(function() {
-                  instance.resample({ width: 0 });
+                  resampleWaveformData(instance, { width: 0 });
                 }).to.throw(RangeError);
               });
 
               it("should throw an error if the scale value is not a number", function() {
                 expect(function() {
-                  instance.resample({ scale: "1024" });
+                  resampleWaveformData(instance, { scale: "1024" });
                 }).to.throw(RangeError);
               });
 
               it("should throw an error if the scale value is not a positive integer", function() {
                 expect(function() {
-                  instance.resample({ scale: 0 });
+                  resampleWaveformData(instance, { scale: 0 });
                 }).to.throw(RangeError);
+              });
+
+              it("should throw an error if the options object is missing", function() {
+                expect(function() {
+                  resampleWaveformData(instance);
+                }).to.throw(Error, /Missing/);
               });
 
               it("should throw an error if both width and scale are missing", function() {
                 expect(function() {
-                  instance.resample({});
+                  resampleWaveformData(instance, {});
                 }).to.throw(Error, /Missing/);
               });
 
               describe("full resample by width", function() {
                 it("should resample to the given width", function() {
-                  expect(instance.resample({ width: 5 })).to.have.a.lengthOf(5);
+                  expect(resampleWaveformData(instance, { width: 5 })).to.have.a.lengthOf(5);
                 });
 
                 it("should return the correct duration", function() {
-                  expect(instance.resample({ width: 5 }).duration).equal(expectations.duration);
+                  expect(resampleWaveformData(instance, { width: 5 }).duration).equal(expectations.duration);
                 });
 
                 it("should contain the same number of channels", function() {
-                  expect(instance.resample({ width: 5 }).channels).to.equal(2);
+                  expect(resampleWaveformData(instance, { width: 5 }).channels).to.equal(2);
                 });
               });
 
               // if we double the scale, it should fit in half the previous size (which means 5px)
               describe("full resample by scale", function() {
                 it("should return a waveform with half the number of points", function() {
-                  expect(instance.resample({ scale: 1024 }))
+                  expect(resampleWaveformData(instance, { scale: 1024 }))
                     .to.have.lengthOf(expectations.resampled_length);
                 });
 
                 it("should return a waveform with half the duration", function() {
-                  expect(instance.resample({ scale: 1024 }))
+                  expect(resampleWaveformData(instance, { scale: 1024 }))
                     .to.have.property("duration", expectations.duration);
                 });
 
                 it("should resample to a set of expected values", function() {
-                  var resampled = instance.resample({ scale: 1024 });
+                  var resampled = resampleWaveformData(instance, { scale: 1024 });
 
                   expect(resampled.channel(0).min_array())
                     .to.deep.equal(expectations.resampled_values.channels[0].min);
@@ -500,7 +506,7 @@ export default function waveformDataTests(WaveformData) {
               });
             });
 
-            describe(".concat()", function() {
+            describe("concatWaveformData()", function() {
               var binaryWaveform, jsonWaveform;
 
               beforeEach(function() {
@@ -509,7 +515,7 @@ export default function waveformDataTests(WaveformData) {
               });
 
               it("should return a new object with the concatenated result", function() {
-                var result = binaryWaveform.concat(jsonWaveform);
+                var result = concatWaveformData(binaryWaveform, jsonWaveform);
 
                 expect(result.channels).to.equal(2);
                 expect(result.length).to.equal(expectations.length * 2);
@@ -523,12 +529,12 @@ export default function waveformDataTests(WaveformData) {
                 expect(function() {
                   let stereoWaveform = WaveformData.create(getBinaryData({ channels: 1 }));
 
-                  binaryWaveform.concat(stereoWaveform);
+                  concatWaveformData(binaryWaveform, stereoWaveform);
                 }).to.throw(Error);
               });
 
               it("can append multiple WaveformDatas at once", function() {
-                var result = binaryWaveform.concat(binaryWaveform, jsonWaveform);
+                var result = concatWaveformData(binaryWaveform, binaryWaveform, jsonWaveform);
 
                 expect(result.channels).to.equal(2);
                 expect(result.length).to.equal(expectations.length * 3);
