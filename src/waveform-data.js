@@ -222,13 +222,16 @@ WaveformResampler.prototype.next = function() {
   var channels = this._inputData.channels;
   var channel;
   var value;
+  var i;
 
   while (this._input_index < this._input_buffer_size && count < total) {
     while (Math.floor(this.sample_at_pixel(this._output_index) / this._scale) === this._input_index) {
       if (this._output_index > 0) {
-        for (channel = 0; channel < channels; ++channel) {
-          this._outputWaveformData.channel(channel).set_min_sample(this._output_index - 1, this._min[channel]);
-          this._outputWaveformData.channel(channel).set_max_sample(this._output_index - 1, this._max[channel]);
+        for (i = 0; i < channels; ++i) {
+          channel = this._outputWaveformData.channel(i);
+
+          channel.set_min_sample(this._output_index - 1, this._min[i]);
+          channel.set_max_sample(this._output_index - 1, this._max[i]);
         }
       }
 
@@ -240,9 +243,9 @@ WaveformResampler.prototype.next = function() {
       this._prev_where = this.sample_at_pixel(this._output_index - 1);
 
       if (this._where !== this._prev_where) {
-        for (channel = 0; channel < channels; ++channel) {
-          this._min[channel] = this._max_value;
-          this._max[channel] = this._min_value;
+        for (i = 0; i < channels; ++i) {
+          this._min[i] = this._max_value;
+          this._max[i] = this._min_value;
         }
       }
     }
@@ -255,17 +258,19 @@ WaveformResampler.prototype.next = function() {
     }
 
     while (this._input_index < this._stop) {
-      for (channel = 0; channel < channels; ++channel) {
-        value = this._inputData.channel(channel).min_sample(this._input_index);
+      for (i = 0; i < channels; ++i) {
+        channel = this._inputData.channel(i);
 
-        if (value < this._min[channel]) {
-          this._min[channel] = value;
+        value = channel.min_sample(this._input_index);
+
+        if (value < this._min[i]) {
+          this._min[i] = value;
         }
 
-        value = this._inputData.channel(channel).max_sample(this._input_index);
+        value = channel.max_sample(this._input_index);
 
-        if (value > this._max[channel]) {
-          this._max[channel] = value;
+        if (value > this._max[i]) {
+          this._max[i] = value;
         }
       }
 
@@ -282,9 +287,11 @@ WaveformResampler.prototype.next = function() {
   else {
     // Done
     if (this._input_index !== this._last_input_index) {
-      for (channel = 0; channel < channels; ++channel) {
-        this._outputWaveformData.channel(channel).set_min_sample(this._output_index - 1, this._min[channel]);
-        this._outputWaveformData.channel(channel).set_max_sample(this._output_index - 1, this._max[channel]);
+      for (i = 0; i < channels; ++i) {
+        channel = this._outputWaveformData.channel(i);
+
+        channel.set_min_sample(this._output_index - 1, this._min[i]);
+        channel.set_max_sample(this._output_index - 1, this._max[i]);
       }
     }
 
