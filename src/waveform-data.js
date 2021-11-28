@@ -14,7 +14,7 @@ function WaveformData(data) {
 
   if (isBinaryWaveformData(data)) {
     this._data = new DataView(data);
-    this._offset = this._version() === 2 ? 24 : 20;
+    this._offset = this._version() >= 2 ? 24 : 20;
 
     this._channels = [];
 
@@ -151,153 +151,147 @@ WaveformData.createFromAudio = function(options, callback) {
 function WaveformResampler(options) {
   this._inputData = options.waveformData;
 
-  // Scale we want to reach
-  this._output_samples_per_pixel = options.scale;
+  this._startTime = options.startTime;
+  this._endTime = options.endTime;
 
-  this._scale = this._inputData.scale; // scale we are coming from
+  if (options.scale) {
+    this._output_samples_per_pixel = options.scale;
+  }
+  else {
+    // Calculate the output scale (samples per pixel) from the given startTime,
+    // endTime, and width (pixels)
+    this._output_samples_per_pixel = (this._endTime - this._startTime)
+                                   * this._inputData.sample_rate / options.width;
+  }
 
-  // The amount of data we want to resample i.e. final zoom want to resample
-  // all data but for intermediate zoom we want to resample subset
-  this._input_buffer_size = this._inputData.length;
+  this._output_buffer_length_pixels = options.width;
 
-  var input_buffer_length_samples = this._input_buffer_size * this._inputData.scale;
-  var output_buffer_length_samples =
-    Math.ceil(input_buffer_length_samples / this._output_samples_per_pixel);
-
-  var output_header_size = 24; // version 2
+  var output_header_size = 24; // version 2/3
   var bytes_per_sample = this._inputData.bits === 8 ? 1 : 2;
   var total_size = output_header_size
-                  + output_buffer_length_samples * 2 * this._inputData.channels * bytes_per_sample;
+                 + this._output_buffer_length_pixels
+                 * 2 * this._inputData.channels * bytes_per_sample;
 
   this._output_data = new ArrayBuffer(total_size);
 
   this.output_dataview = new DataView(this._output_data);
 
-  this.output_dataview.setInt32(0, 2, true); // Version
+  this.output_dataview.setInt32(0, 3, true); // Version
   this.output_dataview.setUint32(4, this._inputData.bits === 8, true); // Is 8 bit?
   this.output_dataview.setInt32(8, this._inputData.sample_rate, true);
-  this.output_dataview.setInt32(12, this._output_samples_per_pixel, true);
-  this.output_dataview.setInt32(16, output_buffer_length_samples, true);
+  this.output_dataview.setFloat32(12, this._output_samples_per_pixel, true);
+  this.output_dataview.setInt32(16, this._output_buffer_length_pixels, true);
   this.output_dataview.setInt32(20, this._inputData.channels, true);
 
   this._outputWaveformData = new WaveformData(this._output_data);
 
-  this._input_index = 0;
+  this._input_index = this._inputData.at_time(this._startTime);
   this._output_index = 0;
 
-  var channels = this._inputData.channels;
+  this._channels = this._inputData.channels;
 
-  this._min = new Array(channels);
-  this._max = new Array(channels);
+  this._min = new Array(this._channels);
+  this._max = new Array(this._channels);
 
-  var channel;
+  var i;
 
-  for (channel = 0; channel < channels; ++channel) {
+  for (i = 0; i < this._channels; ++i) {
     if (this._input_buffer_size > 0) {
-      this._min[channel] = this._inputData.channel(channel).min_sample(this._input_index);
-      this._max[channel] = this._inputData.channel(channel).max_sample(this._input_index);
+      this._min[i] = this._inputData.channel(i).min_sample(this._input_index);
+      this._max[i] = this._inputData.channel(i).max_sample(this._input_index);
     }
     else {
-      this._min[channel] = 0;
-      this._max[channel] = 0;
+      this._min[i] = 0;
+      this._max[i] = 0;
     }
   }
 
   this._min_value = this._inputData.bits === 8 ? -128 : -32768;
   this._max_value = this._inputData.bits === 8 ?  127 :  32767;
-
-  this._where = 0;
-  this._prev_where = 0;
-  this._stop = 0;
-  this._last_input_index = 0;
 }
 
 WaveformResampler.prototype.sample_at_pixel = function(x) {
   return Math.floor(x * this._output_samples_per_pixel);
 };
 
+/**
+ * Returns true when finished, or false if more to do
+ */
+
 WaveformResampler.prototype.next = function() {
   var count = 0;
   var total = 1000;
-  var channels = this._inputData.channels;
   var channel;
-  var value;
   var i;
 
-  while (this._input_index < this._input_buffer_size && count < total) {
-    while (Math.floor(this.sample_at_pixel(this._output_index) / this._scale) ===
-           this._input_index) {
-      if (this._output_index > 0) {
-        for (i = 0; i < channels; ++i) {
-          channel = this._outputWaveformData.channel(i);
+  while (this._output_index < this._output_buffer_length_pixels && count < total) {
+    var nextOutputTime = this._startTime
+                       + (this._endTime - this._startTime)
+                       * (this._output_index + 1) / this._output_buffer_length_pixels;
 
-          channel.set_min_sample(this._output_index - 1, this._min[i]);
-          channel.set_max_sample(this._output_index - 1, this._max[i]);
-        }
+    var nextInputIndex = this._inputData.at_time(nextOutputTime);
+
+    if (this._input_index === nextInputIndex) {
+      for (i = 0; i < this._channels; ++i) {
+        this._min[i] = this._getMinSample(i, this._input_index);
+        this._max[i] = this._getMaxSample(i, this._input_index);
       }
+    }
+    else {
+      while (this._input_index < nextInputIndex) {
+        for (i = 0; i < this._channels; ++i) {
+          let value = this._getMinSample(i, this._input_index);
 
-      this._last_input_index = this._input_index;
+          if (value < this._min[i]) {
+            this._min[i] = value;
+          }
 
-      this._output_index++;
+          value = this._getMaxSample(i, this._input_index);
 
-      this._where      = this.sample_at_pixel(this._output_index);
-      this._prev_where = this.sample_at_pixel(this._output_index - 1);
-
-      if (this._where !== this._prev_where) {
-        for (i = 0; i < channels; ++i) {
-          this._min[i] = this._max_value;
-          this._max[i] = this._min_value;
+          if (value > this._max[i]) {
+            this._max[i] = value;
+          }
         }
+
+        this._input_index++;
       }
     }
 
-    this._where = this.sample_at_pixel(this._output_index);
-    this._stop = Math.floor(this._where / this._scale);
+    for (i = 0; i < this._channels; ++i) {
+      channel = this._outputWaveformData.channel(i);
 
-    if (this._stop > this._input_buffer_size) {
-      this._stop = this._input_buffer_size;
+      channel.set_min_sample(this._output_index, this._min[i]);
+      channel.set_max_sample(this._output_index, this._max[i]);
+
+      this._min[i] = this._max_value;
+      this._max[i] = this._min_value;
     }
 
-    while (this._input_index < this._stop) {
-      for (i = 0; i < channels; ++i) {
-        channel = this._inputData.channel(i);
-
-        value = channel.min_sample(this._input_index);
-
-        if (value < this._min[i]) {
-          this._min[i] = value;
-        }
-
-        value = channel.max_sample(this._input_index);
-
-        if (value > this._max[i]) {
-          this._max[i] = value;
-        }
-      }
-
-      this._input_index++;
-    }
-
+    this._output_index++;
     count++;
   }
 
-  if (this._input_index < this._input_buffer_size) {
-    // More to do
-    return false;
-  }
-  else {
-    // Done
-    if (this._input_index !== this._last_input_index) {
-      for (i = 0; i < channels; ++i) {
-        channel = this._outputWaveformData.channel(i);
+  return this._output_index >= this._output_buffer_length_pixels;
+};
 
-        channel.set_min_sample(this._output_index - 1, this._min[i]);
-        channel.set_max_sample(this._output_index - 1, this._max[i]);
-      }
-    }
+WaveformResampler.prototype._getMinSample = function(channel, index) {
+  channel = this._inputData.channel(channel);
 
-    return true;
+  if (index >= this._inputData.length) {
+    return 0;
   }
+
+  return channel.min_sample(index);
+};
+
+WaveformResampler.prototype._getMaxSample = function(channel, index) {
+  channel = this._inputData.channel(channel);
+
+  if (index >= this._inputData.length) {
+    return 0;
+  }
+
+  return channel.max_sample(index);
 };
 
 WaveformResampler.prototype.getOutputData = function() {
@@ -311,6 +305,8 @@ WaveformData.prototype = {
 
     opts.scale = options.scale;
     opts.width = options.width;
+    opts.startTime = options.startTime;
+    opts.endTime = options.endTime;
 
     if (opts.width != null && (typeof opts.width !== "number" || opts.width <= 0)) {
       throw new RangeError("WaveformData.resample(): width should be a positive integer value");
@@ -324,19 +320,38 @@ WaveformData.prototype = {
       throw new Error("WaveformData.resample(): Missing scale or width option");
     }
 
-    if (opts.width) {
-      // Calculate the target scale for the resampled waveform
-      opts.scale = Math.floor(this.duration * this.sample_rate / opts.width);
+    opts.startTime = 0.0;
+
+    if (options.startTime) {
+      if (!options.width) {
+        throw new Error("WaveformData.resample(): width option is required with startTime");
+      }
+
+      if (options.startTime < 0.0) {
+        throw new RangeError("WaveformData.resample(): startTime must not be negative");
+      }
+
+      opts.startTime = options.startTime;
     }
 
-    if (opts.scale < this.scale) {
-      throw new Error(
-        "WaveformData.resample(): Zoom level " + opts.scale +
-        " too low, minimum: " + this.scale
-      );
+    opts.endTime = this.duration;
+
+    if (options.endTime) {
+      if (!options.width) {
+        throw new Error("WaveformData.resample(): width option is required with startTime");
+      }
+
+      if (options.endTime < opts.startTime) {
+        throw new RangeError("WaveformData.resample(): endTime must be greater than startTime");
+      }
+
+      // If endTime > duration, we'll pad the output with zeros to the specified width
+      opts.endTime = options.endTime;
     }
 
-    opts.abortSignal = options.abortSignal;
+    if (opts.scale) {
+      opts.width = Math.floor(this.length * this.scale / opts.scale);
+    }
 
     return opts;
   },
@@ -478,7 +493,7 @@ WaveformData.prototype = {
    */
 
   get channels() {
-    if (this._version() === 2) {
+    if (this._version() >= 2) {
       return this._data.getInt32(20, true);
     }
     else {
@@ -512,7 +527,12 @@ WaveformData.prototype = {
    */
 
   get scale() {
-    return this._data.getInt32(12, true);
+    if (this._version() === 3) {
+      return this._data.getFloat32(12, true);
+    }
+    else {
+      return this._data.getInt32(12, true);
+    }
   },
 
   /**

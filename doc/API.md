@@ -403,21 +403,16 @@ data. Use this method to create waveform data at different zoom levels.
 
 #### Options
 
-| Name    | Type             |
-| ------- | ---------------- |
-| `width` | Number (integer) |
-| `scale` | Number (integer) |
+| Name        | Type             | Description |
+| ----------- | ---------------- | ----------- |
+| `scale`     | Number (integer) | Resample to a given number of samples per pixel |
+| `width`     | Number (integer) | Resample to fit the waveform to a given number of pixels |
+| `startTime` | Number           | Resample a subset of the waveform, from the given start time (in seconds). Default is 0 seconds. Valid only when using the `width` option |
+| `endTime`   | Number           | Resample a subset of the waveform, to the given end time (in seconds). Default is the end of the waveform. Valid only when using the `width` option |
+
+The `options` object must container either `scale` or `width`, but not both.
 
 #### Examples
-
-To resample the waveform to fit to a specific width:
-
-```javascript
-const waveform = WaveformData.create(buffer);
-const resampledWaveform = waveform.resample({ width: 500 });
-
-console.log(resampledWaveform.length); // -> 500
-```
 
 To resample the waveform to a specific zoom level, in samples per pixel:
 
@@ -429,13 +424,34 @@ const resampledWaveform = waveform.resample({ scale: scale * 2 });
 console.log(resampledWaveform.scale); // -> 1024
 ```
 
-Note that you cannot resample to a lower number of samples per
-pixel than the original waveform.
+Resampling to a lower number of samples per pixel than the original waveform will result in a low resolution waveform:
 
 ```javascript
 const waveform = WaveformData.create(buffer);
 const scale = waveform.scale; // -> 512
-const resampledWaveform = waveform.resample({ scale: scale / 2 }); // throws an Error
+const resampledWaveform = waveform.resample({ scale: scale / 2 });
+```
+
+To resample the waveform to fit to a specific width:
+
+```javascript
+const waveform = WaveformData.create(buffer);
+const resampledWaveform = waveform.resample({ width: 500 });
+
+console.log(resampledWaveform.length); // -> 500
+```
+
+To resample a subset of the waveform to fit to a specific width:
+
+```javascript
+const waveform = WaveformData.create(buffer);
+const resampledWaveform = waveform.resample({
+  startTime: 10.0,
+  endTime: 30.0,
+  width: 500
+});
+
+console.log(resampledWaveform.length); // -> 500
 ```
 
 ### waveformData.concat(...waveforms)

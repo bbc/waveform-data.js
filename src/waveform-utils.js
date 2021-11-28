@@ -15,7 +15,7 @@ export function isBinaryWaveformData(data) {
     var view = new DataView(data);
     var version = view.getInt32(0, true);
 
-    if (version !== 1 && version !== 2) {
+    if (version < 1 || version > 3) {
       throw new TypeError("WaveformData.create(): This waveform data version not supported");
     }
   }
@@ -26,7 +26,7 @@ export function isBinaryWaveformData(data) {
 export function convertJsonToBinary(data) {
   var waveformData = data.data;
   var channels = data.channels || 1;
-  var header_size = 24; // version 2
+  var header_size = 24; // version 2/3
   var bytes_per_sample = data.bits === 8 ? 1 : 2;
   var expected_length = data.length * 2 * channels;
 
@@ -39,10 +39,10 @@ export function convertJsonToBinary(data) {
   var array_buffer = new ArrayBuffer(total_size);
   var data_object = new DataView(array_buffer);
 
-  data_object.setInt32(0, 2, true); // Version
+  data_object.setInt32(0, 3, true); // Version
   data_object.setUint32(4, data.bits === 8, true);
   data_object.setInt32(8, data.sample_rate, true);
-  data_object.setInt32(12, data.samples_per_pixel, true);
+  data_object.setFloat32(12, data.samples_per_pixel, true);
   data_object.setInt32(16, data.length, true);
   data_object.setInt32(20, channels, true);
 

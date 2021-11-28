@@ -41,7 +41,7 @@ export default function waveformDataTests(WaveformData) {
       });
 
       it("should not build an instance for an unknown version", function() {
-        const data = getBinaryData({ version: 3 });
+        const data = getBinaryData({ version: 4 });
 
         expect(function() {
           WaveformData.create(data);
@@ -55,7 +55,7 @@ export default function waveformDataTests(WaveformData) {
           context("with " + bits + "-bit " + format + " data", function() {
             beforeEach(function() {
               const data = format === "binary" ? getBinaryData({ channels: 1, bits: bits })
-                                              : getJSONData({ channels: 1, bits: bits });
+                                               : getJSONData({ channels: 1, bits: bits });
 
               instance = WaveformData.create(data);
             });
@@ -169,15 +169,15 @@ export default function waveformDataTests(WaveformData) {
             });
 
             describe(".resample()", function() {
-              it("should throw an error if the width is larger than the waveform length", function() {
-                expect(function() {
-                  instance.resample({ width: 11 });
-                }).to.throw(Error);
-              });
-
               it("should throw an error if the scale value is not a positive integer", function() {
                 expect(function() {
                   instance.resample({ scale: 0 });
+                }).to.throw(RangeError);
+              });
+
+              it("should throw an error if the scale value is not a number", function() {
+                expect(function() {
+                  instance.resample({ scale: "1024" });
                 }).to.throw(RangeError);
               });
 
@@ -187,10 +187,40 @@ export default function waveformDataTests(WaveformData) {
                 }).to.throw(RangeError);
               });
 
+              it("should throw an error if the width is not a number", function() {
+                expect(function() {
+                  instance.resample({ width: "5" });
+                }).to.throw(Error);
+              });
+
               it("should throw an error if both width and scale are missing", function() {
                 expect(function() {
                   instance.resample({});
                 }).to.throw(Error, /Missing/);
+              });
+
+              it("should throw an error if start time is negative", function() {
+                expect(function() {
+                  instance.resample({ startTime: -1.0, endTime: 10.0, width: 500 });
+                }).to.throw(RangeError);
+              });
+
+              it("should throw an error if end time is less than start time", function() {
+                expect(function() {
+                  instance.resample({ startTime: 11.0, endTime: 10.0, width: 500 });
+                }).to.throw(RangeError);
+              });
+
+              it("should throw an error if start time is given without width option", function() {
+                expect(function() {
+                  instance.resample({ startTime: 11.0, endTime: 10.0 });
+                }).to.throw(Error);
+              });
+
+              it("should throw an error if end time is given without width option", function() {
+                expect(function() {
+                  instance.resample({ endTime: 10.0 });
+                }).to.throw(Error);
               });
 
               describe("full resample by width", function() {
@@ -202,8 +232,32 @@ export default function waveformDataTests(WaveformData) {
                   expect(resampled.sample_rate).to.equal(instance.sample_rate);
                   expect(resampled.channels).to.equal(instance.channels);
                   expect(resampled.bits).to.equal(instance.bits);
+
                   // Resampling updates the waveform data header version
-                  expect(resampled._version()).to.equal(2);
+                  expect(resampled._version()).to.equal(3);
+                });
+
+                it("should stretch the waveform if the width is larger than the waveform length", function() {
+                  const resampled = instance.resample({ width: 20 });
+
+                  expect(resampled).to.be.an.instanceOf(WaveformData);
+                  expect(resampled.length).to.equal(20);
+                  expect(resampled.sample_rate).to.equal(instance.sample_rate);
+                  expect(resampled.channels).to.equal(instance.channels);
+                  expect(resampled.bits).to.equal(instance.bits);
+
+                  for (var i = 0; i < 20; i++) {
+                    var index = Math.floor(i / 2);
+
+                    expect(resampled.channel(0).min_sample(i))
+                      .to.equal(instance.channel(0).min_sample(index));
+
+                    expect(resampled.channel(0).max_sample(i))
+                      .to.equal(instance.channel(0).max_sample(index));
+                  }
+
+                  // Resampling updates the waveform data header version
+                  expect(resampled._version()).to.equal(3);
                 });
               });
 
@@ -422,21 +476,9 @@ export default function waveformDataTests(WaveformData) {
             });
 
             describe(".resample()", function() {
-              it("should throw an error if the width is larger than the waveform length", function() {
+              it("should throw an error if the scale value is not a positive integer", function() {
                 expect(function() {
-                  instance.resample({ width: 11 });
-                }).to.throw(Error);
-              });
-
-              it("should throw an error if the width is not a number", function() {
-                expect(function() {
-                  instance.resample({ width: "5" });
-                }).to.throw(Error);
-              });
-
-              it("should throw an error if the width value is not a positive integer", function() {
-                expect(function() {
-                  instance.resample({ width: 0 });
+                  instance.resample({ scale: 0 });
                 }).to.throw(RangeError);
               });
 
@@ -446,16 +488,46 @@ export default function waveformDataTests(WaveformData) {
                 }).to.throw(RangeError);
               });
 
-              it("should throw an error if the scale value is not a positive integer", function() {
+              it("should throw an error if the width value is not a positive integer", function() {
                 expect(function() {
-                  instance.resample({ scale: 0 });
+                  instance.resample({ width: 0 });
                 }).to.throw(RangeError);
+              });
+
+              it("should throw an error if the width is not a number", function() {
+                expect(function() {
+                  instance.resample({ width: "5" });
+                }).to.throw(Error);
               });
 
               it("should throw an error if both width and scale are missing", function() {
                 expect(function() {
                   instance.resample({});
                 }).to.throw(Error, /Missing/);
+              });
+
+              it("should throw an error if start time is negative", function() {
+                expect(function() {
+                  instance.resample({ startTime: -1.0, endTime: 10.0, width: 500 });
+                }).to.throw(RangeError);
+              });
+
+              it("should throw an error if end time is less than start time", function() {
+                expect(function() {
+                  instance.resample({ startTime: 11.0, endTime: 10.0, width: 500 });
+                }).to.throw(RangeError);
+              });
+
+              it("should throw an error if start time is given without width option", function() {
+                expect(function() {
+                  instance.resample({ startTime: 11.0, endTime: 10.0 });
+                }).to.throw(Error);
+              });
+
+              it("should throw an error if end time is given without width option", function() {
+                expect(function() {
+                  instance.resample({ endTime: 10.0 });
+                }).to.throw(Error);
               });
 
               describe("full resample by width", function() {
