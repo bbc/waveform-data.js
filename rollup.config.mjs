@@ -1,7 +1,7 @@
 import { babel } from "@rollup/plugin-babel";
 import resolve from "@rollup/plugin-node-resolve";
-import { terser } from "rollup-plugin-terser";
-import webWorkerLoader from "rollup-plugin-web-worker-loader";
+import terser from "@rollup/plugin-terser";
+import webWorkerLoader from "@pyrologic/rollup-plugin-web-worker-loader";
 
 export default [
   {
