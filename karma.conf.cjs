@@ -4,7 +4,7 @@
 var commonjs = require("@rollup/plugin-commonjs");
 var resolve = require("@rollup/plugin-node-resolve").nodeResolve;
 var babel = require("@rollup/plugin-babel");
-var webWorkerLoader = require("rollup-plugin-web-worker-loader");
+var webWorkerLoader = require("@pyrologic/rollup-plugin-web-worker-loader");
 var path = require("path");
 
 module.exports = function(config) {
@@ -49,7 +49,7 @@ module.exports = function(config) {
       },
       onwarn: function(warning) {
         if (warning.code === "CIRCULAR_DEPENDENCY" &&
-            warning.importer.indexOf(path.normalize("node_modules/chai/lib") === 0)) {
+            warning.message.indexOf(path.normalize("node_modules/chai/lib") === 0)) {
           // Chai contains circular references, but they are not fatal and can be ignored.
           return;
         }
