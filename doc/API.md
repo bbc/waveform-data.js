@@ -16,6 +16,7 @@
   * [.channel](#waveformDatachannelindex)
   * [.resample](#waveformDataresampleoptions)
   * [.concat](#waveformDataconcatwaveforms)
+  * [.slice](#waveformDatasliceoptions)
   * [.toJSON](#waveformDatatojson)
   * [.toArrayBuffer](#waveformDatatoarraybuffer)
 * [WaveformDataChannel](#waveformdatachannel)
@@ -466,6 +467,38 @@ console.log(wave1.length); // -> 500
 console.log(wave2.length); // -> 300
 console.log(wave3.length); // -> 100
 console.log(combinedResult.length); // -> 900
+```
+
+### waveformData.slice(options)
+
+Returns a subset of the waveform data between a given start and end point.
+
+#### Arguments
+
+| Name      | Type                                 |
+| --------- | ------------------------------------ |
+| `options` | An object containing either `startIndex` and `endIndex` values, which give the start and end indexes in the waveform data, or `startTime` and `endTime`, which give the start and end times (in seconds) |
+
+#### Example
+
+Return the waveform between index 100 and index 200:
+
+```javascript
+const waveform = WaveformData.create(buffer);
+
+const slice = waveform.slice({ startIndex: 100, endIndex: 200 });
+
+console.log(slice.length); // -> 100
+```
+
+Return the waveform between 1.0 and 2.0 seconds:
+
+```javascript
+const waveform = WaveformData.create(buffer);
+
+const slice = waveform.slice({ startTime: 1.0, endTime: 2.0 });
+
+console.log(slice.length); // -> 86
 ```
 
 ## waveformData.toJSON()

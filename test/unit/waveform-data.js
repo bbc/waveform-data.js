@@ -55,7 +55,7 @@ export default function waveformDataTests(WaveformData) {
           context("with " + bits + "-bit " + format + " data", function() {
             beforeEach(function() {
               const data = format === "binary" ? getBinaryData({ channels: 1, bits: bits })
-                                              : getJSONData({ channels: 1, bits: bits });
+                                               : getJSONData({ channels: 1, bits: bits });
 
               instance = WaveformData.create(data);
             });
@@ -284,6 +284,96 @@ export default function waveformDataTests(WaveformData) {
                 expect(result.duration).to.equal(expectations.duration * 3);
               });
             });
+
+            describe(".slice()", function() {
+              context("with valid startIndex and endIndex", function() {
+                it("should return a subset of the waveform", function() {
+                  var extract = instance.slice({ startIndex: 1, endIndex: 4 });
+
+                  expect(extract.length).to.equal(3);
+                  expect(extract.channels).to.equal(instance.channels);
+                  expect(extract.bits).to.equal(instance.bits);
+                  expect(extract.channel(0).min_array()).to.deep.equal([-10, 0, -5]);
+                  expect(extract.channel(0).max_array()).to.deep.equal([10, 0, 7]);
+                });
+              });
+
+              context("with endIndex beyond the length of the waveform", function() {
+                it("should limit to the end of the waveform", function() {
+                  var extract = instance.slice({ startIndex: 1, endIndex: 12 });
+
+                  expect(extract.length).to.equal(9);
+                  expect(extract.channels).to.equal(instance.channels);
+                  expect(extract.bits).to.equal(instance.bits);
+                  expect(extract.channel(0).min_array()).to.deep.equal([-10, 0, -5, -5, 0, 0, 0, 0, -2]);
+                  expect(extract.channel(0).max_array()).to.deep.equal([10, 0, 7, 7, 0, 0, 0, 0, 2]);
+                });
+              });
+
+              context("with startIndex equal to endIndex", function() {
+                it("should return a zero length waveform", function() {
+                  var extract = instance.slice({ startIndex: 1, endIndex: 1 });
+
+                  expect(extract.length).to.equal(0);
+                  expect(extract.channels).to.equal(instance.channels);
+                  expect(extract.bits).to.equal(instance.bits);
+                  expect(extract.channel(0).min_array()).to.deep.equal([]);
+                  expect(extract.channel(0).max_array()).to.deep.equal([]);
+                });
+              });
+
+              context("with startIndex greater than endIndex", function() {
+                it("should return a zero length waveform", function() {
+                  var extract = instance.slice({ startIndex: 1, endIndex: 1 });
+
+                  expect(extract.length).to.equal(0);
+                  expect(extract.channels).to.equal(instance.channels);
+                  expect(extract.bits).to.equal(instance.bits);
+                  expect(extract.channel(0).min_array()).to.deep.equal([]);
+                  expect(extract.channel(0).max_array()).to.deep.equal([]);
+                });
+              });
+
+              context("with startIndex and endIndex beyond the length of the waveform", function() {
+                it("should return a zero length waveform", function() {
+                  var extract = instance.slice({ startIndex: 10, endIndex: 12 });
+
+                  expect(extract.length).to.equal(0);
+                  expect(extract.channels).to.equal(instance.channels);
+                  expect(extract.bits).to.equal(instance.bits);
+                  expect(extract.channel(0).min_array()).to.deep.equal([]);
+                  expect(extract.channel(0).max_array()).to.deep.equal([]);
+                });
+              });
+
+              context("with negative startIndex", function() {
+                it("should throw RangeError", function() {
+                  expect(function() {
+                    instance.slice({ startIndex: -1, endIndex: 4 });
+                  }).to.throw(RangeError);
+                });
+              });
+
+              context("with negative endIndex", function() {
+                it("should throw RangeError", function() {
+                  expect(function() {
+                    instance.slice({ startIndex: 1, endIndex: -1 });
+                  }).to.throw(RangeError);
+                });
+              });
+
+              context("with valid startTime and endTime", function() {
+                it("should return a subset of the waveform", function() {
+                  var extract = instance.slice({ startTime: instance.time(1), endTime: instance.time(4) });
+
+                  expect(extract.length).to.equal(3);
+                  expect(extract.channels).to.equal(instance.channels);
+                  expect(extract.bits).to.equal(instance.bits);
+                  expect(extract.channel(0).min_array()).to.deep.equal([-10, 0, -5]);
+                  expect(extract.channel(0).max_array()).to.deep.equal([10, 0, 7]);
+                });
+              });
+            });
           });
         });
       });
@@ -295,7 +385,7 @@ export default function waveformDataTests(WaveformData) {
           context("with " + bits + "-bit " + format + " data", function() {
             beforeEach(function() {
               const data = format === "binary" ? getBinaryData({ channels: 2, bits: bits })
-                                              : getJSONData({ channels: 2, bits: bits });
+                                               : getJSONData({ channels: 2, bits: bits });
 
               instance = WaveformData.create(data);
             });

@@ -423,6 +423,70 @@ WaveformData.prototype = {
     return totalBuffer;
   },
 
+  slice: function(options) {
+    var startIndex = 0;
+    var endIndex = 0;
+
+    if (options.startIndex != null && options.endIndex != null) {
+      startIndex = options.startIndex;
+      endIndex = options.endIndex;
+    }
+    else if (options.startTime != null && options.endTime != null) {
+      startIndex = this.at_time(options.startTime);
+      endIndex = this.at_time(options.endTime);
+    }
+
+    if (startIndex < 0) {
+      throw new RangeError("startIndex or startTime must not be negative");
+    }
+
+    if (endIndex < 0) {
+      throw new RangeError("endIndex or endTime must not be negative");
+    }
+
+    if (startIndex > this.length) {
+      startIndex = this.length;
+    }
+
+    if (endIndex > this.length) {
+      endIndex = this.length;
+    }
+
+    if (startIndex > endIndex) {
+      startIndex = endIndex;
+    }
+
+    var length = endIndex - startIndex;
+
+    var header_size = 24; // Version 2
+    var bytes_per_sample = this.bits === 8 ? 1 : 2;
+    var total_size = header_size
+                   + length * 2 * this.channels * bytes_per_sample;
+
+    var output_data = new ArrayBuffer(total_size);
+    var output_dataview = new DataView(output_data);
+
+    output_dataview.setInt32(0, 2, true); // Version
+    output_dataview.setUint32(4, this.bits === 8, true); // Is 8 bit?
+    output_dataview.setInt32(8, this.sample_rate, true);
+    output_dataview.setInt32(12, this.scale, true);
+    output_dataview.setInt32(16, length, true);
+    output_dataview.setInt32(20, this.channels, true);
+
+    for (var i = 0; i < length * this.channels * 2; i++) {
+      var sample = this._at(startIndex * this.channels * 2 + i);
+
+      if (this.bits === 8) {
+        output_dataview.setInt8(header_size + i, sample);
+      }
+      else {
+        output_dataview.setInt16(header_size + i * 2, sample, true);
+      }
+    }
+
+    return new WaveformData(output_data);
+  },
+
   /**
    * Returns the data format version number.
    */
