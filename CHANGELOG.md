@@ -1,5 +1,12 @@
 # waveform-data.js
 
+## v4.4.0 (2023/12/06)
+
+ * (#84) Added `slice` method (@chrisn)
+
+ * (#97) Fixed unhandled rejection when calling Web Audio `decodeAudioData`
+   (@jdelStrother)
+
 ## v4.3.0 (2021/10/12)
 
  * Replaced inline-worker with rollup-plugin-web-worker-loader (@chrisn)
