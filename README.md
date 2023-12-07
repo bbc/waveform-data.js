@@ -392,4 +392,4 @@ unit tests using [Karma runner](http://karma-runner.github.io) and the
 
 # Copyright
 
-Copyright 2021 British Broadcasting Corporation
+Copyright 2023 British Broadcasting Corporation
