@@ -86,6 +86,7 @@ export default function waveformDataAudioContextTests(WaveformData) {
             expect(err).to.not.be.ok;
             expect(waveform).to.be.an.instanceOf(WaveformData);
             expect(waveform.channels).to.equal(1);
+            expect(waveform.bits).to.equal(8);
 
             // file length: 88200 samples
             // scale: 512 (default)
@@ -225,6 +226,27 @@ export default function waveformDataAudioContextTests(WaveformData) {
 
             expect(waveform.channel(3).min_sample(waveform.length - 1)).to.equal(-1);
             expect(waveform.channel(3).max_sample(waveform.length - 1)).to.equal(0);
+            done();
+          });
+        });
+
+        it("should return 16-bit waveform data", function(done) {
+          var options = {
+            audio_context: audioContext,
+            array_buffer: sampleBuffer,
+            bits: 16
+          };
+
+          WaveformData.createFromAudio(options, function(err, waveform) {
+            expect(err).to.not.be.ok;
+            expect(waveform).to.be.an.instanceOf(WaveformData);
+            expect(waveform.channels).to.equal(1);
+            expect(waveform.bits).to.equal(16);
+
+            // file length: 88200 samples
+            // scale: 512 (default)
+            // 88200 / 512 = 172, with 136 samples remaining, so 173 points total
+            expect(waveform.length).to.equal(173);
             done();
           });
         });
