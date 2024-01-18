@@ -31,6 +31,7 @@ function WaveformData(data) {
 
 var defaultOptions = {
   scale: 512,
+  bytes_per_output_sample: 1,
   amplitude_scale: 1.0,
   split_channels: false,
   disable_worker: false
@@ -39,6 +40,8 @@ var defaultOptions = {
 function getOptions(options) {
   var opts = {
     scale: options.scale || defaultOptions.scale,
+    bytes_per_output_sample: options.bytes_per_output_sample ||
+        defaultOptions.bytes_per_output_sample,
     amplitude_scale: options.amplitude_scale || defaultOptions.amplitude_scale,
     split_channels: options.split_channels || defaultOptions.split_channels,
     disable_worker: options.disable_worker || defaultOptions.disable_worker
@@ -63,6 +66,7 @@ function createFromAudioBuffer(audio_buffer, options, callback) {
   if (options.disable_worker) {
     var buffer = generateWaveformData({
       scale: options.scale,
+      bytes_per_output_sample: options.bytes_per_output_sample,
       amplitude_scale: options.amplitude_scale,
       split_channels: options.split_channels,
       length: audio_buffer.length,
@@ -81,6 +85,7 @@ function createFromAudioBuffer(audio_buffer, options, callback) {
 
     worker.postMessage({
       scale: options.scale,
+      bytes_per_output_sample: options.bytes_per_output_sample,
       amplitude_scale: options.amplitude_scale,
       split_channels: options.split_channels,
       length: audio_buffer.length,
