@@ -9,6 +9,12 @@ declare module 'waveform-data' {
     scale?: number;
 
     /**
+     * Number of bits per sample (8 or 16). Default: 8
+     */
+
+    bits?: number;
+
+    /**
      * Amplitude scale. Default: 1.0
      */
 

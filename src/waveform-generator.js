@@ -6,20 +6,23 @@
  *   1108c1376c09166162335fab4743008cba57c4ee/src/BlockFile.cpp#L198
  */
 
- var INT8_MAX = 127;
- var INT8_MIN = -128;
+var INT8_MAX = 127;
+var INT8_MIN = -128;
 
- function calculateWaveformDataLength(audio_sample_count, scale) {
-   var data_length = Math.floor(audio_sample_count / scale);
+var INT16_MAX = 32767;
+var INT16_MIN = -32768;
 
-   var samples_remaining = audio_sample_count - (data_length * scale);
+function calculateWaveformDataLength(audio_sample_count, scale) {
+  var data_length = Math.floor(audio_sample_count / scale);
 
-   if (samples_remaining > 0) {
-     data_length++;
-   }
+  var samples_remaining = audio_sample_count - (data_length * scale);
 
-   return data_length;
- }
+  if (samples_remaining > 0) {
+    data_length++;
+  }
+
+  return data_length;
+}
 
 function generateWaveformData(options) {
   var scale = options.scale;
@@ -34,7 +37,8 @@ function generateWaveformData(options) {
   var version = output_channels === 1 ? 1 : 2;
   var header_size = version === 1 ? 20 : 24;
   var data_length = calculateWaveformDataLength(length, scale);
-  var total_size = header_size + data_length * 2 * output_channels;
+  var bytes_per_sample = options.bits === 8 ? 1 : 2;
+  var total_size = header_size + data_length * 2 * bytes_per_sample * output_channels;
   var buffer = new ArrayBuffer(total_size);
   var data_view = new DataView(buffer);
 
@@ -50,14 +54,17 @@ function generateWaveformData(options) {
     max_value[channel] = -Infinity;
   }
 
+  var range_min = options.bits === 8 ? INT8_MIN : INT16_MIN;
+  var range_max = options.bits === 8 ? INT8_MAX : INT16_MAX;
+
   data_view.setInt32(0, version, true); // Version
-  data_view.setUint32(4, 1, true); // Is 8 bit?
+  data_view.setUint32(4, options.bits === 8, true); // Is 8 bit?
   data_view.setInt32(8, sample_rate, true); // Sample rate
   data_view.setInt32(12, scale, true); // Scale
   data_view.setInt32(16, data_length, true); // Length
 
   if (version === 2) {
-    data_view.setInt32(20, output_channels, true);
+      data_view.setInt32(20, output_channels, true);
   }
 
   for (i = 0; i < length; i++) {
@@ -68,41 +75,41 @@ function generateWaveformData(options) {
         sample += channels[channel][i];
       }
 
-      sample = Math.floor(INT8_MAX * sample * amplitude_scale / channels.length);
+      sample = Math.floor(range_max * sample * amplitude_scale / channels.length);
 
       if (sample < min_value[0]) {
         min_value[0] = sample;
 
-        if (min_value[0] < INT8_MIN) {
-          min_value[0] = INT8_MIN;
+        if (min_value[0] < range_min) {
+          min_value[0] = range_min;
         }
       }
 
       if (sample > max_value[0]) {
         max_value[0] = sample;
 
-        if (max_value[0] > INT8_MAX) {
-          max_value[0] = INT8_MAX;
+        if (max_value[0] > range_max) {
+          max_value[0] = range_max;
         }
       }
     }
     else {
       for (channel = 0; channel < output_channels; ++channel) {
-        sample = Math.floor(INT8_MAX * channels[channel][i] * amplitude_scale);
+        sample = Math.floor(range_max * channels[channel][i] * amplitude_scale);
 
         if (sample < min_value[channel]) {
           min_value[channel] = sample;
 
-          if (min_value[channel] < INT8_MIN) {
-            min_value[channel] = INT8_MIN;
+          if (min_value[channel] < range_min) {
+            min_value[channel] = range_min;
           }
         }
 
         if (sample > max_value[channel]) {
           max_value[channel] = sample;
 
-          if (max_value[channel] > INT8_MAX) {
-            max_value[channel] = INT8_MAX;
+          if (max_value[channel] > range_max) {
+            max_value[channel] = range_max;
           }
         }
       }
@@ -110,8 +117,15 @@ function generateWaveformData(options) {
 
     if (++scale_counter === scale) {
       for (channel = 0; channel < output_channels; channel++) {
-        data_view.setInt8(offset++, min_value[channel]);
-        data_view.setInt8(offset++, max_value[channel]);
+        if (options.bits === 8) {
+          data_view.setInt8(offset++, min_value[channel]);
+          data_view.setInt8(offset++, max_value[channel]);
+        }
+        else {
+          data_view.setInt16(offset, min_value[channel], true);
+          data_view.setInt16(offset + 2, max_value[channel], true);
+          offset += 4;
+        }
 
         min_value[channel] = Infinity;
         max_value[channel] = -Infinity;
@@ -123,8 +137,14 @@ function generateWaveformData(options) {
 
   if (scale_counter > 0) {
     for (channel = 0; channel < output_channels; channel++) {
-      data_view.setInt8(offset++, min_value[channel]);
-      data_view.setInt8(offset++, max_value[channel]);
+      if (options.bits === 8) {
+        data_view.setInt8(offset++, min_value[channel]);
+        data_view.setInt8(offset++, max_value[channel]);
+      }
+      else {
+        data_view.setInt16(offset, min_value[channel], true);
+        data_view.setInt16(offset + 2, max_value[channel], true);
+      }
     }
   }
 
