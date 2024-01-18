@@ -11,6 +11,11 @@ module.exports = {
   "plugins": [
     "chai-friendly"
   ],
+  "globals": {
+    "process": "readonly",
+    "crossOriginIsolated": "readonly",
+    "SharedArrayBuffer": "readonly",
+  },
   "rules": {
     "array-bracket-spacing": ["error", "never"],
     "brace-style": ["error", "stroustrup"],
