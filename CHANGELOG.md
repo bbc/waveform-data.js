@@ -1,5 +1,9 @@
 # waveform-data.js
 
+## v4.5.0 (2024/01/18)
+
+ * (#119) Added support for 16-bit samples in `createFromAudio()` (@jameadows)
+
 ## v4.4.0 (2023/12/06)
 
  * (#84) Added `slice` method (@chrisn)
