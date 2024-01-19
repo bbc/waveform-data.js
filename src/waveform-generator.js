@@ -34,8 +34,7 @@ function generateWaveformData(options) {
     return new Float32Array(channel);
   });
   var output_channels = split_channels ? channels.length : 1;
-  var version = output_channels === 1 ? 1 : 2;
-  var header_size = version === 1 ? 20 : 24;
+  var header_size = 24;
   var data_length = calculateWaveformDataLength(length, scale);
   var bytes_per_sample = options.bits === 8 ? 1 : 2;
   var total_size = header_size + data_length * 2 * bytes_per_sample * output_channels;
@@ -57,15 +56,12 @@ function generateWaveformData(options) {
   var range_min = options.bits === 8 ? INT8_MIN : INT16_MIN;
   var range_max = options.bits === 8 ? INT8_MAX : INT16_MAX;
 
-  data_view.setInt32(0, version, true); // Version
+  data_view.setInt32(0, 2, true); // Version
   data_view.setUint32(4, options.bits === 8, true); // Is 8 bit?
   data_view.setInt32(8, sample_rate, true); // Sample rate
   data_view.setInt32(12, scale, true); // Scale
   data_view.setInt32(16, data_length, true); // Length
-
-  if (version === 2) {
-      data_view.setInt32(20, output_channels, true);
-  }
+  data_view.setInt32(20, output_channels, true);
 
   for (i = 0; i < length; i++) {
     var sample = 0;
