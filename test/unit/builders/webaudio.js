@@ -28,7 +28,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
         it("should return an error if the audio buffer is invalid", function(done) {
           var options = {
             audio_context: audioContext,
-            array_buffer: new ArrayBuffer(1024)
+            array_buffer: new ArrayBuffer(1024),
+            disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
@@ -42,7 +43,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
         it("shouldn't cause an unhandledrejection on error", function(done) {
           var options = {
             audio_context: audioContext,
-            array_buffer: new ArrayBuffer(1024)
+            array_buffer: new ArrayBuffer(1024),
+            disable_worker: true
           };
 
           function listener() {
@@ -62,7 +64,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
         it("should only invoke the callback once on error", function(done) {
           var options = {
             audio_context: audioContext,
-            array_buffer: new ArrayBuffer(1024)
+            array_buffer: new ArrayBuffer(1024),
+            disable_worker: true
           };
           var count = 0;
 
@@ -79,7 +82,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
         it("should return a valid waveform", function(done) {
           var options = {
             audio_context: audioContext,
-            array_buffer: sampleBuffer
+            array_buffer: sampleBuffer,
+            disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
@@ -96,11 +100,10 @@ export default function waveformDataAudioContextTests(WaveformData) {
           });
         });
 
-        it("should return a valid waveform without using a worker", function(done) {
+        it("should return a valid waveform using a worker", function(done) {
           var options = {
             audio_context: audioContext,
-            array_buffer: sampleBuffer,
-            disable_worker: true
+            array_buffer: sampleBuffer
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
@@ -119,7 +122,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
         it("should return the decoded audio", function(done) {
           var options = {
             audio_context: audioContext,
-            array_buffer: sampleBuffer
+            array_buffer: sampleBuffer,
+            disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform, audioBuffer) {
@@ -136,7 +140,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
           var options = {
             audio_context: audioContext,
             array_buffer: sampleBuffer,
-            scale: 128
+            scale: 128,
+            disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
@@ -155,7 +160,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
         it("should return waveform data points", function(done) {
           var options = {
             audio_context: audioContext,
-            array_buffer: sampleBuffer
+            array_buffer: sampleBuffer,
+            disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
@@ -176,7 +182,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
           var options = {
             audio_context: audioContext,
             array_buffer: sampleBuffer,
-            amplitude_scale: 2.0
+            amplitude_scale: 2.0,
+            disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
@@ -195,7 +202,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
           var options = {
             audio_context: audioContext,
             array_buffer: sampleBuffer,
-            split_channels: true
+            split_channels: true,
+            disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
@@ -234,7 +242,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
           var options = {
             audio_context: audioContext,
             array_buffer: sampleBuffer,
-            bits: 16
+            bits: 16,
+            disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {

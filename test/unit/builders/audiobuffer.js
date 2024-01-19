@@ -22,7 +22,8 @@ export default function waveformDataAudioBufferTests(WaveformData) {
       context("given an AudioBuffer", function() {
         it("should return a valid waveform", function(done) {
           var options = {
-            audio_buffer: sampleAudioBuffer
+            audio_buffer: sampleAudioBuffer,
+            disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
@@ -39,10 +40,9 @@ export default function waveformDataAudioBufferTests(WaveformData) {
           });
         });
 
-        it("should return a valid waveform without using a worker", function(done) {
+        it("should return a valid waveform using a worker", function(done) {
           var options = {
-            audio_buffer: sampleAudioBuffer,
-            disable_worker: true
+            audio_buffer: sampleAudioBuffer
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
@@ -61,7 +61,8 @@ export default function waveformDataAudioBufferTests(WaveformData) {
         it("should adjust the length of the waveform when using a different scale", function(done) {
           var options = {
             audio_buffer: sampleAudioBuffer,
-            scale: 128
+            scale: 128,
+            disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
@@ -79,7 +80,8 @@ export default function waveformDataAudioBufferTests(WaveformData) {
 
         it("should return waveform data points", function(done) {
           var options = {
-            audio_buffer: sampleAudioBuffer
+            audio_buffer: sampleAudioBuffer,
+            disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
@@ -97,7 +99,8 @@ export default function waveformDataAudioBufferTests(WaveformData) {
         it("should return correctly scaled waveform data points", function(done) {
           var options = {
             audio_buffer: sampleAudioBuffer,
-            amplitude_scale: 2.0
+            amplitude_scale: 2.0,
+            disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
@@ -112,10 +115,50 @@ export default function waveformDataAudioBufferTests(WaveformData) {
           });
         });
 
+        it("should return multiple channels of waveform data points", function(done) {
+          var options = {
+            audio_buffer: sampleAudioBuffer,
+            split_channels: true,
+            disable_worker: true
+          };
+
+          WaveformData.createFromAudio(options, function(err, waveform) {
+            expect(err).to.not.be.ok;
+
+            expect(waveform.channels).to.equal(4);
+
+            expect(waveform.channel(0).min_sample(0)).to.equal(-1);
+            expect(waveform.channel(0).max_sample(0)).to.equal(0);
+
+            expect(waveform.channel(1).min_sample(0)).to.equal(-1);
+            expect(waveform.channel(1).max_sample(0)).to.equal(0);
+
+            expect(waveform.channel(2).min_sample(0)).to.equal(-90);
+            expect(waveform.channel(2).max_sample(0)).to.equal(89);
+
+            expect(waveform.channel(3).min_sample(0)).to.equal(-1);
+            expect(waveform.channel(3).max_sample(0)).to.equal(0);
+
+            expect(waveform.channel(0).min_sample(waveform.length - 1)).to.equal(-1);
+            expect(waveform.channel(0).max_sample(waveform.length - 1)).to.equal(0);
+
+            expect(waveform.channel(1).min_sample(waveform.length - 1)).to.equal(-1);
+            expect(waveform.channel(1).max_sample(waveform.length - 1)).to.equal(0);
+
+            expect(waveform.channel(2).min_sample(waveform.length - 1)).to.equal(-90);
+            expect(waveform.channel(2).max_sample(waveform.length - 1)).to.equal(89);
+
+            expect(waveform.channel(3).min_sample(waveform.length - 1)).to.equal(-1);
+            expect(waveform.channel(3).max_sample(waveform.length - 1)).to.equal(0);
+            done();
+          });
+        });
+
         it("should return 16-bit waveform data", function(done) {
           var options = {
             audio_buffer: sampleAudioBuffer,
-            bits: 16
+            bits: 16,
+            disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
