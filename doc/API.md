@@ -102,11 +102,11 @@ Audio API.
 
 | Name              | Type                                                                                                          | Description |
 | ----------------- | ------------------------------------------------------------------------------------------------------------- | - |
-| `audio_context`   | [`AudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext)                               | When using the `array_buffer` option to provide encoded audio, this should be a Web Audio `AudioContext` object, which will be used to decode the audio. Not required otherwise |
 | `array_buffer`    | [`ArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer) | Contains encoded audio. If using this option, an `audio_context` is also required |
 | `audio_buffer`    | [`AudioBuffer`](https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer)                                 | Contains decoded audio. If using this option, an `audio_context` is not required |
+| `audio_context`   | [`AudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext)                               | When using the `array_buffer` option to provide encoded audio, this should be a Web Audio `AudioContext` object, which will be used to decode the audio. Not required otherwise |
 | `scale`           | Number (integer, default: `512`)                                                                              | Controls the resolution of the waveform data by specifying the number of input audio samples per output waveform data point |
-| `bits`            | Number (integer, default: `8`)                                                                                | Sets the number of bits to use for output waveform data points. Valid values are either `8` or `16`. |
+| `bits`            | Number (integer, default: `8`)                                                                                | Sets the number of bits to use for output waveform data points. Valid values are either `8` or `16` |
 | `amplitude_scale` | Number (default: `1.0`)                                                                                       | Applies amplitude scaling to the waveform data. For example, set to `2.0` to double the waveform amplitude |
 | `split_channels`  | Boolean (default: `false`)                                                                                    | Set to `true` to produce separate waveform channels instead of combining all channels into a single waveform |
 | `disable_worker`  | Boolean (default: `false`)                                                                                    | Set to `true` to disable use of a [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers) |
@@ -416,8 +416,9 @@ To resample the waveform to fit to a specific width:
 
 ```javascript
 const waveform = WaveformData.create(buffer);
-const resampledWaveform = waveform.resample({ width: 500 });
+console.log(waveform.length); // -> 1000
 
+const resampledWaveform = waveform.resample({ width: 500 });
 console.log(resampledWaveform.length); // -> 500
 ```
 
@@ -445,8 +446,7 @@ const resampledWaveform = waveform.resample({ scale: scale / 2 }); // throws an 
 Concatenates the receiver with one or more other waveforms, returning a new
 [`WaveformData`](#waveformdata) object.
 
-The waveforms must be compatible, i.e., have the same sample rate, scale,
-and number of channels.
+The waveforms all have the same sample rate, scale, and number of channels.
 
 #### Arguments
 
@@ -482,7 +482,7 @@ Returns a subset of the waveform data between a given start and end point.
 
 #### Example
 
-Return the waveform between index 100 and index 200:
+To return the waveform between index 100 and index 200:
 
 ```javascript
 const waveform = WaveformData.create(buffer);
@@ -492,7 +492,7 @@ const slice = waveform.slice({ startIndex: 100, endIndex: 200 });
 console.log(slice.length); // -> 100
 ```
 
-Return the waveform between 1.0 and 2.0 seconds:
+To return the waveform between 1.0 and 2.0 seconds:
 
 ```javascript
 const waveform = WaveformData.create(buffer);
@@ -517,7 +517,7 @@ console.log(waveform.toJSON());
 // { version: 2, channels: 1, sample_rate: 44100, samples_per_pixel: 512,
 //   bits: 8, length: 4, data: [0, 0, -1, 1, -2, 2, -3, 3] }
 
-console.log(JSON.stringify(waveform))
+console.log(JSON.stringify(waveform));
 // '{"version":2,"channels":1,"sample_rate":44100,"samples_per_pixel":512,
 //   "bits":8,"length":4,"data":[0,0,-1,1,-2,2,-3,3]}'
 ```
@@ -541,6 +541,8 @@ WaveformData.createFromAudio(buffer, function(err, waveformData) {
 ```
 
 ## WaveformDataChannel
+
+A `WaveformDataChannel` object allows you to access the waveform data point values.
 
 ### waveformDataChannel.min_sample(index)
 
