@@ -596,7 +596,7 @@ for (let i = 0; i < waveform.length; i++) {
 
 ### waveformDataChannel.min_array()
 
-Returns all the waveform minimum values as an array.
+Returns a copy of the waveform minimum values as an array.
 
 ```javascript
 const waveform = WaveformData.create(buffer);
@@ -613,7 +613,7 @@ for (let i = 0; i < waveform.length; i++) {
 
 ### waveformDataChannel.max_array()
 
-Returns all the waveform maximum values as an array.
+Returns a copy of the waveform maximum values as an array.
 
 ```javascript
 const waveform = WaveformData.create(buffer);
