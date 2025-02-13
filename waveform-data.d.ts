@@ -25,6 +25,12 @@ declare module 'waveform-data' {
      */
 
     split_channels?: boolean;
+
+    /**
+     * Set to `true` to disable use of a Web Worker. Default: false
+     */
+
+    disable_worker?: boolean;
   }
 
   export interface WaveformDataAudioContextOptions extends Options {
