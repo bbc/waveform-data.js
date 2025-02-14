@@ -1,5 +1,9 @@
 # waveform-data.js
 
+## v4.5.1 (2025/02/14)
+
+ * (#121) Fixed TypeScript declarations (@trevorblades)
+
 ## v4.5.0 (2024/01/18)
 
  * (#119) Added support for 16-bit samples in `createFromAudio()` (@jameadows)
