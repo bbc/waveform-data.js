@@ -74,7 +74,8 @@ const commonRules = {
         'parameters': 2
       },
       'ignoredNodes': ['ConditionalExpression'],
-      'ArrayExpression': 1
+      'ArrayExpression': 1,
+      'MemberExpression': 'off'
     }
   ],
   '@stylistic/js/max-len': ['warn', 100],
@@ -126,7 +127,7 @@ export default defineConfig([
     rules: commonRules
   },
   {
-    files: ['test/*.js'],
+    files: ['test/*.js', 'test/unit/*.js', 'test/unit/builders/*.js'],
     plugins: {
       'js': js,
       '@stylistic/js': stylisticJs,
@@ -158,6 +159,7 @@ export default defineConfig([
       // TODO: Disable this because it causes an error:
       // TypeError: Cannot read properties of undefined (reading '0')
       'mocha/consistent-spacing-between-blocks': 'off',
+      'mocha/no-exports': 'off',
       'mocha/no-hooks': 'off',
       'mocha/no-hooks-for-single-case': 'off',
       'mocha/no-setup-in-describe': 'off',

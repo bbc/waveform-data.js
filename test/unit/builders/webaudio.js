@@ -1,13 +1,13 @@
-import { expect } from "chai";
+import { expect } from 'chai';
 
 export default function waveformDataAudioContextTests(WaveformData) {
-  describe("WaveformData", function() {
-    var sampleBuffer;
-    var AudioContext = window.AudioContext || window.webkitAudioContext;
-    var audioContext = new AudioContext();
+  describe('WaveformData', function() {
+    let sampleBuffer;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioContext = new AudioContext();
 
     beforeEach(function() {
-      return fetch("/base/test/data/4channel.wav").then(function(response) {
+      return fetch('/base/test/data/4channel.wav').then(function(response) {
         if (response.ok) {
           return response.arrayBuffer();
         }
@@ -17,16 +17,16 @@ export default function waveformDataAudioContextTests(WaveformData) {
       });
     });
 
-    describe(".createFromAudio", function() {
-      it("should throw if an AudioContext is given as the first argument", function() {
+    describe('.createFromAudio', function() {
+      it('should throw if an AudioContext is given as the first argument', function() {
         expect(function() {
           WaveformData.createFromAudio(audioContext, sinon.spy());
         }).to.throw(/AudioContext/);
       });
 
-      context("given an AudioContext and ArrayBuffer", function() {
-        it("should return an error if the audio buffer is invalid", function(done) {
-          var options = {
+      context('given an AudioContext and ArrayBuffer', function() {
+        it('should return an error if the audio buffer is invalid', function(done) {
+          const options = {
             audio_context: audioContext,
             array_buffer: new ArrayBuffer(1024),
             disable_worker: true
@@ -34,43 +34,47 @@ export default function waveformDataAudioContextTests(WaveformData) {
 
           WaveformData.createFromAudio(options, function(err, waveform) {
             expect(err).to.be.an.instanceOf(DOMException);
-            expect(waveform).to.not.be.ok;
+            expect(waveform).to.equal(undefined);
 
             done();
           });
         });
 
-        it("shouldn't cause an unhandledrejection on error", function(done) {
-          var options = {
+        it('should not cause an unhandledrejection on error', function(done) {
+          const options = {
             audio_context: audioContext,
             array_buffer: new ArrayBuffer(1024),
             disable_worker: true
           };
 
           function listener() {
-            done("This shouldn't be reached");
+            done('Should not get here');
           }
-          window.addEventListener("unhandledrejection", listener);
+          window.addEventListener('unhandledrejection', listener);
 
           WaveformData.createFromAudio(options, function(err, waveform) {
             expect(err).to.be.an.instanceOf(DOMException);
+            expect(waveform).to.equal(undefined);
+
             setTimeout(function() {
-              window.removeEventListener("unhandledrejection", listener);
+              window.removeEventListener('unhandledrejection', listener);
               done();
             });
           });
         });
 
-        it("should only invoke the callback once on error", function(done) {
-          var options = {
+        it('should only invoke the callback once on error', function(done) {
+          const options = {
             audio_context: audioContext,
             array_buffer: new ArrayBuffer(1024),
             disable_worker: true
           };
-          var count = 0;
+          let count = 0;
 
           WaveformData.createFromAudio(options, function(err, waveform) {
             expect(err).to.be.an.instanceOf(DOMException);
+            expect(waveform).to.equal(undefined);
+
             count++;
             setTimeout(function() {
               expect(count).to.eq(1);
@@ -79,15 +83,15 @@ export default function waveformDataAudioContextTests(WaveformData) {
           });
         });
 
-        it("should return a valid waveform", function(done) {
-          var options = {
+        it('should return a valid waveform', function(done) {
+          const options = {
             audio_context: audioContext,
             array_buffer: sampleBuffer,
             disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
-            expect(err).to.not.be.ok;
+            expect(err).to.equal(undefined);
             expect(waveform).to.be.an.instanceOf(WaveformData);
             expect(waveform.channels).to.equal(1);
             expect(waveform.bits).to.equal(8);
@@ -100,14 +104,14 @@ export default function waveformDataAudioContextTests(WaveformData) {
           });
         });
 
-        it("should return a valid waveform using a worker", function(done) {
-          var options = {
+        it('should return a valid waveform using a worker', function(done) {
+          const options = {
             audio_context: audioContext,
             array_buffer: sampleBuffer
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
-            expect(err).to.not.be.ok;
+            expect(err).to.equal(undefined);
             expect(waveform).to.be.an.instanceOf(WaveformData);
             expect(waveform.channels).to.equal(1);
 
@@ -119,15 +123,16 @@ export default function waveformDataAudioContextTests(WaveformData) {
           });
         });
 
-        it("should return the decoded audio", function(done) {
-          var options = {
+        it('should return the decoded audio', function(done) {
+          const options = {
             audio_context: audioContext,
             array_buffer: sampleBuffer,
             disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform, audioBuffer) {
-            expect(err).to.not.be.ok;
+            expect(err).to.equal(undefined);
+            expect(waveform).to.be.an.instanceOf(WaveformData);
 
             expect(audioBuffer).to.be.an.instanceOf(AudioBuffer);
             expect(audioBuffer.numberOfChannels).to.equal(4);
@@ -136,8 +141,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
           });
         });
 
-        it("should adjust the length of the waveform when using a different scale", function(done) {
-          var options = {
+        it('should adjust the length of the waveform when using a different scale', function(done) {
+          const options = {
             audio_context: audioContext,
             array_buffer: sampleBuffer,
             scale: 128,
@@ -145,7 +150,7 @@ export default function waveformDataAudioContextTests(WaveformData) {
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
-            expect(err).to.not.be.ok;
+            expect(err).to.equal(undefined);
             expect(waveform).to.be.an.instanceOf(WaveformData);
             expect(waveform.channels).to.equal(1);
 
@@ -157,15 +162,15 @@ export default function waveformDataAudioContextTests(WaveformData) {
           });
         });
 
-        it("should return waveform data points", function(done) {
-          var options = {
+        it('should return waveform data points', function(done) {
+          const options = {
             audio_context: audioContext,
             array_buffer: sampleBuffer,
             disable_worker: true
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
-            expect(err).to.not.be.ok;
+            expect(err).to.equal(undefined);
 
             expect(waveform.channels).to.equal(1);
 
@@ -178,8 +183,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
           });
         });
 
-        it("should return correctly scaled waveform data points", function(done) {
-          var options = {
+        it('should return correctly scaled waveform data points', function(done) {
+          const options = {
             audio_context: audioContext,
             array_buffer: sampleBuffer,
             amplitude_scale: 2.0,
@@ -187,7 +192,7 @@ export default function waveformDataAudioContextTests(WaveformData) {
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
-            expect(err).to.not.be.ok;
+            expect(err).to.equal(undefined);
 
             expect(waveform.channel(0).min_sample(0)).to.equal(-45);
             expect(waveform.channel(0).max_sample(0)).to.equal(44);
@@ -198,8 +203,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
           });
         });
 
-        it("should return multiple channels of waveform data points", function(done) {
-          var options = {
+        it('should return multiple channels of waveform data points', function(done) {
+          const options = {
             audio_context: audioContext,
             array_buffer: sampleBuffer,
             split_channels: true,
@@ -207,7 +212,7 @@ export default function waveformDataAudioContextTests(WaveformData) {
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
-            expect(err).to.not.be.ok;
+            expect(err).to.equal(undefined);
 
             expect(waveform.channels).to.equal(4);
 
@@ -238,8 +243,8 @@ export default function waveformDataAudioContextTests(WaveformData) {
           });
         });
 
-        it("should return 16-bit waveform data", function(done) {
-          var options = {
+        it('should return 16-bit waveform data', function(done) {
+          const options = {
             audio_context: audioContext,
             array_buffer: sampleBuffer,
             bits: 16,
@@ -247,7 +252,7 @@ export default function waveformDataAudioContextTests(WaveformData) {
           };
 
           WaveformData.createFromAudio(options, function(err, waveform) {
-            expect(err).to.not.be.ok;
+            expect(err).to.equal(undefined);
             expect(waveform).to.be.an.instanceOf(WaveformData);
             expect(waveform.channels).to.equal(1);
             expect(waveform.bits).to.equal(16);

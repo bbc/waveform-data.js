@@ -74,13 +74,13 @@ function createFromAudioBuffer(audio_buffer, options, callback) {
       channels: channels
     });
 
-    callback(null, new WaveformData(buffer), audio_buffer);
+    callback(undefined, new WaveformData(buffer), audio_buffer);
   }
   else {
     const worker = new WaveformDataWorker();
 
     worker.onmessage = function(evt) {
-      callback(null, new WaveformData(evt.data), audio_buffer);
+      callback(undefined, new WaveformData(evt.data), audio_buffer);
     };
 
     worker.postMessage({

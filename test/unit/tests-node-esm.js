@@ -1,5 +1,5 @@
-import WaveformData from "../../dist/waveform-data.esm";
+import WaveformData from '../../dist/waveform-data.esm';
 
-import waveformDataTests from "./waveform-data";
+import waveformDataTests from './waveform-data';
 
 waveformDataTests(WaveformData);
