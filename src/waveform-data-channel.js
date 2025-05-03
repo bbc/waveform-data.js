@@ -12,7 +12,7 @@ function WaveformDataChannel(waveformData, channelIndex) {
  */
 
 WaveformDataChannel.prototype.min_sample = function(index) {
-  var offset = (index * this._waveformData.channels + this._channelIndex) * 2;
+  const offset = (index * this._waveformData.channels + this._channelIndex) * 2;
 
   return this._waveformData._at(offset);
 };
@@ -22,7 +22,7 @@ WaveformDataChannel.prototype.min_sample = function(index) {
  */
 
 WaveformDataChannel.prototype.max_sample = function(index) {
-  var offset = (index * this._waveformData.channels + this._channelIndex) * 2 + 1;
+  const offset = (index * this._waveformData.channels + this._channelIndex) * 2 + 1;
 
   return this._waveformData._at(offset);
 };
@@ -32,7 +32,7 @@ WaveformDataChannel.prototype.max_sample = function(index) {
  */
 
 WaveformDataChannel.prototype.set_min_sample = function(index, sample) {
-  var offset = (index * this._waveformData.channels + this._channelIndex) * 2;
+  const offset = (index * this._waveformData.channels + this._channelIndex) * 2;
 
   return this._waveformData._set_at(offset, sample);
 };
@@ -42,7 +42,7 @@ WaveformDataChannel.prototype.set_min_sample = function(index, sample) {
  */
 
 WaveformDataChannel.prototype.set_max_sample = function(index, sample) {
-  var offset = (index * this._waveformData.channels + this._channelIndex) * 2 + 1;
+  const offset = (index * this._waveformData.channels + this._channelIndex) * 2 + 1;
 
   return this._waveformData._set_at(offset, sample);
 };
@@ -52,10 +52,10 @@ WaveformDataChannel.prototype.set_max_sample = function(index, sample) {
  */
 
 WaveformDataChannel.prototype.min_array = function() {
-  var length = this._waveformData.length;
-  var values = [];
+  const length = this._waveformData.length;
+  const values = [];
 
-  for (var i = 0; i < length; i++) {
+  for (let i = 0; i < length; i++) {
     values.push(this.min_sample(i));
   }
 
@@ -67,10 +67,10 @@ WaveformDataChannel.prototype.min_array = function() {
  */
 
 WaveformDataChannel.prototype.max_array = function() {
-  var length = this._waveformData.length;
-  var values = [];
+  const length = this._waveformData.length;
+  const values = [];
 
-  for (var i = 0; i < length; i++) {
+  for (let i = 0; i < length; i++) {
     values.push(this.max_sample(i));
   }
 

@@ -1,7 +1,8 @@
-import WaveformDataChannel from "./waveform-data-channel";
-import { generateWaveformData } from "./waveform-generator";
-import { isJsonWaveformData, isBinaryWaveformData, convertJsonToBinary } from "./waveform-utils";
-import WaveformDataWorker from "web-worker:./waveform-data-worker";
+import WaveformDataChannel from './waveform-data-channel';
+import { generateWaveformData } from './waveform-generator';
+import { isJsonWaveformData, isBinaryWaveformData, convertJsonToBinary } from './waveform-utils';
+import { isNullOrUndefined } from './utils';
+import WaveformDataWorker from 'web-worker:./waveform-data-worker';
 
 /**
  * Provides access to waveform data.
@@ -18,18 +19,18 @@ function WaveformData(data) {
 
     this._channels = [];
 
-    for (var channel = 0; channel < this.channels; channel++) {
+    for (let channel = 0; channel < this.channels; channel++) {
       this._channels[channel] = new WaveformDataChannel(this, channel);
     }
   }
   else {
     throw new TypeError(
-      "WaveformData.create(): Unknown data format"
+      'WaveformData.create(): Unknown data format'
     );
   }
 }
 
-var defaultOptions = {
+const defaultOptions = {
   scale: 512,
   bits: 8,
   amplitude_scale: 1.0,
@@ -38,7 +39,7 @@ var defaultOptions = {
 };
 
 function getOptions(options) {
-  var opts = {
+  const opts = {
     scale: options.scale || defaultOptions.scale,
     bits: options.bits || defaultOptions.bits,
     amplitude_scale: options.amplitude_scale || defaultOptions.amplitude_scale,
@@ -50,9 +51,9 @@ function getOptions(options) {
 }
 
 function getChannelData(audio_buffer) {
-  var channels = [];
+  const channels = [];
 
-  for (var i = 0; i < audio_buffer.numberOfChannels; ++i) {
+  for (let i = 0; i < audio_buffer.numberOfChannels; ++i) {
     channels.push(audio_buffer.getChannelData(i).buffer);
   }
 
@@ -60,10 +61,10 @@ function getChannelData(audio_buffer) {
 }
 
 function createFromAudioBuffer(audio_buffer, options, callback) {
-  var channels = getChannelData(audio_buffer);
+  const channels = getChannelData(audio_buffer);
 
   if (options.disable_worker) {
-    var buffer = generateWaveformData({
+    const buffer = generateWaveformData({
       scale: options.scale,
       bits: options.bits,
       amplitude_scale: options.amplitude_scale,
@@ -76,7 +77,7 @@ function createFromAudioBuffer(audio_buffer, options, callback) {
     callback(null, new WaveformData(buffer), audio_buffer);
   }
   else {
-    var worker = new WaveformDataWorker();
+    const worker = new WaveformDataWorker();
 
     worker.onmessage = function(evt) {
       callback(null, new WaveformData(evt.data), audio_buffer);
@@ -102,7 +103,7 @@ function createFromArrayBuffer(audioContext, audioData, options, callback) {
 
   function errorCallback(error) {
     if (!error) {
-      error = new DOMException("EncodingError");
+      error = new DOMException('EncodingError');
     }
 
     callback(error);
@@ -110,7 +111,7 @@ function createFromArrayBuffer(audioContext, audioData, options, callback) {
     callback = function() { };
   }
 
-  var promise = audioContext.decodeAudioData(
+  const promise = audioContext.decodeAudioData(
     audioData,
     function(audio_buffer) {
       createFromAudioBuffer(audio_buffer, options, callback);
@@ -136,7 +137,7 @@ WaveformData.create = function create(data) {
  */
 
 WaveformData.createFromAudio = function(options, callback) {
-  var opts = getOptions(options);
+  const opts = getOptions(options);
 
   if (options.audio_context && options.array_buffer) {
     return createFromArrayBuffer(options.audio_context, options.array_buffer, opts, callback);
@@ -147,7 +148,7 @@ WaveformData.createFromAudio = function(options, callback) {
   else {
     throw new TypeError(
       // eslint-disable-next-line
-      "WaveformData.createFromAudio(): Pass either an AudioContext and ArrayBuffer, or an AudioBuffer object"
+      'WaveformData.createFromAudio(): Pass either an AudioContext and ArrayBuffer, or an AudioBuffer object'
     );
   }
 };
@@ -164,14 +165,14 @@ function WaveformResampler(options) {
   // all data but for intermediate zoom we want to resample subset
   this._input_buffer_size = this._inputData.length;
 
-  var input_buffer_length_samples = this._input_buffer_size * this._inputData.scale;
-  var output_buffer_length_samples =
+  const input_buffer_length_samples = this._input_buffer_size * this._inputData.scale;
+  const output_buffer_length_samples =
     Math.ceil(input_buffer_length_samples / this._output_samples_per_pixel);
 
-  var output_header_size = 24; // version 2
-  var bytes_per_sample = this._inputData.bits === 8 ? 1 : 2;
-  var total_size = output_header_size
-                  + output_buffer_length_samples * 2 * this._inputData.channels * bytes_per_sample;
+  const output_header_size = 24; // version 2
+  const bytes_per_sample = this._inputData.bits === 8 ? 1 : 2;
+  const total_size = output_header_size
+                   + output_buffer_length_samples * 2 * this._inputData.channels * bytes_per_sample;
 
   this._output_data = new ArrayBuffer(total_size);
 
@@ -189,14 +190,12 @@ function WaveformResampler(options) {
   this._input_index = 0;
   this._output_index = 0;
 
-  var channels = this._inputData.channels;
+  const channels = this._inputData.channels;
 
   this._min = new Array(channels);
   this._max = new Array(channels);
 
-  var channel;
-
-  for (channel = 0; channel < channels; ++channel) {
+  for (let channel = 0; channel < channels; ++channel) {
     if (this._input_buffer_size > 0) {
       this._min[channel] = this._inputData.channel(channel).min_sample(this._input_index);
       this._max[channel] = this._inputData.channel(channel).max_sample(this._input_index);
@@ -221,18 +220,16 @@ WaveformResampler.prototype.sample_at_pixel = function(x) {
 };
 
 WaveformResampler.prototype.next = function() {
-  var count = 0;
-  var total = 1000;
-  var channels = this._inputData.channels;
-  var channel;
-  var value;
-  var i;
+  let count = 0;
+  const total = 1000;
+  const channels = this._inputData.channels;
+  let channel;
 
   while (this._input_index < this._input_buffer_size && count < total) {
     while (Math.floor(this.sample_at_pixel(this._output_index) / this._scale) ===
            this._input_index) {
       if (this._output_index > 0) {
-        for (i = 0; i < channels; ++i) {
+        for (let i = 0; i < channels; ++i) {
           channel = this._outputWaveformData.channel(i);
 
           channel.set_min_sample(this._output_index - 1, this._min[i]);
@@ -248,7 +245,7 @@ WaveformResampler.prototype.next = function() {
       this._prev_where = this.sample_at_pixel(this._output_index - 1);
 
       if (this._where !== this._prev_where) {
-        for (i = 0; i < channels; ++i) {
+        for (let i = 0; i < channels; ++i) {
           this._min[i] = this._max_value;
           this._max[i] = this._min_value;
         }
@@ -263,10 +260,10 @@ WaveformResampler.prototype.next = function() {
     }
 
     while (this._input_index < this._stop) {
-      for (i = 0; i < channels; ++i) {
+      for (let i = 0; i < channels; ++i) {
         channel = this._inputData.channel(i);
 
-        value = channel.min_sample(this._input_index);
+        let value = channel.min_sample(this._input_index);
 
         if (value < this._min[i]) {
           this._min[i] = value;
@@ -292,7 +289,7 @@ WaveformResampler.prototype.next = function() {
   else {
     // Done
     if (this._input_index !== this._last_input_index) {
-      for (i = 0; i < channels; ++i) {
+      for (let i = 0; i < channels; ++i) {
         channel = this._outputWaveformData.channel(i);
 
         channel.set_min_sample(this._output_index - 1, this._min[i]);
@@ -311,21 +308,21 @@ WaveformResampler.prototype.getOutputData = function() {
 WaveformData.prototype = {
 
   _getResampleOptions(options) {
-    var opts = {};
+    const opts = {};
 
     opts.scale = options.scale;
     opts.width = options.width;
 
-    if (opts.width != null && (typeof opts.width !== "number" || opts.width <= 0)) {
-      throw new RangeError("WaveformData.resample(): width should be a positive integer value");
+    if (!isNullOrUndefined(opts.width) && (typeof opts.width !== 'number' || opts.width <= 0)) {
+      throw new RangeError('WaveformData.resample(): width should be a positive integer value');
     }
 
-    if (opts.scale != null && (typeof opts.scale !== "number" || opts.scale <= 0)) {
-      throw new RangeError("WaveformData.resample(): scale should be a positive integer value");
+    if (!isNullOrUndefined(opts.scale) && (typeof opts.scale !== 'number' || opts.scale <= 0)) {
+      throw new RangeError('WaveformData.resample(): scale should be a positive integer value');
     }
 
     if (!opts.scale && !opts.width) {
-      throw new Error("WaveformData.resample(): Missing scale or width option");
+      throw new Error('WaveformData.resample(): Missing scale or width option');
     }
 
     if (opts.width) {
@@ -335,8 +332,8 @@ WaveformData.prototype = {
 
     if (opts.scale < this.scale) {
       throw new Error(
-        "WaveformData.resample(): Zoom level " + opts.scale +
-        " too low, minimum: " + this.scale
+        'WaveformData.resample(): Zoom level ' + opts.scale +
+        ' too low, minimum: ' + this.scale
       );
     }
 
@@ -349,7 +346,7 @@ WaveformData.prototype = {
     options = this._getResampleOptions(options);
     options.waveformData = this;
 
-    var resampler = new WaveformResampler(options);
+    const resampler = new WaveformResampler(options);
 
     while (!resampler.next()) {
       // nothing
@@ -363,8 +360,8 @@ WaveformData.prototype = {
    */
 
   concat: function() {
-    var self = this;
-    var otherWaveforms = Array.prototype.slice.call(arguments);
+    const self = this;
+    const otherWaveforms = Array.prototype.slice.call(arguments);
 
     // Check that all the supplied waveforms are compatible
     otherWaveforms.forEach(function(otherWaveform) {
@@ -372,11 +369,11 @@ WaveformData.prototype = {
         self.sample_rate !== otherWaveform.sample_rate ||
         self.bits !== otherWaveform.bits ||
         self.scale !== otherWaveform.scale) {
-        throw new Error("WaveformData.concat(): Waveforms are incompatible");
+        throw new Error('WaveformData.concat(): Waveforms are incompatible');
       }
     });
 
-    var combinedBuffer = this._concatBuffers.apply(this, otherWaveforms);
+    const combinedBuffer = this._concatBuffers.apply(this, otherWaveforms);
 
     return WaveformData.create(combinedBuffer);
   },
@@ -387,39 +384,40 @@ WaveformData.prototype = {
    */
 
   _concatBuffers: function() {
-    var otherWaveforms = Array.prototype.slice.call(arguments);
-    var headerSize = this._offset;
-    var totalSize = headerSize;
-    var totalDataLength = 0;
-    var bufferCollection = [this].concat(otherWaveforms).map(function(w) {
+    const otherWaveforms = Array.prototype.slice.call(arguments);
+    const headerSize = this._offset;
+    let totalSize = headerSize;
+    let totalDataLength = 0;
+    const bufferCollection = [this].concat(otherWaveforms).map(function(w) {
       return w._data.buffer;
     });
-    var i, buffer;
 
-    for (i = 0; i < bufferCollection.length; i++) {
-      buffer = bufferCollection[i];
-      var dataSize = new DataView(buffer).getInt32(16, true);
+    for (let i = 0; i < bufferCollection.length; i++) {
+      const buffer = bufferCollection[i];
+      const dataSize = new DataView(buffer).getInt32(16, true);
 
       totalSize += buffer.byteLength - headerSize;
       totalDataLength += dataSize;
     }
 
-    var totalBuffer = new ArrayBuffer(totalSize);
-    var sourceHeader = new DataView(bufferCollection[0]);
-    var totalBufferView = new DataView(totalBuffer);
+    const totalBuffer = new ArrayBuffer(totalSize);
+    const sourceHeader = new DataView(bufferCollection[0]);
+    const totalBufferView = new DataView(totalBuffer);
 
     // Copy the header from the first chunk
-    for (i = 0; i < headerSize; i++) {
+    for (let i = 0; i < headerSize; i++) {
       totalBufferView.setUint8(i, sourceHeader.getUint8(i));
     }
+
     // Rewrite the data-length header item to reflect all of the samples concatenated together
     totalBufferView.setInt32(16, totalDataLength, true);
 
-    var offset = 0;
-    var dataOfTotalBuffer = new Uint8Array(totalBuffer, headerSize);
+    let offset = 0;
+    const dataOfTotalBuffer = new Uint8Array(totalBuffer, headerSize);
 
-    for (i = 0; i < bufferCollection.length; i++) {
-      buffer = bufferCollection[i];
+    for (let i = 0; i < bufferCollection.length; i++) {
+      const buffer = bufferCollection[i];
+
       dataOfTotalBuffer.set(new Uint8Array(buffer, headerSize), offset);
       offset += buffer.byteLength - headerSize;
     }
@@ -428,24 +426,24 @@ WaveformData.prototype = {
   },
 
   slice: function(options) {
-    var startIndex = 0;
-    var endIndex = 0;
+    let startIndex = 0;
+    let endIndex = 0;
 
-    if (options.startIndex != null && options.endIndex != null) {
+    if (!isNullOrUndefined(options.startIndex) && !isNullOrUndefined(options.endIndex)) {
       startIndex = options.startIndex;
       endIndex = options.endIndex;
     }
-    else if (options.startTime != null && options.endTime != null) {
+    else if (!isNullOrUndefined(options.startTime) && !isNullOrUndefined(options.endTime)) {
       startIndex = this.at_time(options.startTime);
       endIndex = this.at_time(options.endTime);
     }
 
     if (startIndex < 0) {
-      throw new RangeError("startIndex or startTime must not be negative");
+      throw new RangeError('startIndex or startTime must not be negative');
     }
 
     if (endIndex < 0) {
-      throw new RangeError("endIndex or endTime must not be negative");
+      throw new RangeError('endIndex or endTime must not be negative');
     }
 
     if (startIndex > this.length) {
@@ -460,15 +458,15 @@ WaveformData.prototype = {
       startIndex = endIndex;
     }
 
-    var length = endIndex - startIndex;
+    const length = endIndex - startIndex;
 
-    var header_size = 24; // Version 2
-    var bytes_per_sample = this.bits === 8 ? 1 : 2;
-    var total_size = header_size
-                   + length * 2 * this.channels * bytes_per_sample;
+    const header_size = 24; // Version 2
+    const bytes_per_sample = this.bits === 8 ? 1 : 2;
+    const total_size = header_size
+                     + length * 2 * this.channels * bytes_per_sample;
 
-    var output_data = new ArrayBuffer(total_size);
-    var output_dataview = new DataView(output_data);
+    const output_data = new ArrayBuffer(total_size);
+    const output_dataview = new DataView(output_data);
 
     output_dataview.setInt32(0, 2, true); // Version
     output_dataview.setUint32(4, this.bits === 8, true); // Is 8 bit?
@@ -477,8 +475,8 @@ WaveformData.prototype = {
     output_dataview.setInt32(16, length, true);
     output_dataview.setInt32(20, this.channels, true);
 
-    for (var i = 0; i < length * this.channels * 2; i++) {
-      var sample = this._at(startIndex * this.channels * 2 + i);
+    for (let i = 0; i < length * this.channels * 2; i++) {
+      const sample = this._at(startIndex * this.channels * 2 + i);
 
       if (this.bits === 8) {
         output_dataview.setInt8(header_size + i, sample);
@@ -512,7 +510,7 @@ WaveformData.prototype = {
    */
 
   get bits() {
-    var bits = Boolean(this._data.getUint32(4, true));
+    const bits = Boolean(this._data.getUint32(4, true));
 
     return bits ? 8 : 16;
   },
@@ -563,7 +561,7 @@ WaveformData.prototype = {
       return this._channels[index];
     }
     else {
-      throw new RangeError("Invalid channel: " + index);
+      throw new RangeError('Invalid channel: ' + index);
     }
   },
 
@@ -640,8 +638,8 @@ WaveformData.prototype = {
       data: []
     };
 
-    for (var i = 0; i < this.length; i++) {
-      for (var channel = 0; channel < this.channels; channel++) {
+    for (let i = 0; i < this.length; i++) {
+      for (let channel = 0; channel < this.channels; channel++) {
         waveform.data.push(this.channel(channel).min_sample(i));
         waveform.data.push(this.channel(channel).max_sample(i));
       }

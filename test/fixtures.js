@@ -3,11 +3,11 @@ export function getJSONData(options) {
     options = {};
   }
 
-  if (!("channels" in options)) {
+  if (!('channels' in options)) {
     options.channels = 1;
   }
 
-  if (!("bits" in options)) {
+  if (!('bits' in options)) {
     options.bits = 8;
   }
 
@@ -54,14 +54,14 @@ export function getJSONData(options) {
     ];
   }
 
-  if ("version" in options) {
+  if ('version' in options) {
     data.version = options.version;
   }
 
   return data;
 }
 
-export function getExpectedData(options) {
+export function getExpectedData() {
   return {
     length: 10,
     sample_rate: 48000,
@@ -90,11 +90,11 @@ export function getBinaryData(options) {
     options = {};
   }
 
-  if (!("channels" in options)) {
+  if (!('channels' in options)) {
     options.channels = 1;
   }
 
-  if (!("bits" in options)) {
+  if (!('bits' in options)) {
     options.bits = 8;
   }
 
@@ -102,7 +102,7 @@ export function getBinaryData(options) {
 
   let version;
 
-  if ("version" in options) {
+  if ('version' in options) {
     version = options.version;
   }
   else {

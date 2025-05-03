@@ -1,22 +1,22 @@
-import { babel } from "@rollup/plugin-babel";
-import resolve from "@rollup/plugin-node-resolve";
-import terser from "@rollup/plugin-terser";
-import webWorkerLoader from "@pyrologic/rollup-plugin-web-worker-loader";
+import { babel } from '@rollup/plugin-babel';
+import resolve from '@rollup/plugin-node-resolve';
+import terser from '@rollup/plugin-terser';
+import webWorkerLoader from '@pyrologic/rollup-plugin-web-worker-loader';
 
 export default [
   {
-    input: "src/waveform-data.js",
+    input: 'src/waveform-data.js',
     output: [
       {
-        file: "dist/waveform-data.js",
-        format: "umd",
-        name: "WaveformData",
+        file: 'dist/waveform-data.js',
+        format: 'umd',
+        name: 'WaveformData',
         sourcemap: true
       },
       {
-        file: "dist/waveform-data.min.js",
-        format: "umd",
-        name: "WaveformData",
+        file: 'dist/waveform-data.min.js',
+        format: 'umd',
+        name: 'WaveformData',
         sourcemap: true,
         plugins: [
           terser()
@@ -26,41 +26,41 @@ export default [
     plugins: [
       resolve({ browser: true }),
       webWorkerLoader(),
-      babel({ babelHelpers: "bundled" })
+      babel({ babelHelpers: 'bundled' })
     ]
   },
   {
-    input: "src/waveform-data.js",
+    input: 'src/waveform-data.js',
     output: [
       {
-        file: "dist/waveform-data.esm.js",
-        name: "waveform-data",
-        format: "es"
+        file: 'dist/waveform-data.esm.js',
+        name: 'waveform-data',
+        format: 'es'
       }
     ],
     plugins: [
       resolve({ browser: true }),
       webWorkerLoader({
-        targetPlatform: "browser"
+        targetPlatform: 'browser'
       }),
-      babel({ babelHelpers: "bundled" })
+      babel({ babelHelpers: 'bundled' })
     ]
   },
   {
-    input: "src/waveform-data.js",
+    input: 'src/waveform-data.js',
     output: [
       {
-        file: "dist/waveform-data.cjs.js",
-        name: "waveform-data",
-        format: "cjs",
-        // Corresonds to "module.exports = WaveformData"
-        exports: "default"
+        file: 'dist/waveform-data.cjs.js',
+        name: 'waveform-data',
+        format: 'cjs',
+        // Corresonds to 'module.exports = WaveformData'
+        exports: 'default'
       }
     ],
     plugins: [
       resolve({ browser: true }),
       webWorkerLoader(),
-      babel({ babelHelpers: "bundled" })
+      babel({ babelHelpers: 'bundled' })
     ]
   }
 ];
