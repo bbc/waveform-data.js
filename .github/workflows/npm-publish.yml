@@ -20,12 +20,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - node-version: 16.x
-          - node-version: 18.x
           - node-version: 20.x
-          - node-version: 16.x
+          - node-version: 22.x
+          - node-version: 20.x
             browser: "ChromeHeadless"
-          - node-version: 16.x
+          - node-version: 20.x
             browser: "FirefoxHeadless"
 
     steps:
