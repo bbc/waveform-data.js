@@ -217,6 +217,14 @@ declare module 'waveform-data' {
      */
 
     toArrayBuffer: () => ArrayBuffer;
+
+    /**
+     * Extracts a portion of the waveform data and returns it as a new WaveformData object.
+     * Accepts either time-based parameters (startTime/endTime) or index-based parameters (startIndex/endIndex). 
+     * The returned object preserves all original metadata (sample rate, channels, bits, etc.) but contains only the specified range of samples.
+     */
+
+    slice(options: { startTime: number; endTime: number } | { startIndex: number; endIndex: number }): WaveformData;
   }
 
   export default WaveformData;
