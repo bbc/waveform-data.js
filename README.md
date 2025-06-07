@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/bbc/waveform-data.js/workflows/Node.js%20CI/badge.svg?branch=master)](https://github.com/bbc/waveform-data.js/actions) [![npm](https://img.shields.io/npm/v/waveform-data.svg)](https://www.npmjs.com/package/waveform-data)
+[![Build Status](https://github.com/bbc/waveform-data.js/actions/workflows/node.js.yml/badge.svg?branch=master)](https://github.com/bbc/waveform-data.js/actions) [![npm](https://img.shields.io/npm/v/waveform-data.svg)](https://www.npmjs.com/package/waveform-data)
 
 # waveform-data.js
 
