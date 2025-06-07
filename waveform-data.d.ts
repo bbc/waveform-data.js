@@ -207,6 +207,16 @@ declare module 'waveform-data' {
     concat: (...args: Array<WaveformData>) => WaveformData;
 
     /**
+     * Returns a subset of the waveform data between a given start and end
+     * point
+     */
+
+    slice: (
+      options: { startTime: number; endTime: number } |
+               { startIndex: number; endIndex: number }
+    ) => WaveformData;
+
+    /**
      * Returns the waveform data as an object
      */
 
