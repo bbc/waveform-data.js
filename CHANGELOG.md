@@ -1,5 +1,9 @@
 # waveform-data.js
 
+## v4.5.2 (2025/06/07)
+
+ * Fixed TypeScript declarations (@chrisn)
+
 ## v4.5.1 (2025/02/14)
 
  * (#121) Fixed TypeScript declarations (@trevorblades)
